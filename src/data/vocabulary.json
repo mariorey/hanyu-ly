@@ -1,0 +1,74 @@
+[
+  {
+    "type": "word",
+    "chinese": "你好",
+    "pinyin": "nǐ hǎo",
+    "meaning": "hola"
+  },
+  {
+    "type": "word",
+    "chinese": "谢谢",
+    "pinyin": "xiè xiè",
+    "meaning": "gracias"
+  },
+  {
+    "type": "word",
+    "chinese": "再见",
+    "pinyin": "zài jiàn",
+    "meaning": "adiós"
+  },
+  {
+    "type": "word",
+    "chinese": "对不起",
+    "pinyin": "duì bu qǐ",
+    "meaning": "lo siento, perdona"
+  },
+  {
+    "type": "word",
+    "chinese": "没关系",
+    "pinyin": "méi guān xi",
+    "meaning": "no pasa nada"
+  },
+  {
+    "type": "word",
+    "chinese": "水",
+    "pinyin": "shuǐ",
+    "meaning": "agua"
+  },
+  {
+    "type": "word",
+    "chinese": "吃饭",
+    "pinyin": "chī fàn",
+    "meaning": "comer, tomar comida"
+  },
+  {
+    "type": "phrase",
+    "chinese": "你今天怎么样？",
+    "pinyin": "nǐ jīntiān zěnmeyàng?",
+    "meaning": "¿cómo estás hoy?"
+  },
+  {
+    "type": "phrase",
+    "chinese": "我不明白。",
+    "pinyin": "wǒ bù míngbai.",
+    "meaning": "no entiendo."
+  },
+  {
+    "type": "phrase",
+    "chinese": "请再说一遍。",
+    "pinyin": "qǐng zài shuō yī biàn.",
+    "meaning": "por favor, repítelo."
+  },
+  {
+    "type": "phrase",
+    "chinese": "你叫什么名字？",
+    "pinyin": "nǐ jiào shénme míngzi?",
+    "meaning": "¿cómo te llamas?"
+  },
+  {
+    "type": "phrase",
+    "chinese": "我在学中文。",
+    "pinyin": "wǒ zài xué zhōngwén.",
+    "meaning": "estoy aprendiendo chino."
+  }
+]

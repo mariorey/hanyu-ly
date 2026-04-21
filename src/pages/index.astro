@@ -1,0 +1,34 @@
+---
+import PracticeCard from '../components/PracticeCard.astro';
+import vocabulary from '../data/vocabulary.json';
+import type { VocabItem } from '../types';
+
+const items = vocabulary as VocabItem[];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>汉语练习</title>
+  </head>
+  <body class="min-h-dvh bg-stone-100 flex flex-col items-center justify-center px-4 py-12 font-sans">
+
+    <header class="text-center mb-10">
+      <h1 class="text-3xl font-bold text-stone-900 tracking-tight" style="font-family: 'PingFang SC', 'Noto Sans SC', sans-serif;">
+        汉语练习
+      </h1>
+      <p class="text-sm text-stone-400 mt-1">Mandarin practice</p>
+    </header>
+
+    <main class="w-full max-w-md bg-white rounded-2xl border border-stone-200 shadow-sm p-8">
+      <PracticeCard items={items} />
+    </main>
+
+    <footer class="mt-8 text-xs text-stone-400">
+      Press <kbd class="px-1.5 py-0.5 rounded border border-stone-300 text-stone-500 font-mono text-xs">Enter</kbd> to advance
+    </footer>
+
+  </body>
+</html>

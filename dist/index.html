@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>汉语练习</title><link rel="stylesheet" href="/_astro/index.09YBXM8Y.css"></head> <body class="min-h-dvh bg-stone-100 flex flex-col items-center justify-center px-4 py-12 font-sans"> <header class="text-center mb-10"> <h1 class="text-3xl font-bold text-stone-900 tracking-tight" style="font-family: 'PingFang SC', 'Noto Sans SC', sans-serif;">
+汉语练习
+</h1> <p class="text-sm text-stone-400 mt-1">Mandarin practice</p> </header> <main class="w-full max-w-md bg-white rounded-2xl border border-stone-200 shadow-sm p-8"> <div class="flex flex-col gap-5" data-astro-cid-u6gw6vf2> <!-- Filter tabs --> <div class="flex gap-2" role="group" aria-label="Filtrar vocabulario" data-astro-cid-u6gw6vf2> <button class="tab active" data-filter="all" data-astro-cid-u6gw6vf2>Todo</button> <button class="tab" data-filter="word" data-astro-cid-u6gw6vf2>Palabras</button> <button class="tab" data-filter="phrase" data-astro-cid-u6gw6vf2>Frases</button> </div> <!-- Type badge + counter --> <div class="flex justify-between items-center" data-astro-cid-u6gw6vf2> <span id="type-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-stone-100 text-stone-500 border border-stone-200" data-astro-cid-u6gw6vf2></span> <span class="text-xs text-stone-400" data-astro-cid-u6gw6vf2> <span id="current-index" data-astro-cid-u6gw6vf2>1</span> / <span id="total-count" data-astro-cid-u6gw6vf2>1</span> </span> </div> <!-- Prompt area --> <div class="text-center py-8 min-h-[9rem] flex flex-col items-center justify-center gap-3" data-astro-cid-u6gw6vf2> <span id="prompt-text" data-astro-cid-u6gw6vf2></span> <span id="prompt-hint" class="text-xs text-stone-400 tracking-wide uppercase" data-astro-cid-u6gw6vf2></span> </div> <!-- Pinyin / meaning reveals (always occupy space) --> <div class="flex flex-col gap-1 text-center min-h-[3.25rem]" data-astro-cid-u6gw6vf2> <p class="h-6" data-astro-cid-u6gw6vf2><span id="pinyin-text" class="text-base italic text-red-700  invisible" data-astro-cid-u6gw6vf2></span></p> <p class="h-6" data-astro-cid-u6gw6vf2><span id="meaning-text" class="text-sm        text-emerald-700 invisible" data-astro-cid-u6gw6vf2></span></p> </div> <!-- Input --> <input id="answer-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="Tu respuesta" class="w-full px-4 py-3 rounded-lg border border-stone-200 bg-stone-50 text-stone-900 placeholder-stone-300 text-base outline-none focus:border-stone-500 transition-colors" data-astro-cid-u6gw6vf2> <!-- Result banner (words only, shown after checking) --> <div id="result-banner" class="hidden rounded-lg px-4 py-3 text-sm text-center" data-astro-cid-u6gw6vf2> <p id="result-line" class="font-semibold" data-astro-cid-u6gw6vf2></p> <p id="correct-answer" class="mt-0.5 text-stone-500" data-astro-cid-u6gw6vf2></p> </div> <!-- Reveal buttons (always visible) --> <div class="flex gap-2" data-astro-cid-u6gw6vf2> <button id="btn-pinyin" class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors" data-astro-cid-u6gw6vf2>Pinyin</button> <button id="btn-meaning" class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors" data-astro-cid-u6gw6vf2>Significado</button> </div> <!-- State: answering --> <div id="row-check" data-astro-cid-u6gw6vf2> <button id="btn-check" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors" data-astro-cid-u6gw6vf2>
+Comprobar →
+</button> </div> <!-- State: word result → Next --> <div id="row-next" class="hidden" data-astro-cid-u6gw6vf2> <button id="btn-next" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors" data-astro-cid-u6gw6vf2>
+Siguiente →
+</button> </div> <!-- State: phrase self-assess --> <div id="row-selfassess" class="hidden flex gap-2" data-astro-cid-u6gw6vf2> <button id="btn-knew" class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors" data-astro-cid-u6gw6vf2>✓ Lo sabía</button> <button id="btn-didnt" class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-red-500    text-white hover:bg-red-600    transition-colors" data-astro-cid-u6gw6vf2>✗ No lo sabía</button> </div> </div>  <script>(function(){const serialized = "[{\"type\":\"word\",\"chinese\":\"你好\",\"pinyin\":\"nǐ hǎo\",\"meaning\":\"hola\"},{\"type\":\"word\",\"chinese\":\"谢谢\",\"pinyin\":\"xiè xiè\",\"meaning\":\"gracias\"},{\"type\":\"word\",\"chinese\":\"再见\",\"pinyin\":\"zài jiàn\",\"meaning\":\"adiós\"},{\"type\":\"word\",\"chinese\":\"对不起\",\"pinyin\":\"duì bu qǐ\",\"meaning\":\"lo siento, perdona\"},{\"type\":\"word\",\"chinese\":\"没关系\",\"pinyin\":\"méi guān xi\",\"meaning\":\"no pasa nada\"},{\"type\":\"word\",\"chinese\":\"水\",\"pinyin\":\"shuǐ\",\"meaning\":\"agua\"},{\"type\":\"word\",\"chinese\":\"吃饭\",\"pinyin\":\"chī fàn\",\"meaning\":\"comer, tomar comida\"},{\"type\":\"phrase\",\"chinese\":\"你今天怎么样？\",\"pinyin\":\"nǐ jīntiān zěnmeyàng?\",\"meaning\":\"¿cómo estás hoy?\"},{\"type\":\"phrase\",\"chinese\":\"我不明白。\",\"pinyin\":\"wǒ bù míngbai.\",\"meaning\":\"no entiendo.\"},{\"type\":\"phrase\",\"chinese\":\"请再说一遍。\",\"pinyin\":\"qǐng zài shuō yī biàn.\",\"meaning\":\"por favor, repítelo.\"},{\"type\":\"phrase\",\"chinese\":\"你叫什么名字？\",\"pinyin\":\"nǐ jiào shénme míngzi?\",\"meaning\":\"¿cómo te llamas?\"},{\"type\":\"phrase\",\"chinese\":\"我在学中文。\",\"pinyin\":\"wǒ zài xué zhōngwén.\",\"meaning\":\"estoy aprendiendo chino.\"}]";
+
+  // ── Data ──────────────────────────────────────────────────────────────────
+  const ALL_ITEMS = JSON.parse(serialized);
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  let filtered      = [];
+  let currentIndex  = 0;
+  let direction     = 'zh-to-es'; // 'zh-to-es' | 'es-to-zh'  (words only)
+  let phase         = 'answering'; // 'answering' | 'checked'
+  let pinyinOn      = false;
+  let meaningOn     = false;
+
+  // ── DOM ───────────────────────────────────────────────────────────────────
+  const promptEl      = document.getElementById('prompt-text');
+  const hintEl        = document.getElementById('prompt-hint');
+  const pinyinEl      = document.getElementById('pinyin-text');
+  const meaningEl     = document.getElementById('meaning-text');
+  const answerEl      = document.getElementById('answer-input');
+  const typeBadge     = document.getElementById('type-badge');
+  const counterCur    = document.getElementById('current-index');
+  const counterTot    = document.getElementById('total-count');
+  const resultBanner  = document.getElementById('result-banner');
+  const resultLine    = document.getElementById('result-line');
+  const correctAnswer = document.getElementById('correct-answer');
+  const btnPinyin     = document.getElementById('btn-pinyin');
+  const btnMeaning    = document.getElementById('btn-meaning');
+  const btnCheck      = document.getElementById('btn-check');
+  const btnNext       = document.getElementById('btn-next');
+  const btnKnew       = document.getElementById('btn-knew');
+  const btnDidnt      = document.getElementById('btn-didnt');
+  const rowCheck      = document.getElementById('row-check');
+  const rowNext       = document.getElementById('row-next');
+  const rowSelfassess = document.getElementById('row-selfassess');
+  const tabs          = document.querySelectorAll('.tab');
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function normalize(s) {
+    return s.trim().toLowerCase()
+      .replace(/[.,!?¿¡；，。！？''…]/g, '')
+      .replace(/\s+/g, ' ');
+  }
+
+  function isCorrect(input, item) {
+    const norm = normalize(input);
+    if (!norm) return false;
+
+    if (direction === 'zh-to-es') {
+      // Accept any alternative separated by / or ,
+      return item.meaning.split(/[\/,]/).map(normalize).some(o => o === norm);
+    } else {
+      // Accept Chinese characters OR pinyin (with or without tone marks)
+      return normalize(item.chinese) === norm || normalize(item.pinyin) === norm;
+    }
+  }
+
+  // ── Reveal toggles ────────────────────────────────────────────────────────
+  function setReveal(el, btn, visible) {
+    el.classList.toggle('invisible', !visible);
+    btn.classList.toggle('on', visible);
+  }
+
+  function resetReveals() {
+    pinyinOn  = false;
+    meaningOn = false;
+    setReveal(pinyinEl,  btnPinyin,  false);
+    setReveal(meaningEl, btnMeaning, false);
+  }
+
+  // ── Phase transitions ─────────────────────────────────────────────────────
+  function goAnswering() {
+    phase = 'answering';
+    answerEl.disabled = false;
+    answerEl.value    = '';
+    resultBanner.classList.add('hidden');
+    rowCheck.classList.remove('hidden');
+    rowNext.classList.add('hidden');
+    rowSelfassess.classList.add('hidden');
+    answerEl.focus();
+  }
+
+  function goWordResult(correct, item) {
+    phase = 'checked';
+    answerEl.disabled = true;
+
+    resultBanner.classList.remove('hidden');
+    resultBanner.className = resultBanner.className
+      .replace(/bg-\S+/, '')
+      .replace(/text-\S+(?=\s)/g, '');
+
+    if (correct) {
+      resultBanner.classList.add('bg-emerald-50', 'border', 'border-emerald-200');
+      resultLine.textContent  = '✓ Correcto';
+      resultLine.className    = 'font-semibold text-emerald-700';
+      correctAnswer.textContent = '';
+    } else {
+      resultBanner.classList.add('bg-red-50', 'border', 'border-red-200');
+      resultLine.textContent    = '✗ Incorrecto';
+      resultLine.className      = 'font-semibold text-red-700';
+      const expected = direction === 'zh-to-es' ? item.meaning : `${item.chinese}  /  ${item.pinyin}`;
+      correctAnswer.textContent = `Respuesta: ${expected}`;
+    }
+
+    rowCheck.classList.add('hidden');
+    rowNext.classList.remove('hidden');
+  }
+
+  function goPhraseAssess() {
+    phase = 'checked';
+    answerEl.disabled = true;
+    // Auto-reveal meaning so the user can compare
+    meaningOn = true;
+    setReveal(meaningEl, btnMeaning, true);
+    rowCheck.classList.add('hidden');
+    rowSelfassess.classList.remove('hidden');
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  const CHINESE_CLASSES = 'font-chinese text-chinese-lg font-medium text-stone-900';
+  const MEANING_CLASSES = 'text-2xl font-medium text-stone-700 leading-snug';
+
+  function renderCurrent() {
+    if (!filtered.length) return;
+
+    const item = filtered[currentIndex];
+    const isWord = item.type === 'word';
+
+    // Badge
+    typeBadge.textContent = isWord ? 'palabra' : 'frase';
+
+    // Counter
+    counterCur.textContent = String(currentIndex + 1);
+    counterTot.textContent = String(filtered.length);
+
+    // Direction (words only)
+    if (isWord) {
+      direction = Math.random() < 0.5 ? 'zh-to-es' : 'es-to-zh';
+    }
+
+    // Prompt text + hint
+    if (!isWord || direction === 'zh-to-es') {
+      promptEl.className   = CHINESE_CLASSES;
+      promptEl.textContent = item.chinese;
+      hintEl.textContent   = isWord ? 'escribe el significado' : '';
+    } else {
+      promptEl.className   = MEANING_CLASSES;
+      promptEl.textContent = item.meaning;
+      hintEl.textContent   = 'escribe en chino o pinyin';
+    }
+
+    // Populate hidden reveal spans
+    pinyinEl.textContent  = item.pinyin;
+    meaningEl.textContent = item.meaning;
+
+    // Placeholder
+    answerEl.placeholder = isWord
+      ? (direction === 'zh-to-es' ? 'Escribe el significado en español…' : 'Escribe en chino o en pinyin…')
+      : 'Responde o traduce la frase…';
+
+    resetReveals();
+    goAnswering();
+  }
+
+  function nextItem() {
+    currentIndex = (currentIndex + 1) % filtered.length;
+    renderCurrent();
+  }
+
+  function applyFilter(filter) {
+    filtered = filter === 'all'
+      ? shuffle(ALL_ITEMS)
+      : shuffle(ALL_ITEMS.filter(i => i.type === filter));
+    currentIndex = 0;
+  }
+
+  // ── Events ────────────────────────────────────────────────────────────────
+  btnPinyin.addEventListener('click', () => {
+    pinyinOn = !pinyinOn;
+    setReveal(pinyinEl, btnPinyin, pinyinOn);
+  });
+
+  btnMeaning.addEventListener('click', () => {
+    meaningOn = !meaningOn;
+    setReveal(meaningEl, btnMeaning, meaningOn);
+  });
+
+  btnCheck.addEventListener('click', () => {
+    const item = filtered[currentIndex];
+    if (item.type === 'word') {
+      goWordResult(isCorrect(answerEl.value, item), item);
+    } else {
+      goPhraseAssess();
+    }
+  });
+
+  btnNext.addEventListener('click', nextItem);
+  btnKnew.addEventListener('click', nextItem);
+  btnDidnt.addEventListener('click', nextItem);
+
+  answerEl.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (phase === 'answering') btnCheck.click();
+    else if (phase === 'checked') btnNext.click();
+  });
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      applyFilter(tab.dataset.filter);
+      renderCurrent();
+    });
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  applyFilter('all');
+  renderCurrent();
+})();</script> </main> <footer class="mt-8 text-xs text-stone-400">
+Press <kbd class="px-1.5 py-0.5 rounded border border-stone-300 text-stone-500 font-mono text-xs">Enter</kbd> to advance
+</footer> </body></html>
