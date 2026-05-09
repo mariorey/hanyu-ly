@@ -18,68 +18,158 @@ const serialized = JSON.stringify(items);
     <button class="tab" data-filter="phrase">Frases</button>
   </div>
 
-  <!-- Type badge + counter -->
-  <div class="flex justify-between items-center">
-    <span id="type-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-stone-100 text-stone-500 border border-stone-200"></span>
-    <span class="text-xs text-stone-400">
-      <span id="current-index">1</span> / <span id="total-count">1</span>
-    </span>
+  <!-- Tema filter -->
+  <div class="flex items-center gap-2.5">
+    <span class="text-xs text-stone-400 shrink-0">Tema:</span>
+    <div class="flex gap-1 flex-wrap">
+      <button class="tema-btn active" data-tema="all">Todos</button>
+      <button class="tema-btn" data-tema="tema2">T2</button>
+      <button class="tema-btn" data-tema="tema3">T3</button>
+      <button class="tema-btn" data-tema="tema4">T4</button>
+      <button class="tema-btn" data-tema="tema5">T5</button>
+      <button class="tema-btn" data-tema="tema6">T6</button>
+      <button class="tema-btn" data-tema="tema7">T7</button>
+      <button class="tema-btn" data-tema="tema8">T8</button>
+      <button class="tema-btn" data-tema="tema9">T9</button>
+      <button class="tema-btn" data-tema="tema10">T10</button>
+    </div>
   </div>
 
-  <!-- Prompt area -->
-  <div class="text-center py-8 min-h-[9rem] flex flex-col items-center justify-center gap-3">
-    <span id="prompt-text"></span>
-    <span id="prompt-hint" class="text-xs text-stone-400 tracking-wide uppercase"></span>
+  <!-- Direction mode -->
+  <div class="flex items-center gap-2.5">
+    <span class="text-xs text-stone-400 shrink-0">Modo:</span>
+    <div class="flex gap-1">
+      <button class="mode-btn active" data-mode="mix">Mezcla</button>
+      <button class="mode-btn" data-mode="zh-to-es">汉→ES</button>
+      <button class="mode-btn" data-mode="es-to-zh">ES→汉</button>
+    </div>
   </div>
 
-  <!-- Pinyin / meaning reveals (always occupy space) -->
-  <div class="flex flex-col gap-1 text-center min-h-[3.25rem]">
-    <p class="h-6"><span id="pinyin-text"  class="text-base italic text-red-700  invisible"></span></p>
-    <p class="h-6"><span id="meaning-text" class="text-sm        text-emerald-700 invisible"></span></p>
+  <!-- Session size selector -->
+  <div class="flex items-center gap-2.5">
+    <span class="text-xs text-stone-400 shrink-0">Sesión:</span>
+    <div class="flex gap-1">
+      <button class="size-btn" data-size="10">10</button>
+      <button class="size-btn active" data-size="20">20</button>
+      <button class="size-btn" data-size="50">50</button>
+      <button class="size-btn" data-size="0">∞</button>
+    </div>
   </div>
 
-  <!-- Input -->
-  <input
-    id="answer-input"
-    type="text"
-    autocomplete="off"
-    autocorrect="off"
-    autocapitalize="none"
-    spellcheck="false"
-    aria-label="Tu respuesta"
-    class="w-full px-4 py-3 rounded-lg border border-stone-200 bg-stone-50 text-stone-900 placeholder-stone-300 text-base outline-none focus:border-stone-500 transition-colors"
-  />
+  <!-- ── PRACTICE VIEW ─────────────────────────────────────────────────── -->
+  <div id="practice-view" class="flex flex-col gap-5">
 
-  <!-- Result banner (words only, shown after checking) -->
-  <div id="result-banner" class="hidden rounded-lg px-4 py-3 text-sm text-center">
-    <p id="result-line" class="font-semibold"></p>
-    <p id="correct-answer" class="mt-0.5 text-stone-500"></p>
+    <!-- Type badge + SRS badge + counter -->
+    <div class="flex justify-between items-center">
+      <div class="flex gap-1.5">
+        <span id="type-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-stone-100 text-stone-500 border border-stone-200"></span>
+        <span id="srs-badge"  class="text-xs font-medium px-2 py-0.5 rounded-full border"></span>
+      </div>
+      <span class="text-xs text-stone-400">
+        <span id="current-index">1</span> / <span id="total-count">1</span>
+      </span>
+    </div>
+
+    <!-- Prompt -->
+    <div class="text-center py-6 min-h-[9rem] flex flex-col items-center justify-center gap-3">
+      <span id="prompt-text"></span>
+      <span id="prompt-hint" class="text-xs text-stone-400 tracking-wide uppercase"></span>
+      <button
+        id="btn-audio"
+        aria-label="Escuchar pronunciación"
+        class="mt-1 w-8 h-8 rounded-full border border-stone-200 bg-stone-50 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors flex items-center justify-center text-sm leading-none"
+      >🔊</button>
+    </div>
+
+    <!-- Pinyin / meaning reveals -->
+    <div class="flex flex-col gap-1 text-center min-h-[3.25rem]">
+      <p class="h-6"><span id="pinyin-text"  class="text-base italic text-red-700   invisible"></span></p>
+      <p class="h-6"><span id="meaning-text" class="text-sm        text-emerald-700 invisible"></span></p>
+    </div>
+
+    <!-- Input -->
+    <input
+      id="answer-input"
+      type="text"
+      autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+      aria-label="Tu respuesta"
+      class="w-full px-4 py-3 rounded-lg border border-stone-200 bg-stone-50 text-stone-900 placeholder-stone-300 text-base outline-none focus:border-stone-500 transition-colors"
+    />
+
+    <!-- Result banner (words, shown after auto-check) -->
+    <div id="result-banner" class="hidden rounded-lg px-4 py-3 text-sm text-center">
+      <p id="result-line"    class="font-semibold"></p>
+      <p id="correct-answer" class="mt-0.5 text-stone-500"></p>
+    </div>
+
+    <!-- Reveal buttons -->
+    <div class="flex gap-2">
+      <button id="btn-pinyin"  class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors">Pinyin</button>
+      <button id="btn-meaning" class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors">Significado</button>
+    </div>
+
+    <!-- Phase: answering -->
+    <div id="row-check">
+      <button id="btn-check" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors">
+        Comprobar →
+      </button>
+    </div>
+
+    <!-- Phase: word checked → next -->
+    <div id="row-next" class="hidden">
+      <button id="btn-next" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors">
+        Siguiente →
+      </button>
+    </div>
+
+    <!-- Phase: phrase self-assess -->
+    <div id="row-selfassess" class="hidden flex gap-2">
+      <button id="btn-knew"  class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">✓ Lo sabía</button>
+      <button id="btn-didnt" class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-red-500    text-white hover:bg-red-600    transition-colors">✗ No lo sabía</button>
+    </div>
+
   </div>
 
-  <!-- Reveal buttons (always visible) -->
-  <div class="flex gap-2">
-    <button id="btn-pinyin"  class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors">Pinyin</button>
-    <button id="btn-meaning" class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors">Significado</button>
-  </div>
+  <!-- ── SUMMARY VIEW ───────────────────────────────────────────────────── -->
+  <div id="summary-view" class="hidden flex flex-col gap-5 py-2">
 
-  <!-- State: answering -->
-  <div id="row-check">
-    <button id="btn-check" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors">
-      Comprobar →
-    </button>
-  </div>
+    <div class="text-center">
+      <p class="text-5xl font-bold text-stone-900" id="summary-pct">—</p>
+      <p class="text-sm text-stone-400 mt-1">de acierto esta sesión</p>
+    </div>
 
-  <!-- State: word result → Next -->
-  <div id="row-next" class="hidden">
-    <button id="btn-next" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors">
-      Siguiente →
-    </button>
-  </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center">
+        <p class="text-2xl font-bold text-emerald-700" id="summary-correct">0</p>
+        <p class="text-xs text-emerald-600 mt-0.5">correctas</p>
+      </div>
+      <div class="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
+        <p class="text-2xl font-bold text-red-700" id="summary-wrong">0</p>
+        <p class="text-xs text-red-600 mt-0.5">falladas</p>
+      </div>
+    </div>
 
-  <!-- State: phrase self-assess -->
-  <div id="row-selfassess" class="hidden flex gap-2">
-    <button id="btn-knew"   class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">✓ Lo sabía</button>
-    <button id="btn-didnt"  class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-red-500    text-white hover:bg-red-600    transition-colors">✗ No lo sabía</button>
+    <!-- SRS breakdown -->
+    <div class="bg-stone-50 border border-stone-100 rounded-xl p-4">
+      <p class="text-xs text-stone-400 font-medium uppercase tracking-wide mb-3">Progreso total</p>
+      <div class="flex gap-2 text-center text-xs text-stone-500">
+        <div class="flex-1 bg-white border border-stone-200 rounded-lg py-2.5">
+          <strong id="srs-count-0" class="block text-lg text-stone-700 font-bold">0</strong>nuevas
+        </div>
+        <div class="flex-1 bg-amber-50 border border-amber-100 rounded-lg py-2.5">
+          <strong id="srs-count-1" class="block text-lg text-amber-700 font-bold">0</strong>aprendiendo
+        </div>
+        <div class="flex-1 bg-emerald-50 border border-emerald-100 rounded-lg py-2.5">
+          <strong id="srs-count-2" class="block text-lg text-emerald-700 font-bold">0</strong>dominadas
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <button id="btn-review-mistakes" class="hidden w-full py-2.5 rounded-lg text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"></button>
+      <button id="btn-new-session"     class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors">Nueva sesión</button>
+    </div>
+
   </div>
 
 </div>
@@ -94,44 +184,167 @@ const serialized = JSON.stringify(items);
   .btn-reveal.on {
     @apply bg-stone-200 border-stone-300 text-stone-800;
   }
+  .size-btn {
+    @apply px-2.5 py-1 rounded-md text-xs font-medium border border-stone-200 text-stone-500 hover:bg-stone-100 transition-colors;
+  }
+  .size-btn.active {
+    @apply bg-stone-900 text-white border-stone-900;
+  }
+  .tema-btn {
+    @apply px-2.5 py-1 rounded-md text-xs font-medium border border-stone-200 text-stone-500 hover:bg-stone-100 transition-colors;
+  }
+  .tema-btn.active {
+    @apply bg-stone-900 text-white border-stone-900;
+  }
+  .mode-btn {
+    @apply px-2.5 py-1 rounded-md text-xs font-medium border border-stone-200 text-stone-500 hover:bg-stone-100 transition-colors;
+  }
+  .mode-btn.active {
+    @apply bg-stone-900 text-white border-stone-900;
+  }
+  #btn-audio.speaking {
+    @apply bg-stone-200 text-stone-700 border-stone-300;
+  }
 </style>
 
 <script define:vars={{ serialized }}>
-  // ── Data ──────────────────────────────────────────────────────────────────
-  const ALL_ITEMS = JSON.parse(serialized);
+  // ── Constants ─────────────────────────────────────────────────────────────
+  const ALL_ITEMS   = JSON.parse(serialized);
+  const SRS_KEY     = 'hanyu-srs-v1';
+  const INTERVALS   = [0, 1, 4];
+  const BOX_LABEL   = ['nueva', 'aprendiendo', 'dominada'];
+  const BOX_CLASSES = [
+    'bg-stone-100 text-stone-500 border-stone-200',
+    'bg-amber-100 text-amber-700 border-amber-200',
+    'bg-emerald-100 text-emerald-700 border-emerald-200',
+  ];
+  const CHINESE_CLS = 'font-chinese text-chinese-lg font-medium text-stone-900';
+  const MEANING_CLS = 'text-2xl font-medium text-stone-700 leading-snug';
 
   // ── State ─────────────────────────────────────────────────────────────────
+  let srsData       = {};
   let filtered      = [];
   let currentIndex  = 0;
-  let direction     = 'zh-to-es'; // 'zh-to-es' | 'es-to-zh'  (words only)
-  let phase         = 'answering'; // 'answering' | 'checked'
+  let direction     = 'zh-to-es';
+  let phase         = 'answering';
   let pinyinOn      = false;
   let meaningOn     = false;
+  let mistakes      = [];
+  let sessionRight  = 0;
+  let sessionWrong  = 0;
+  let activeFilter  = 'all';
+  let reviewMode    = false;
+  let sessionLimit   = 20;
+  let activeTema     = 'all';
+  let directionMode  = 'mix';   // 'mix' | 'zh-to-es' | 'es-to-zh'
+  let currentChinese = '';       // Chinese text of current card (for audio)
 
   // ── DOM ───────────────────────────────────────────────────────────────────
-  const promptEl      = document.getElementById('prompt-text');
-  const hintEl        = document.getElementById('prompt-hint');
-  const pinyinEl      = document.getElementById('pinyin-text');
-  const meaningEl     = document.getElementById('meaning-text');
-  const answerEl      = document.getElementById('answer-input');
-  const typeBadge     = document.getElementById('type-badge');
-  const counterCur    = document.getElementById('current-index');
-  const counterTot    = document.getElementById('total-count');
-  const resultBanner  = document.getElementById('result-banner');
-  const resultLine    = document.getElementById('result-line');
-  const correctAnswer = document.getElementById('correct-answer');
-  const btnPinyin     = document.getElementById('btn-pinyin');
-  const btnMeaning    = document.getElementById('btn-meaning');
-  const btnCheck      = document.getElementById('btn-check');
-  const btnNext       = document.getElementById('btn-next');
-  const btnKnew       = document.getElementById('btn-knew');
-  const btnDidnt      = document.getElementById('btn-didnt');
-  const rowCheck      = document.getElementById('row-check');
-  const rowNext       = document.getElementById('row-next');
-  const rowSelfassess = document.getElementById('row-selfassess');
-  const tabs          = document.querySelectorAll('.tab');
+  const $ = id => document.getElementById(id);
+  const practiceView      = $('practice-view');
+  const summaryView       = $('summary-view');
+  const promptEl          = $('prompt-text');
+  const hintEl            = $('prompt-hint');
+  const pinyinEl          = $('pinyin-text');
+  const meaningEl         = $('meaning-text');
+  const answerEl          = $('answer-input');
+  const typeBadge         = $('type-badge');
+  const srsBadge          = $('srs-badge');
+  const counterCur        = $('current-index');
+  const counterTot        = $('total-count');
+  const resultBanner      = $('result-banner');
+  const resultLine        = $('result-line');
+  const correctAnswerEl   = $('correct-answer');
+  const btnPinyin         = $('btn-pinyin');
+  const btnMeaning        = $('btn-meaning');
+  const btnAudio          = $('btn-audio');
+  const btnCheck          = $('btn-check');
+  const btnNext           = $('btn-next');
+  const btnKnew           = $('btn-knew');
+  const btnDidnt          = $('btn-didnt');
+  const rowCheck          = $('row-check');
+  const rowNext           = $('row-next');
+  const rowSelfassess     = $('row-selfassess');
+  const summaryPct        = $('summary-pct');
+  const summaryCorrect    = $('summary-correct');
+  const summaryWrong      = $('summary-wrong');
+  const srsCount          = [0,1,2].map(i => $(`srs-count-${i}`));
+  const btnReviewMistakes = $('btn-review-mistakes');
+  const btnNewSession     = $('btn-new-session');
+  const tabs              = document.querySelectorAll('.tab');
+  const sizeBtns          = document.querySelectorAll('.size-btn');
+  const temaBtns          = document.querySelectorAll('.tema-btn');
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
+  // ── Audio ─────────────────────────────────────────────────────────────────
+  const hasSpeech = typeof speechSynthesis !== 'undefined';
+
+  if (!hasSpeech) btnAudio.style.display = 'none';
+
+  function speak(text) {
+    if (!hasSpeech) return;
+    speechSynthesis.cancel();
+    const utt  = new SpeechSynthesisUtterance(text);
+    utt.lang   = 'zh-CN';
+    utt.rate   = 0.8;
+    utt.onstart = () => btnAudio.classList.add('speaking');
+    utt.onend   = () => btnAudio.classList.remove('speaking');
+    speechSynthesis.speak(utt);
+  }
+
+  // ── SRS ───────────────────────────────────────────────────────────────────
+  function loadSRS() {
+    try { srsData = JSON.parse(localStorage.getItem(SRS_KEY) || '{}'); }
+    catch { srsData = {}; }
+  }
+
+  function saveSRS() {
+    localStorage.setItem(SRS_KEY, JSON.stringify(srsData));
+  }
+
+  function getRecord(chinese) {
+    return srsData[chinese] ?? { box: 0, due: new Date(0).toISOString() };
+  }
+
+  function isDue(chinese) {
+    return new Date(getRecord(chinese).due) <= new Date();
+  }
+
+  function recordResult(chinese, correct) {
+    const rec    = getRecord(chinese);
+    const newBox = correct ? Math.min(rec.box + 1, 2) : 0;
+    const due    = new Date();
+    if (newBox > 0) due.setDate(due.getDate() + INTERVALS[newBox]);
+    srsData[chinese] = { box: newBox, due: due.toISOString() };
+    saveSRS();
+  }
+
+  // ── Normalisation ─────────────────────────────────────────────────────────
+  function normalise(s) {
+    return s
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[1-5]/g, '')
+      .toLowerCase()
+      .replace(/[.,!?¿¡；，。！？''…]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function isCorrect(input, item) {
+    const norm = normalise(input);
+    if (!norm) return false;
+    if (direction === 'zh-to-es') {
+      // Accept Spanish meaning
+      if (item.meaning.split(/[\/,]/).map(s => normalise(s.trim())).some(o => o === norm)) return true;
+      // Also accept pinyin: with tones, without tones, with/without spaces
+      // e.g. "nǐ hǎo" / "ni hao" / "nihao" / "ni3 hao3" / "ni3hao3" all accepted
+      const normPinyin = normalise(item.pinyin);
+      return norm === normPinyin || norm.replace(/\s/g, '') === normPinyin.replace(/\s/g, '');
+    }
+    return normalise(item.chinese) === norm || normalise(item.pinyin) === norm;
+  }
+
+  // ── Session building ──────────────────────────────────────────────────────
   function shuffle(arr) {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) {
@@ -141,23 +354,19 @@ const serialized = JSON.stringify(items);
     return a;
   }
 
-  function normalize(s) {
-    return s.trim().toLowerCase()
-      .replace(/[.,!?¿¡；，。！？''…]/g, '')
-      .replace(/\s+/g, ' ');
+  function getPool() {
+    let pool = activeFilter === 'all' ? ALL_ITEMS : ALL_ITEMS.filter(i => i.type === activeFilter);
+    if (activeTema !== 'all') pool = pool.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTema));
+    return pool;
   }
 
-  function isCorrect(input, item) {
-    const norm = normalize(input);
-    if (!norm) return false;
-
-    if (direction === 'zh-to-es') {
-      // Accept any alternative separated by / or ,
-      return item.meaning.split(/[\/,]/).map(normalize).some(o => o === norm);
-    } else {
-      // Accept Chinese characters OR pinyin (with or without tone marks)
-      return normalize(item.chinese) === norm || normalize(item.pinyin) === norm;
-    }
+  function buildSession(pool) {
+    const due      = pool.filter(i =>  srsData[i.chinese] &&  isDue(i.chinese));
+    const newCards = pool.filter(i => !srsData[i.chinese]);
+    const notDue   = pool.filter(i =>  srsData[i.chinese] && !isDue(i.chinese));
+    const session  = [...shuffle(due), ...shuffle(newCards)];
+    const base     = session.length > 0 ? session : shuffle(notDue);
+    return sessionLimit > 0 ? base.slice(0, sessionLimit) : base;
   }
 
   // ── Reveal toggles ────────────────────────────────────────────────────────
@@ -169,7 +378,7 @@ const serialized = JSON.stringify(items);
   function resetReveals() {
     pinyinOn  = false;
     meaningOn = false;
-    setReveal(pinyinEl,  btnPinyin,  false);
+    setReveal(pinyinEl, btnPinyin, false);
     setReveal(meaningEl, btnMeaning, false);
   }
 
@@ -188,25 +397,26 @@ const serialized = JSON.stringify(items);
   function goWordResult(correct, item) {
     phase = 'checked';
     answerEl.disabled = true;
-
     resultBanner.classList.remove('hidden');
-    resultBanner.className = resultBanner.className
-      .replace(/bg-\S+/, '')
-      .replace(/text-\S+(?=\s)/g, '');
-
     if (correct) {
-      resultBanner.classList.add('bg-emerald-50', 'border', 'border-emerald-200');
-      resultLine.textContent  = '✓ Correcto';
-      resultLine.className    = 'font-semibold text-emerald-700';
-      correctAnswer.textContent = '';
+      resultBanner.className      = 'rounded-lg px-4 py-3 text-sm text-center bg-emerald-50 border border-emerald-200';
+      resultLine.textContent      = '✓ Correcto';
+      resultLine.className        = 'font-semibold text-emerald-700';
+      if (direction === 'zh-to-es') {
+        correctAnswerEl.textContent = `${item.meaning}  —  ${item.pinyin}`;
+      } else {
+        correctAnswerEl.textContent = `${item.chinese}  /  ${item.pinyin}`;
+      }
     } else {
-      resultBanner.classList.add('bg-red-50', 'border', 'border-red-200');
-      resultLine.textContent    = '✗ Incorrecto';
-      resultLine.className      = 'font-semibold text-red-700';
-      const expected = direction === 'zh-to-es' ? item.meaning : `${item.chinese}  /  ${item.pinyin}`;
-      correctAnswer.textContent = `Respuesta: ${expected}`;
+      resultBanner.className      = 'rounded-lg px-4 py-3 text-sm text-center bg-red-50 border border-red-200';
+      resultLine.textContent      = '✗ Incorrecto';
+      resultLine.className        = 'font-semibold text-red-700';
+      if (direction === 'zh-to-es') {
+        correctAnswerEl.textContent = `${item.meaning}  —  ${item.pinyin}`;
+      } else {
+        correctAnswerEl.textContent = `${item.chinese}  /  ${item.pinyin}`;
+      }
     }
-
     rowCheck.classList.add('hidden');
     rowNext.classList.remove('hidden');
   }
@@ -214,72 +424,112 @@ const serialized = JSON.stringify(items);
   function goPhraseAssess() {
     phase = 'checked';
     answerEl.disabled = true;
-    // Auto-reveal meaning so the user can compare
     meaningOn = true;
     setReveal(meaningEl, btnMeaning, true);
     rowCheck.classList.add('hidden');
     rowSelfassess.classList.remove('hidden');
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
-  const CHINESE_CLASSES = 'font-chinese text-chinese-lg font-medium text-stone-900';
-  const MEANING_CLASSES = 'text-2xl font-medium text-stone-700 leading-snug';
+  // ── Summary ───────────────────────────────────────────────────────────────
+  function showSummary() {
+    speechSynthesis?.cancel();
+    practiceView.classList.add('hidden');
+    summaryView.classList.remove('hidden');
 
+    const total = sessionRight + sessionWrong;
+    summaryPct.textContent     = total === 0 ? '—' : `${Math.round((sessionRight / total) * 100)}%`;
+    summaryCorrect.textContent = String(sessionRight);
+    summaryWrong.textContent   = String(sessionWrong);
+
+    const pool   = getPool();
+    const counts = [0, 0, 0];
+    for (const item of pool) {
+      const box = srsData[item.chinese] ? getRecord(item.chinese).box : 0;
+      counts[box]++;
+    }
+    srsCount.forEach((el, i) => { el.textContent = String(counts[i]); });
+
+    if (mistakes.length > 0) {
+      btnReviewMistakes.textContent = `Repasar errores (${mistakes.length})`;
+      btnReviewMistakes.classList.remove('hidden');
+    } else {
+      btnReviewMistakes.classList.add('hidden');
+    }
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
   function renderCurrent() {
     if (!filtered.length) return;
 
-    const item = filtered[currentIndex];
+    const item   = filtered[currentIndex];
     const isWord = item.type === 'word';
+    const box    = srsData[item.chinese] ? getRecord(item.chinese).box : 0;
 
-    // Badge
+    currentChinese = item.chinese;
+
     typeBadge.textContent = isWord ? 'palabra' : 'frase';
+    srsBadge.textContent  = BOX_LABEL[box];
+    srsBadge.className    = `text-xs font-medium px-2 py-0.5 rounded-full border ${BOX_CLASSES[box]}`;
 
-    // Counter
     counterCur.textContent = String(currentIndex + 1);
     counterTot.textContent = String(filtered.length);
 
-    // Direction (words only)
-    if (isWord) {
-      direction = Math.random() < 0.5 ? 'zh-to-es' : 'es-to-zh';
-    }
+    if (isWord) direction = directionMode === 'mix' ? (Math.random() < 0.5 ? 'zh-to-es' : 'es-to-zh') : directionMode;
 
-    // Prompt text + hint
-    if (!isWord || direction === 'zh-to-es') {
-      promptEl.className   = CHINESE_CLASSES;
-      promptEl.textContent = item.chinese;
-      hintEl.textContent   = isWord ? 'escribe el significado' : '';
-    } else {
-      promptEl.className   = MEANING_CLASSES;
-      promptEl.textContent = item.meaning;
-      hintEl.textContent   = 'escribe en chino o pinyin';
-    }
+    const showChinese = !isWord || direction === 'zh-to-es';
+    promptEl.className   = showChinese ? CHINESE_CLS : MEANING_CLS;
+    promptEl.textContent = showChinese ? item.chinese : item.meaning;
+    hintEl.textContent   = isWord ? (showChinese ? 'escribe el significado o el pinyin' : 'escribe en chino o en pinyin') : '';
 
-    // Populate hidden reveal spans
+    // Audio button: hide when Chinese is the answer (would be a spoiler)
+    btnAudio.classList.toggle('invisible', !showChinese);
+
     pinyinEl.textContent  = item.pinyin;
     meaningEl.textContent = item.meaning;
 
-    // Placeholder
     answerEl.placeholder = isWord
-      ? (direction === 'zh-to-es' ? 'Escribe el significado en español…' : 'Escribe en chino o en pinyin…')
+      ? (direction === 'zh-to-es' ? 'Escribe el significado en español o el pinyin…' : 'Escribe en chino o en pinyin…')
       : 'Responde o traduce la frase…';
 
     resetReveals();
     goAnswering();
   }
 
-  function nextItem() {
-    currentIndex = (currentIndex + 1) % filtered.length;
+  // ── Advance ───────────────────────────────────────────────────────────────
+  function advance() {
+    speechSynthesis?.cancel();
+    currentIndex++;
+    if (currentIndex >= filtered.length) showSummary();
+    else renderCurrent();
+  }
+
+  function onResult(correct, item) {
+    if (correct) sessionRight++;
+    else { sessionWrong++; mistakes.push(item); }
+    recordResult(item.chinese, correct);
+  }
+
+  // ── Init session ──────────────────────────────────────────────────────────
+  function initSession(pool, isReview = false) {
+    reviewMode   = isReview;
+    filtered     = isReview ? shuffle(pool) : buildSession(pool);
+    currentIndex = 0;
+    sessionRight = 0;
+    sessionWrong = 0;
+    mistakes = [];
+    summaryView.classList.add('hidden');
+    practiceView.classList.remove('hidden');
     renderCurrent();
   }
 
   function applyFilter(filter) {
-    filtered = filter === 'all'
-      ? shuffle(ALL_ITEMS)
-      : shuffle(ALL_ITEMS.filter(i => i.type === filter));
-    currentIndex = 0;
+    activeFilter = filter;
+    initSession(getPool());
   }
 
   // ── Events ────────────────────────────────────────────────────────────────
+  btnAudio.addEventListener('click', () => speak(currentChinese));
+
   btnPinyin.addEventListener('click', () => {
     pinyinOn = !pinyinOn;
     setReveal(pinyinEl, btnPinyin, pinyinOn);
@@ -293,17 +543,19 @@ const serialized = JSON.stringify(items);
   btnCheck.addEventListener('click', () => {
     const item = filtered[currentIndex];
     if (item.type === 'word') {
-      goWordResult(isCorrect(answerEl.value, item), item);
+      const correct = isCorrect(answerEl.value, item);
+      onResult(correct, item);
+      goWordResult(correct, item);
     } else {
       goPhraseAssess();
     }
   });
 
-  btnNext.addEventListener('click', nextItem);
-  btnKnew.addEventListener('click', nextItem);
-  btnDidnt.addEventListener('click', nextItem);
+  btnNext.addEventListener('click', advance);
+  btnKnew.addEventListener('click',  () => { onResult(true,  filtered[currentIndex]); advance(); });
+  btnDidnt.addEventListener('click', () => { onResult(false, filtered[currentIndex]); advance(); });
 
-  answerEl.addEventListener('keydown', e => {
+  document.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
     if (phase === 'answering') btnCheck.click();
     else if (phase === 'checked') btnNext.click();
@@ -314,11 +566,49 @@ const serialized = JSON.stringify(items);
       tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       applyFilter(tab.dataset.filter);
-      renderCurrent();
     });
   });
 
-  // ── Init ──────────────────────────────────────────────────────────────────
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      directionMode = btn.dataset.mode;
+      initSession(getPool());
+    });
+  });
+
+  temaBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      temaBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTema = btn.dataset.tema;
+      initSession(getPool());
+    });
+  });
+
+  sizeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sizeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sessionLimit = Number(btn.dataset.size);
+      initSession(getPool());
+    });
+  });
+
+  btnNewSession.addEventListener('click', () => {
+    const pool = getPool();
+    pool.forEach(item => { delete srsData[item.chinese]; });
+    saveSRS();
+    initSession(pool);
+  });
+  btnReviewMistakes.addEventListener('click', () => {
+    summaryView.classList.add('hidden');
+    practiceView.classList.remove('hidden');
+    initSession(mistakes, true);
+  });
+
+  // ── Boot ──────────────────────────────────────────────────────────────────
+  loadSRS();
   applyFilter('all');
-  renderCurrent();
 </script>

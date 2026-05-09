@@ -3,4 +3,5 @@ export interface VocabItem {
   chinese: string;
   pinyin: string;
   meaning: string;
+  tags?: string[];
 }
