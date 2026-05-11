@@ -91,7 +91,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
         </div>
 
         <!-- PROMPT: grows to fill available space, centered -->
-        <div class="flex-1 min-h-[6rem] flex flex-col items-center justify-center text-center gap-2 py-2">
+        <div id="prompt-area" class="flex-1 min-h-[5rem] flex flex-col items-center justify-center text-center gap-2 py-2">
           <span id="prompt-text"></span>
           <span id="prompt-hint" class="text-xs text-slate-400 tracking-wide uppercase"></span>
         </div>
@@ -185,6 +185,28 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   .dir-btn-full { @apply w-full text-left; }
   .dir-btn.active { @apply bg-indigo-600 text-white border-indigo-500; }
   .btn-reveal.on  { @apply bg-white/10 border-white/20 text-white; }
+
+  /* ── Keyboard-open compact mode (mobile only) ── */
+  @media (max-width: 1023px) {
+    /* When keyboard is open, collapse the prompt to a compact strip */
+    .kb-open #prompt-area {
+      flex: 0 0 auto;
+      min-height: 0;
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+    }
+    .kb-open #prompt-text {
+      font-size: 1.5rem !important;
+      line-height: 1.4;
+    }
+    .kb-open #prompt-hint {
+      display: none;
+    }
+    /* Hide hint buttons when keyboard is open (not needed while typing) */
+    .kb-open #hint-zone {
+      display: none;
+    }
+  }
 </style>
 
 <script define:vars={{ serialized }}>
@@ -660,6 +682,24 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
     if (phase === 'answering') btnCheck.click();
     else if (phase === 'checked') btnNext.click();
   });
+
+  // ── Keyboard detection (mobile) ────────────────────────────────────────────
+  // When the virtual keyboard opens the visualViewport shrinks.
+  // We add/remove `.kb-open` on #pc-root so CSS can compact the prompt,
+  // keeping the question visible above the input without any scroll.
+  if (typeof window !== 'undefined' && 'visualViewport' in window) {
+    const root = $('pc-root');
+    let kbOpen = false;
+    window.visualViewport.addEventListener('resize', () => {
+      // keyboard height = difference between window height and visual viewport height
+      const kbH = window.innerHeight - window.visualViewport.height;
+      const shouldCompact = kbH > 120; // threshold to distinguish keyboard from browser UI chrome
+      if (shouldCompact !== kbOpen) {
+        kbOpen = shouldCompact;
+        root?.classList.toggle('kb-open', kbOpen);
+      }
+    });
+  }
 
   // ── Init ───────────────────────────────────────────────────────────────────
   loadSRS();
