@@ -410,7 +410,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 
   // ── Session end screen ─────────────────────────────────────────────────────
   function showSessionEnd() {
-    pcRoot?.classList.remove('kb-open');
+    answerEl.blur(); // close the keyboard so the summary shows at full height
     pcCard.classList.add('hidden');
     sessionProgEl.classList.add('hidden');
     sessionEndEl.classList.remove('hidden');
@@ -502,17 +502,29 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   }
 
   // ── Phase transitions ──────────────────────────────────────────────────────
+  // Border classes on the input to signal correct / incorrect
+  const INPUT_NEUTRAL  = ['border-slate-600'];
+  const INPUT_CORRECT  = ['border-emerald-500'];
+  const INPUT_WRONG    = ['border-rose-500'];
+  function setInputBorder(classes) {
+    answerEl.classList.remove(...INPUT_NEUTRAL, ...INPUT_CORRECT, ...INPUT_WRONG);
+    answerEl.classList.add(...classes);
+  }
+
   function goAnswering() {
     phase = 'answering';
-    answerEl.disabled = false;
+    // readOnly instead of disabled keeps the virtual keyboard open on iOS —
+    // disabling the input removes focus, which closes the keyboard and shifts the layout.
+    answerEl.readOnly = false;
     answerEl.value    = '';
+    setInputBorder(INPUT_NEUTRAL);
     resultBanner.classList.add('hidden');
     hintZone.classList.remove('hidden');
     rowCheck.classList.remove('hidden');
     rowNext.classList.add('hidden');
     rowSelfassess.classList.add('hidden');
-    // On mobile, auto-focusing opens the keyboard immediately on every card load,
-    // causing constant layout shifts. Let the user tap when ready.
+    // Auto-focus on desktop only. On mobile the user taps to start;
+    // auto-focus would open the keyboard on every card transition → layout shift.
     if (window.matchMedia('(min-width: 1024px)').matches) {
       answerEl.focus();
     }
@@ -520,8 +532,10 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 
   function goWordResult(correct, item) {
     phase = 'checked';
-    answerEl.disabled = true;
-    hintZone.classList.add('hidden');      // hide hints, show result
+    // readOnly keeps focus → keyboard stays open → dvh unchanged → NO layout shift.
+    answerEl.readOnly = true;
+    setInputBorder(correct ? INPUT_CORRECT : INPUT_WRONG);
+    hintZone.classList.add('hidden');
     const boxBefore   = getSRS(item).box;
     updateSRS(item, correct);
     const boxAfter    = getSRS(item).box;
@@ -549,8 +563,8 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 
   function goPhraseAssess() {
     phase = 'selfassess';
-    answerEl.disabled = true;
-    hintZone.classList.add('hidden');      // hide hints
+    answerEl.readOnly = true;
+    hintZone.classList.add('hidden');
     meaningOn = true;
     setReveal(meaningEl, btnMeaning, true);
     rowCheck.classList.add('hidden');
@@ -594,12 +608,14 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   }
 
   function nextItem() {
-    // Release compact mode so the next card renders with full layout
-    pcRoot?.classList.remove('kb-open');
     sessionIndex++;
     renderProgress();
     if (sessionIndex >= sessionItems.length) { showSessionEnd(); return; }
     renderCurrent();
+    // If the input kept focus (Enter-key flow), it is now writeable and the
+    // keyboard stays open — the user can type the next answer immediately.
+    // If the user tapped the button, the input already blurred, kb-open was
+    // cleared by the blur handler, and the new card shows at full height.
   }
 
   // ── Events ─────────────────────────────────────────────────────────────────
@@ -687,27 +703,31 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
     else if (phase === 'checked') btnNext.click();
   });
 
-  // ── Keyboard detection (mobile) ────────────────────────────────────────────
-  // Strategy:
-  //   focus  → add .kb-open  (hint-zone CSS-collapses, body h-dvh shrinks layout)
-  //   blur   → remove .kb-open ONLY if still in answering phase
-  //            (keeps layout stable while result is showing — no shift on submit)
-  //   nextItem / showSessionEnd → remove .kb-open when moving to next card
+  // ── Keyboard / compact-mode detection ─────────────────────────────────────
+  // .kb-open on #pc-root = "the virtual keyboard is open".
   //
-  // body uses h-dvh so iOS's keyboard animation automatically resizes the layout.
-  // No JS height math, no visualViewport, no timers for position.
+  // KEY INSIGHT: we use `readOnly` instead of `disabled` when showing the result.
+  // - `disabled` removes focus → iOS closes keyboard → dvh changes → layout shifts ✗
+  // - `readOnly` keeps focus → keyboard stays open → dvh unchanged → NO shift ✓
+  //
+  // Because of this, focus/blur cleanly mirror keyboard state:
+  //   focus → keyboard opened → .kb-open (hint-zone collapses, layout compacts)
+  //   blur  → keyboard closed → .kb-open removed
+  //
+  // Two flows after submitting:
+  //   Press Enter → readOnly keeps focus → keyboard stays → user types next answer immediately
+  //   Tap button  → input blurs naturally → keyboard closes → new card at full height
 
   answerEl.addEventListener('focus', () => {
     pcRoot?.classList.add('kb-open');
   });
 
   answerEl.addEventListener('blur', () => {
-    // Give the browser a tick to settle (avoids flicker when tapping hint buttons)
     setTimeout(() => {
-      if (document.activeElement === answerEl) return; // re-focused
-      if (phase === 'checked' || phase === 'selfassess') return; // keep compact during result
-      pcRoot?.classList.remove('kb-open');
-    }, 100);
+      if (document.activeElement !== answerEl) {
+        pcRoot?.classList.remove('kb-open');
+      }
+    }, 50);
   });
 
   // ── Init ───────────────────────────────────────────────────────────────────
