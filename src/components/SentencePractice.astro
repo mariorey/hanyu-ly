@@ -1,0 +1,480 @@
+---
+import type { VocabItem } from '../types';
+interface Props { items: VocabItem[]; }
+const { items } = Astro.props;
+const sentences = items.filter(i => i.type === 'sentence');
+const serialized = JSON.stringify(sentences);
+const temas = [...new Set(sentences.flatMap(i => i.tags ?? []))].sort();
+---
+
+<div id="sp-root" class="w-full flex flex-col gap-3">
+
+  <!-- ── MOBILE: settings toggle ── -->
+  <div class="lg:hidden flex justify-end">
+    <button id="sp-settings-toggle"
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+      ⚙️ <span>Ajustes</span>
+    </button>
+  </div>
+
+  <!-- ── MOBILE: settings panel ── -->
+  <div id="sp-settings-panel" class="lg:hidden overflow-hidden"
+    style="max-height:0; transition:max-height 0.25s ease, opacity 0.2s ease; opacity:0">
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-4 mb-1 grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Tema</span>
+        <div class="relative">
+          <select id="sp-tema-mob"
+            class="w-full px-3 py-2 pr-7 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none focus:border-indigo-500 appearance-none cursor-pointer">
+            <option value="all">Todos</option>
+            {temas.map(t => <option value={t}>{t.replace('tema','Tema ')}</option>)}
+          </select>
+          <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">▾</span>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Dirección</span>
+        <div class="flex flex-col gap-1">
+          <button class="sp-dir-btn active text-left" data-dir="es-to-zh">ES → 中</button>
+          <button class="sp-dir-btn text-left" data-dir="zh-to-pin">中 → Pīn</button>
+          <button class="sp-dir-btn text-left" data-dir="zh-to-es">中 → ES</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3-COLUMN GRID (desktop) / single col (mobile) ── -->
+  <div class="lg:grid lg:grid-cols-[208px_1fr_208px] lg:gap-5 lg:items-start">
+
+    <!-- Col 1: sidebar (desktop only) -->
+    <aside class="hidden lg:flex flex-col gap-4">
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Tema</span>
+        <div class="relative">
+          <select id="sp-tema-desk"
+            class="w-full px-3 py-2 pr-8 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none focus:border-indigo-500 appearance-none cursor-pointer">
+            <option value="all">Todos</option>
+            {temas.map(t => <option value={t}>{t.replace('tema','Tema ')}</option>)}
+          </select>
+          <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">▾</span>
+        </div>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Dirección</span>
+        <div class="flex flex-col gap-1.5">
+          <button class="sp-dir-btn active" data-dir="es-to-zh">Español → 中 / Pīn</button>
+          <button class="sp-dir-btn" data-dir="zh-to-pin">中文 → Pinyin</button>
+          <button class="sp-dir-btn" data-dir="zh-to-es">中文 → Español</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Col 2: card — truly centered -->
+    <div class="flex justify-center flex-col gap-4 items-center">
+
+      <!-- Practice card -->
+      <div id="sp-practice" class="w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
+
+        <div class="flex justify-between items-center">
+          <span id="sp-counter" class="text-xs text-slate-400">1 / 1</span>
+          <span id="sp-warning" class="hidden text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-2 py-0.5"></span>
+        </div>
+
+        <div class="text-center py-4">
+          <p class="text-xs text-slate-400 uppercase tracking-wide mb-2">Traduce al chino</p>
+          <p id="sp-prompt" class="text-xl font-medium text-white leading-snug"></p>
+        </div>
+
+        <input id="sp-input" type="text"
+          autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+          placeholder="Escribe en chino o en pinyin…"
+          class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 text-base outline-none focus:border-indigo-500 transition-colors"
+        />
+
+        <div id="sp-result" class="hidden rounded-xl px-4 py-3 text-sm">
+          <p id="sp-result-line" class="font-semibold mb-2"></p>
+          <p id="sp-correct-chinese" class="mt-1 text-base leading-relaxed" style="font-family:'PingFang SC','Noto Sans SC',sans-serif;font-size:1.15rem;"></p>
+          <p id="sp-correct-pinyin" class="mt-1 text-slate-400 italic text-sm"></p>
+          <p id="sp-diff-legend" class="hidden mt-2 text-[10px] text-slate-500">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1"></span>correcto
+            <span class="inline-block w-2 h-2 rounded-full bg-rose-400 ml-2 mr-1"></span>faltaba/incorrecto
+          </p>
+        </div>
+
+        <div id="sp-row-check">
+          <button id="sp-btn-check" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">
+            Comprobar →
+          </button>
+        </div>
+        <div id="sp-row-next" class="hidden flex gap-2">
+          <button id="sp-btn-reveal" class="flex-1 py-3 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+            Ver respuesta
+          </button>
+          <button id="sp-btn-next" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">
+            Siguiente →
+          </button>
+        </div>
+        <div id="sp-row-selfassess" class="hidden flex gap-2">
+          <button id="sp-btn-knew"  class="flex-1 py-3 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors">✓ Lo sabía</button>
+          <button id="sp-btn-didnt" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors">✗ No lo sabía</button>
+        </div>
+
+      </div>
+
+      <!-- Mini summary (every 5) -->
+      <div id="sp-summary" class="hidden w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4">
+        <h3 class="text-center font-semibold text-white">Resumen parcial</h3>
+        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+          <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
+            <p id="sp-sum-correct" class="text-2xl font-bold text-emerald-400">0</p>
+            <p class="text-emerald-300/70 mt-0.5">correctas</p>
+          </div>
+          <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
+            <p id="sp-sum-partial" class="text-2xl font-bold text-amber-400">0</p>
+            <p class="text-amber-300/70 mt-0.5">parciales</p>
+          </div>
+          <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3">
+            <p id="sp-sum-wrong" class="text-2xl font-bold text-rose-400">0</p>
+            <p class="text-rose-300/70 mt-0.5">falladas</p>
+          </div>
+        </div>
+        <div id="sp-weak-patterns" class="text-xs text-slate-400 text-center hidden"></div>
+        <div class="flex gap-2">
+          <button id="sp-btn-continue" class="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">5 más →</button>
+          <button id="sp-btn-restart"  class="flex-1 py-2.5 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Reiniciar</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Col 3: mirror spacer -->
+    <div class="hidden lg:block"></div>
+
+  </div>
+</div>
+
+<style>
+  .sp-dir-btn {
+    @apply w-full px-3 py-1.5 rounded-lg text-xs font-medium border border-white/10 text-slate-400 hover:bg-white/5 transition-colors;
+  }
+  .sp-dir-btn.active { @apply bg-indigo-600 text-white border-indigo-500; }
+</style>
+
+<script define:vars={{ serialized }}>
+  const ALL_SENTENCES = JSON.parse(serialized);
+  const SRS_KEY = 'hanyu-srs-sentences-v1';
+
+  let srsData = {}, pool = [], queue = [], currentIndex = 0, activeTema = 'all';
+  let batchStart = 0, batchCorrect = 0, batchPartial = 0, batchWrong = 0, errorMap = {};
+  let spPhase = 'answering'; // 'answering' | 'checked'
+  let activeDirection = 'es-to-zh'; // 'es-to-zh' | 'zh-to-pin' | 'zh-to-es'
+
+  const $ = id => document.getElementById(id);
+  const spPrompt      = $('sp-prompt');
+  const spInput       = $('sp-input');
+  const spCounter     = $('sp-counter');
+  const spWarning     = $('sp-warning');
+  const spResult      = $('sp-result');
+  const spResultLine  = $('sp-result-line');
+  const spCorrectChinese = $('sp-correct-chinese');
+  const spCorrectPinyin  = $('sp-correct-pinyin');
+  const spRowCheck    = $('sp-row-check');
+  const spRowNext     = $('sp-row-next');
+  const spRowSelfassess = $('sp-row-selfassess');
+  const spBtnCheck    = $('sp-btn-check');
+  const spBtnNext     = $('sp-btn-next');
+  const spBtnReveal   = $('sp-btn-reveal');
+  const spBtnKnew     = $('sp-btn-knew');
+  const spBtnDidnt    = $('sp-btn-didnt');
+  const spSummary     = $('sp-summary');
+  const spSumCorrect  = $('sp-sum-correct');
+  const spSumPartial  = $('sp-sum-partial');
+  const spSumWrong    = $('sp-sum-wrong');
+  const spWeakPatterns = $('sp-weak-patterns');
+  const spBtnContinue = $('sp-btn-continue');
+  const spBtnRestart  = $('sp-btn-restart');
+  const spDiffLegend  = $('sp-diff-legend');
+  const spTemaDesk    = $('sp-tema-desk');
+  const spTemaMob     = $('sp-tema-mob');
+  const spSettingsToggle = $('sp-settings-toggle');
+  const spSettingsPanel  = $('sp-settings-panel');
+
+  // Settings panel toggle (mobile)
+  let settingsOpen = false;
+  spSettingsToggle.addEventListener('click', () => {
+    settingsOpen = !settingsOpen;
+    spSettingsPanel.style.maxHeight = settingsOpen ? '200px' : '0';
+    spSettingsPanel.style.opacity   = settingsOpen ? '1' : '0';
+  });
+
+  function loadSRS() { try { srsData = JSON.parse(localStorage.getItem(SRS_KEY)||'{}'); } catch { srsData={}; } }
+  function saveSRS() { localStorage.setItem(SRS_KEY, JSON.stringify(srsData)); }
+
+  function normalise(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[1-5]/g,'')
+      .toLowerCase().replace(/[.,!?¿¡；，。！？''…]/g,'').replace(/\s+/g,' ').trim();
+  }
+
+  function isCorrect(input, item) {
+    const norm = normalise(input);
+    if (!norm) return false;
+    const c = normalise(item.chinese), p = normalise(item.pinyin);
+    if (norm === c || norm === p || norm.replace(/\s/g,'') === p.replace(/\s/g,'')) return true;
+    // Check alternatives (e.g. 的 omission, 吗/没有 swap)
+    return (item.alternatives || []).some(alt => {
+      const a = normalise(alt);
+      return norm === a || norm.replace(/\s/g,'') === a.replace(/\s/g,'');
+    });
+  }
+
+  function buildDiff(userInput, item) {
+    const normTok = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[1-5]/g,'')
+      .toLowerCase().replace(/[，。！？。]/g,' ').replace(/\s+/g,' ').trim();
+    const chineseCount = [...userInput].filter(c => /[一-鿿]/.test(c)).length;
+    const isChinese = chineseCount > 0;
+    const userTokens    = isChinese ? [...userInput.replace(/[，。！？\s]/g,'')] : normTok(userInput).split(/\s+/).filter(Boolean);
+    const correctTokens = isChinese ? [...item.chinese.replace(/[，。！？\s]/g,'')] : normTok(item.pinyin).split(/\s+/).filter(Boolean);
+    const m = userTokens.length, n = correctTokens.length;
+    const dp = Array.from({length:m+1},()=>new Array(n+1).fill(0));
+    for (let i=1;i<=m;i++) for (let j=1;j<=n;j++)
+      dp[i][j] = userTokens[i-1]===correctTokens[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j],dp[i][j-1]);
+    const matched = new Set();
+    let i=m, j=n;
+    while (i>0&&j>0) {
+      if (userTokens[i-1]===correctTokens[j-1]) { matched.add(j-1); i--; j--; }
+      else if (dp[i-1][j]>=dp[i][j-1]) i--; else j--;
+    }
+    let ci = 0;
+    return [...item.chinese].map(char => {
+      if (/[，。！？\s]/.test(char)) return {char,ok:true};
+      const ok = matched.has(ci); ci++;
+      return {char,ok};
+    });
+  }
+
+  function renderDiff(userInput, item) {
+    const diff = buildDiff(userInput, item);
+    spCorrectChinese.innerHTML = diff.map(({char,ok}) =>
+      ok ? `<span class="text-emerald-400">${char}</span>`
+         : `<span class="text-rose-400 font-bold">${char}</span>`
+    ).join('');
+    spCorrectPinyin.textContent = item.pinyin;
+  }
+
+  function isPartial(input, item) {
+    const norm = normalise(input);
+    if (!norm) return false;
+    const words = normalise(item.pinyin).split(' ');
+    return words.filter(w => norm.includes(w)).length >= Math.ceil(words.length*0.5);
+  }
+
+  function shuffle(arr) {
+    const a=[...arr];
+    for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+  }
+
+  function buildQueue() {
+    pool = activeTema==='all' ? ALL_SENTENCES : ALL_SENTENCES.filter(i=>i.tags?.includes(activeTema));
+    queue = shuffle(pool);
+    currentIndex = batchStart = batchCorrect = batchPartial = batchWrong = 0;
+    errorMap = {};
+    renderCurrent();
+  }
+
+  function renderCurrent() {
+    if (!queue.length) return;
+    spPhase = 'answering';
+    const item = queue[currentIndex % queue.length];
+    spCounter.textContent = `${currentIndex+1} / ${queue.length}`;
+    spInput.value = ''; spInput.disabled = false;
+    spResult.classList.add('hidden');
+    spRowCheck.classList.remove('hidden');
+    spRowNext.classList.add('hidden');
+    spRowSelfassess.classList.add('hidden');
+    spSummary.classList.add('hidden');
+    spWarning.classList.add('hidden');
+
+    const ZH_STYLE = "font-family:'PingFang SC','Noto Sans SC',sans-serif;font-size:1.5rem;";
+    if (activeDirection === 'es-to-zh') {
+      spPrompt.style.cssText = '';
+      spPrompt.textContent   = item.meaning;
+      spInput.placeholder    = 'Escribe en chino o en pinyin…';
+      spPrompt.previousElementSibling.textContent = 'Traduce al chino';
+    } else if (activeDirection === 'zh-to-pin') {
+      spPrompt.style.cssText = ZH_STYLE;
+      spPrompt.textContent   = item.chinese;
+      spInput.placeholder    = 'Escribe el pinyin…';
+      spPrompt.previousElementSibling.textContent = 'Escribe el pinyin';
+    } else {
+      spPrompt.style.cssText = ZH_STYLE;
+      spPrompt.textContent   = item.chinese;
+      spInput.placeholder    = 'Traduce al español…';
+      spPrompt.previousElementSibling.textContent = 'Traduce al español';
+    }
+
+    const errors = errorMap[item.chinese]||0;
+    if (errors>=2) { spWarning.textContent=`⚠️ ${errors+1} veces fallada`; spWarning.classList.remove('hidden'); }
+    spInput.focus();
+  }
+
+  function isCorrectPinyin(input, item) {
+    const norm = normalise(input);
+    const p    = normalise(item.pinyin);
+    return norm === p || norm.replace(/\s/g,'') === p.replace(/\s/g,'');
+  }
+
+  function checkAnswer() {
+    const item  = queue[currentIndex % queue.length];
+    const input = spInput.value.trim();
+    if (!input) return;
+    spPhase = 'checked';
+    spInput.disabled = true;
+    spRowCheck.classList.add('hidden');
+    spResult.classList.remove('hidden');
+
+    // ── 中 → ES: self-assess, no automated grading ─────────────────────────
+    if (activeDirection === 'zh-to-es') {
+      spResult.className = 'rounded-xl px-4 py-3 text-sm bg-slate-700/50 border border-white/10';
+      spResultLine.className = 'font-semibold text-slate-300 mb-2';
+      spResultLine.textContent = 'Traducción oficial:';
+      spCorrectChinese.innerHTML = `<span class="text-emerald-300">${item.meaning}</span>`;
+      spCorrectPinyin.textContent = item.pinyin;
+      spDiffLegend.classList.add('hidden');
+      spRowSelfassess.classList.remove('hidden');
+      return;
+    }
+
+    // ── ES → 中 or 中 → Pīn: automated grading ────────────────────────────
+    spRowNext.classList.remove('hidden');
+    const correct = activeDirection === 'zh-to-pin'
+      ? isCorrectPinyin(input, item)
+      : isCorrect(input, item);
+    const partial = !correct && isPartial(input, item);
+
+    if (correct) {
+      // Show all chars green — no diff needed
+      spCorrectChinese.innerHTML = [...item.chinese].map(c =>
+        /[，。！？\s]/.test(c) ? c : `<span class="text-emerald-400">${c}</span>`
+      ).join('');
+      spCorrectPinyin.textContent = item.pinyin;
+      spDiffLegend.classList.add('hidden');
+    } else if (activeDirection === 'zh-to-pin') {
+      spCorrectChinese.innerHTML = `<span class="text-white">${item.chinese}</span>`;
+      spCorrectPinyin.textContent = item.pinyin;
+      spDiffLegend.classList.add('hidden');
+    } else {
+      renderDiff(input, item);
+    }
+
+    if (correct) {
+      batchCorrect++;
+      spResult.className = 'rounded-xl px-4 py-3 text-sm bg-emerald-500/10 border border-emerald-500/20';
+      spResultLine.className = 'font-semibold text-emerald-400 mb-2';
+      spResultLine.textContent = '✅ ¡Correcto!';
+    } else if (partial) {
+      batchPartial++;
+      errorMap[item.chinese] = (errorMap[item.chinese]||0)+1;
+      spResult.className = 'rounded-xl px-4 py-3 text-sm bg-amber-500/10 border border-amber-500/20';
+      spResultLine.className = 'font-semibold text-amber-400 mb-2';
+      spResultLine.textContent = '⚠️ Casi — mira qué falta:';
+      spDiffLegend.classList.remove('hidden');
+    } else {
+      batchWrong++;
+      errorMap[item.chinese] = (errorMap[item.chinese]||0)+1;
+      spResult.className = 'rounded-xl px-4 py-3 text-sm bg-rose-500/10 border border-rose-500/20';
+      spResultLine.className = 'font-semibold text-rose-400 mb-2';
+      spResultLine.textContent = '❌ Incorrecto — mira qué falta:';
+      if (activeDirection !== 'zh-to-pin') spDiffLegend.classList.remove('hidden');
+    }
+  }
+
+  function advance() {
+    currentIndex++;
+    const batchSize = currentIndex - batchStart;
+    if (batchSize>0 && batchSize%5===0) {
+      showMiniSummary();
+    } else if (currentIndex>=queue.length) {
+      queue = shuffle(queue);
+      currentIndex = batchStart = 0;
+      renderCurrent();
+    } else {
+      renderCurrent();
+    }
+  }
+
+  function showMiniSummary() {
+    spSummary.classList.remove('hidden');
+    spSumCorrect.textContent = String(batchCorrect);
+    spSumPartial.textContent = String(batchPartial);
+    spSumWrong.textContent   = String(batchWrong);
+    const weak = Object.entries(errorMap).filter(([,v])=>v>=2);
+    spWeakPatterns.textContent = weak.length ? `Repasar: ${weak.map(([k])=>k).join('、')}` : '';
+    spWeakPatterns.classList.toggle('hidden', !weak.length);
+  }
+
+  function revealAnswer() {
+    const item = queue[currentIndex % queue.length];
+    spResult.classList.remove('hidden');
+    spResult.className = 'rounded-xl px-4 py-3 text-sm bg-slate-700/50 border border-white/10';
+    spResultLine.className = 'font-semibold text-slate-300 mb-2';
+    spResultLine.textContent = 'Respuesta:';
+    spCorrectChinese.innerHTML = `<span class="text-white">${item.chinese}</span>`;
+    spCorrectPinyin.textContent = item.pinyin;
+  }
+
+  spBtnCheck.addEventListener('click',   checkAnswer);
+  spBtnNext.addEventListener('click',    advance);
+  spBtnReveal.addEventListener('click',  revealAnswer);
+  spBtnContinue.addEventListener('click', () => {
+    batchStart = currentIndex; batchCorrect = batchPartial = batchWrong = 0;
+    if (currentIndex>=queue.length) currentIndex = 0;
+    renderCurrent();
+  });
+  spBtnRestart.addEventListener('click', buildQueue);
+
+  // Self-assess (中 → ES mode)
+  spBtnKnew.addEventListener('click', () => {
+    batchCorrect++;
+    advance();
+  });
+  spBtnDidnt.addEventListener('click', () => {
+    batchWrong++;
+    errorMap[queue[currentIndex % queue.length].chinese] = (errorMap[queue[currentIndex % queue.length].chinese]||0)+1;
+    advance();
+  });
+
+  // Direction buttons
+  document.querySelectorAll('.sp-dir-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = btn.dataset.dir;
+      document.querySelectorAll('.sp-dir-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll(`.sp-dir-btn[data-dir="${dir}"]`).forEach(b => b.classList.add('active'));
+      activeDirection = dir;
+      renderCurrent();
+    });
+  });
+
+  function onSpTemaChange(val) {
+    activeTema = val;
+    if (spTemaDesk) spTemaDesk.value = val;
+    if (spTemaMob)  spTemaMob.value  = val;
+    buildQueue();
+  }
+  spTemaDesk?.addEventListener('change', e => onSpTemaChange(e.target.value));
+  spTemaMob?.addEventListener('change',  e => onSpTemaChange(e.target.value));
+
+  // Enter — works in both phases (disabled input doesn't fire keydown)
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (e.target.tagName === 'SELECT') return;
+    const tabContent = $('sp-root')?.closest('.tab-content');
+    if (tabContent && !tabContent.classList.contains('active')) return;
+    if (e.target===spBtnCheck || e.target===spBtnNext || e.target===spBtnReveal) return;
+    if (spPhase === 'answering') spBtnCheck.click();
+    else if (spPhase === 'checked') spBtnNext.click();
+  });
+
+  loadSRS();
+  buildQueue();
+</script>

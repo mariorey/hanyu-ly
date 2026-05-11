@@ -1,0 +1,259 @@
+---
+import type { VocabItem } from '../types';
+interface Props { items: VocabItem[]; }
+const { items } = Astro.props;
+const dialogueItems = items.filter(i => i.type === 'dialogue');
+
+// Group dialogues
+const dialogueMap: Record<string, VocabItem[]> = {};
+dialogueItems.forEach(item => {
+  const id = item.dialogueId ?? 'unknown';
+  if (!dialogueMap[id]) dialogueMap[id] = [];
+  dialogueMap[id].push(item);
+});
+Object.values(dialogueMap).forEach(lines => lines.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+
+const dialogueIds = Object.keys(dialogueMap);
+const temas = [...new Set(dialogueItems.flatMap(i => i.tags ?? []))].sort();
+const serialized = JSON.stringify(dialogueMap);
+---
+
+<div class="flex flex-col gap-4 max-w-md mx-auto">
+
+  <!-- Topic filter -->
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="text-xs text-slate-400 shrink-0">Tema:</span>
+    <button class="dp-tema active" data-tema="all">Todos</button>
+    {temas.map(t => (
+      <button class="dp-tema" data-tema={t}>{t.replace('tema', 'T')}</button>
+    ))}
+  </div>
+
+  <!-- Dialogue selection grid -->
+  <div id="dp-grid" class="grid grid-cols-2 gap-3"></div>
+
+  <!-- Practice view (hidden until dialogue selected) -->
+  <div id="dp-practice" class="hidden bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
+
+    <div class="flex items-center justify-between">
+      <button id="dp-back" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors">
+        ← Diálogos
+      </button>
+      <span id="dp-counter" class="text-xs text-slate-400">1 / 2</span>
+    </div>
+
+    <!-- Chinese prompt -->
+    <div class="text-center py-4">
+      <p class="text-xs text-slate-400 uppercase tracking-wide mb-2">Lee en pinyin</p>
+      <p id="dp-chinese" class="text-3xl font-medium text-white" style="font-family:'PingFang SC','Noto Sans SC',sans-serif;line-height:1.4;"></p>
+    </div>
+
+    <!-- Input -->
+    <input
+      id="dp-input"
+      type="text"
+      autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+      placeholder="Escribe el pinyin…"
+      class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 text-base outline-none focus:border-indigo-500 transition-colors"
+    />
+
+    <!-- Result -->
+    <div id="dp-result" class="hidden rounded-xl px-4 py-3 text-sm">
+      <p id="dp-result-line" class="font-semibold mb-1"></p>
+      <p id="dp-pinyin-correct" class="text-base text-indigo-300 font-medium italic"></p>
+      <p id="dp-meaning" class="text-slate-400 text-xs mt-1"></p>
+    </div>
+
+    <button id="dp-btn-check" class="w-full py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">
+      Comprobar →
+    </button>
+    <button id="dp-btn-next" class="hidden w-full py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">
+      Siguiente →
+    </button>
+  </div>
+
+  <!-- End of dialogue -->
+  <div id="dp-end" class="hidden bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-4 text-center">
+    <p class="text-4xl">🎉</p>
+    <p class="font-semibold text-white">¡Diálogo completado!</p>
+    <p id="dp-accuracy" class="text-slate-300 text-sm"></p>
+    <div class="flex gap-2 mt-2">
+      <button id="dp-btn-retry" class="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">Reintentar</button>
+      <button id="dp-btn-back2" class="flex-1 py-2.5 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Otro diálogo</button>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .dp-tema {
+    @apply px-2.5 py-1 rounded-lg text-xs font-medium border border-white/10 text-slate-400 hover:bg-white/5 transition-colors;
+  }
+  .dp-tema.active {
+    @apply bg-indigo-600 text-white border-indigo-500;
+  }
+  .dp-card {
+    @apply bg-white/5 border border-white/10 rounded-xl p-4 text-left hover:bg-white/10 hover:border-indigo-500/50 transition-all cursor-pointer;
+  }
+</style>
+
+<script define:vars={{ serialized }}>
+  const DIALOGUE_MAP = JSON.parse(serialized);
+  let activeTema = 'all';
+  let currentDialogueId = null;
+  let currentLines = [];
+  let currentLineIndex = 0;
+  let sessionCorrect = 0;
+  let sessionTotal = 0;
+
+  const $ = id => document.getElementById(id);
+  const dpGrid = $('dp-grid');
+  const dpPractice = $('dp-practice');
+  const dpEnd = $('dp-end');
+  const dpChinese = $('dp-chinese');
+  const dpInput = $('dp-input');
+  const dpCounter = $('dp-counter');
+  const dpResult = $('dp-result');
+  const dpResultLine = $('dp-result-line');
+  const dpPinyinCorrect = $('dp-pinyin-correct');
+  const dpMeaning = $('dp-meaning');
+  const dpBtnCheck = $('dp-btn-check');
+  const dpBtnNext = $('dp-btn-next');
+  const dpBack = $('dp-back');
+  const dpAccuracy = $('dp-accuracy');
+  const dpBtnRetry = $('dp-btn-retry');
+  const dpBtnBack2 = $('dp-btn-back2');
+
+  function normalise(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[1-5]/g, '')
+      .toLowerCase().replace(/[.,!?¿¡；，。！？''…]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  function isPinyinCorrect(input, item) {
+    const norm = normalise(input);
+    const normPinyin = normalise(item.pinyin);
+    return norm === normPinyin || norm.replace(/\s/g,'') === normPinyin.replace(/\s/g,'');
+  }
+
+  function renderGrid() {
+    dpGrid.innerHTML = '';
+    const ids = Object.keys(DIALOGUE_MAP).filter(id => {
+      if (activeTema === 'all') return true;
+      return DIALOGUE_MAP[id].some(line => line.tags?.includes(activeTema));
+    });
+
+    if (ids.length === 0) {
+      dpGrid.innerHTML = '<p class="col-span-2 text-center text-slate-400 text-sm py-4">No hay diálogos para este tema.</p>';
+      return;
+    }
+
+    ids.forEach(id => {
+      const lines = DIALOGUE_MAP[id];
+      const tema = lines[0]?.tags?.[0] ?? '';
+      const btn = document.createElement('button');
+      btn.className = 'dp-card';
+      btn.innerHTML = `
+        <span class="text-xs text-indigo-400 font-medium mb-1 block">${tema.replace('tema','T')}</span>
+        <p class="text-sm text-white font-medium leading-tight" style="font-family:'PingFang SC','Noto Sans SC',sans-serif;">${lines[0]?.chinese ?? ''}</p>
+        <p class="text-xs text-slate-500 mt-1">${lines.length} líneas</p>
+      `;
+      btn.addEventListener('click', () => startDialogue(id));
+      dpGrid.appendChild(btn);
+    });
+  }
+
+  function startDialogue(id) {
+    currentDialogueId = id;
+    currentLines = DIALOGUE_MAP[id];
+    currentLineIndex = 0;
+    sessionCorrect = 0;
+    sessionTotal = 0;
+    dpGrid.classList.add('hidden');
+    dpEnd.classList.add('hidden');
+    dpPractice.classList.remove('hidden');
+    renderLine();
+  }
+
+  function renderLine() {
+    const line = currentLines[currentLineIndex];
+    dpChinese.textContent = line.chinese;
+    dpCounter.textContent = `${currentLineIndex + 1} / ${currentLines.length}`;
+    dpInput.value = '';
+    dpInput.disabled = false;
+    dpResult.classList.add('hidden');
+    dpBtnCheck.classList.remove('hidden');
+    dpBtnNext.classList.add('hidden');
+    dpInput.focus();
+  }
+
+  function checkLine() {
+    const line = currentLines[currentLineIndex];
+    const input = dpInput.value.trim();
+    if (!input) return;
+
+    dpInput.disabled = true;
+    dpBtnCheck.classList.add('hidden');
+    dpBtnNext.classList.remove('hidden');
+    dpResult.classList.remove('hidden');
+
+    sessionTotal++;
+    dpPinyinCorrect.textContent = line.pinyin;
+    dpMeaning.textContent = line.meaning;
+
+    if (isPinyinCorrect(input, line)) {
+      sessionCorrect++;
+      dpResult.className = 'rounded-xl px-4 py-3 text-sm bg-emerald-500/10 border border-emerald-500/20';
+      dpResultLine.className = 'font-semibold text-emerald-400 mb-1';
+      dpResultLine.textContent = '✅ ¡Perfecto!';
+    } else {
+      dpResult.className = 'rounded-xl px-4 py-3 text-sm bg-amber-500/10 border border-amber-500/20';
+      dpResultLine.className = 'font-semibold text-amber-400 mb-1';
+      dpResultLine.textContent = '⚠️ Pinyin correcto:';
+    }
+  }
+
+  function advanceLine() {
+    currentLineIndex++;
+    if (currentLineIndex >= currentLines.length) {
+      showEnd();
+    } else {
+      renderLine();
+    }
+  }
+
+  function showEnd() {
+    dpPractice.classList.add('hidden');
+    dpEnd.classList.remove('hidden');
+    const pct = sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
+    dpAccuracy.textContent = `${sessionCorrect} / ${sessionTotal} correctas (${pct}%)`;
+  }
+
+  function showGrid() {
+    dpPractice.classList.add('hidden');
+    dpEnd.classList.add('hidden');
+    dpGrid.classList.remove('hidden');
+    renderGrid();
+  }
+
+  dpBtnCheck.addEventListener('click', checkLine);
+  dpBtnNext.addEventListener('click', advanceLine);
+  dpBack.addEventListener('click', showGrid);
+  dpBtnRetry.addEventListener('click', () => startDialogue(currentDialogueId));
+  dpBtnBack2.addEventListener('click', showGrid);
+  dpInput.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (!dpInput.disabled) checkLine();
+    else dpBtnNext.click();
+  });
+
+  document.querySelectorAll('.dp-tema').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.dp-tema').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTema = btn.dataset.tema;
+      renderGrid();
+    });
+  });
+
+  renderGrid();
+</script>

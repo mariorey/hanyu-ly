@@ -1,0 +1,149 @@
+---
+import type { VocabItem } from '../types';
+interface Props { items: VocabItem[]; }
+const { items } = Astro.props;
+const serialized = JSON.stringify(items);
+const temas = [...new Set(items.flatMap(i => i.tags ?? []))].sort();
+---
+
+<div class="flex flex-col gap-5 max-w-md mx-auto">
+
+  <!-- Streak section -->
+  <div class="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-2xl p-5">
+    <div class="flex items-center gap-3 mb-3">
+      <span class="text-4xl">🔥</span>
+      <div>
+        <p id="pv-streak" class="text-3xl font-bold text-amber-300">0</p>
+        <p class="text-sm text-amber-400/80">días consecutivos</p>
+      </div>
+    </div>
+    <!-- Heatmap last 30 days -->
+    <div id="pv-heatmap" class="flex gap-1 flex-wrap mt-2"></div>
+    <p class="text-xs text-amber-400/60 mt-2">Últimos 30 días</p>
+  </div>
+
+  <!-- Overall stats -->
+  <div class="grid grid-cols-3 gap-3">
+    <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 text-center">
+      <p id="pv-mastered" class="text-2xl font-bold text-indigo-300">0</p>
+      <p class="text-xs text-indigo-400/70 mt-0.5">dominadas</p>
+    </div>
+    <div class="bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 text-center">
+      <p id="pv-learning" class="text-2xl font-bold text-violet-300">0</p>
+      <p class="text-xs text-violet-400/70 mt-0.5">aprendiendo</p>
+    </div>
+    <div class="bg-slate-500/10 border border-slate-500/20 rounded-xl p-4 text-center">
+      <p id="pv-new" class="text-2xl font-bold text-slate-300">0</p>
+      <p class="text-xs text-slate-400/70 mt-0.5">nuevas</p>
+    </div>
+  </div>
+
+  <!-- Per-topic progress -->
+  <div class="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4">
+    <h3 class="text-sm font-semibold text-white">Progreso por tema</h3>
+    <div id="pv-topics" class="flex flex-col gap-3"></div>
+  </div>
+
+  <!-- Motivational message -->
+  <div id="pv-message" class="text-center text-sm text-slate-400 py-2"></div>
+
+</div>
+
+<script define:vars={{ serialized }}>
+  const ALL_ITEMS = JSON.parse(serialized);
+  const SRS_KEY = 'hanyu-srs-v1';
+  const STREAK_KEY = 'hanyu-streak-v1';
+  const ACTIVITY_KEY = 'hanyu-activity-v1';
+
+  function loadSRS() {
+    try { return JSON.parse(localStorage.getItem(SRS_KEY) || '{}'); } catch { return {}; }
+  }
+
+  function loadStreak() {
+    try { return JSON.parse(localStorage.getItem(STREAK_KEY) || '{"count":0,"lastDate":""}'); } catch { return { count: 0, lastDate: '' }; }
+  }
+
+  function loadActivity() {
+    try { return JSON.parse(localStorage.getItem(ACTIVITY_KEY) || '{}'); } catch { return {}; }
+  }
+
+  const srs = loadSRS();
+  const streak = loadStreak();
+  const activity = loadActivity();
+
+  // Streak
+  document.getElementById('pv-streak').textContent = String(streak.count);
+
+  // Heatmap
+  const heatmap = document.getElementById('pv-heatmap');
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+    const active = activity[d] || false;
+    const dot = document.createElement('div');
+    dot.className = active
+      ? 'w-5 h-5 rounded-sm bg-amber-400/80'
+      : 'w-5 h-5 rounded-sm bg-white/10';
+    dot.title = d;
+    heatmap.appendChild(dot);
+  }
+
+  // Today's activity
+  const today = new Date().toISOString().slice(0, 10);
+  if (!activity[today]) {
+    activity[today] = true;
+    localStorage.setItem(ACTIVITY_KEY, JSON.stringify(activity));
+  }
+
+  // Stats
+  const words = ALL_ITEMS.filter(i => i.type === 'word' || i.type === 'phrase');
+  let mastered = 0, learning = 0, newItems = 0;
+  words.forEach(item => {
+    const rec = srs[item.chinese];
+    if (!rec) { newItems++; }
+    else if (rec.box >= 4) { mastered++; }
+    else { learning++; }
+  });
+  document.getElementById('pv-mastered').textContent = String(mastered);
+  document.getElementById('pv-learning').textContent = String(learning);
+  document.getElementById('pv-new').textContent = String(newItems);
+
+  // Per-topic
+  const topicsEl = document.getElementById('pv-topics');
+  const temaLabels = {
+    tema2: 'T2 — Saludos', tema3: 'T3 — Nacionalidades',
+    tema4: 'T4 — Profesiones', tema5: 'T5 — Familia',
+    tema6: 'T6 — Fechas y horas', tema7: 'T7 — Tiempo libre',
+    tema8: 'T8 — Comida', tema9: 'T9 — Ubicaciones', tema10: 'T10 — Compras'
+  };
+
+  const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
+  temas.forEach(tema => {
+    const tItems = words.filter(i => i.tags?.includes(tema));
+    const tMastered = tItems.filter(i => srs[i.chinese]?.box >= 4).length;
+    const pct = tItems.length > 0 ? Math.round((tMastered / tItems.length) * 100) : 0;
+
+    const row = document.createElement('div');
+    row.innerHTML = `
+      <div class="flex justify-between items-center mb-1">
+        <span class="text-xs text-slate-300 font-medium">${temaLabels[tema] ?? tema}</span>
+        <span class="text-xs text-slate-400">${tMastered}/${tItems.length}</span>
+      </div>
+      <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-500" style="width:${pct}%"></div>
+      </div>
+    `;
+    topicsEl.appendChild(row);
+  });
+
+  // Motivational message
+  const pct = words.length > 0 ? Math.round((mastered / words.length) * 100) : 0;
+  const messages = [
+    [0, 10, '¡Empieza tu aventura con el chino! 加油！'],
+    [10, 30, '¡Buen comienzo! Sigue practicando cada día. 💪'],
+    [30, 60, '¡Vas genial! Ya conoces bastante vocabulario. 🚀'],
+    [60, 80, '¡Impresionante progreso! Casi lo tienes. ⭐'],
+    [80, 101, '¡Eres un maestro del HSK1! 🏆 厉害！']
+  ];
+  const msg = messages.find(([min, max]) => pct >= min && pct < max);
+  if (msg) document.getElementById('pv-message').textContent = msg[2];
+</script>
