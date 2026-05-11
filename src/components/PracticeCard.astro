@@ -11,7 +11,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 <div id="pc-root" class="flex-1 min-h-0 flex flex-col lg:w-full lg:gap-3">
 
   <!-- ── MOBILE: compact always-visible settings bar ── -->
-  <div class="lg:hidden shrink-0 flex gap-2 items-center mb-2">
+  <div id="mobile-settings-bar" class="lg:hidden shrink-0 flex gap-2 items-center mb-2">
     <!-- Tema select -->
     <div class="relative flex-1 min-w-0">
       <select id="tema-mob"
@@ -186,21 +186,54 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   .dir-btn.active { @apply bg-indigo-600 text-white border-indigo-500; }
   .btn-reveal.on  { @apply bg-white/10 border-white/20 text-white; }
 
-  /* ── Mobile keyboard handling ──────────────────────────────────────────────
-     The body uses h-dvh so when the iOS keyboard opens the viewport shrinks
-     and the flex layout compacts automatically — no JS height math needed.
-     We only need to collapse #hint-zone (not needed while typing) to free
-     enough space for the prompt + input + button to stay fully visible.
-     .kb-open is set on focus, cleared only when advancing to the next card. */
+  /* ── Mobile: keyboard-open compact mode ────────────────────────────────────
+     When the virtual keyboard opens we add .kb-open to <body>.
+     Three things happen simultaneously via CSS transitions:
+       1. Settings bar and progress bar collapse (max-height → 0)
+       2. Hint buttons collapse (max-height → 0)
+       3. Prompt padding shrinks to zero
+     Combined with h-dvh on body (shrinks when keyboard opens) and the bottom
+     nav hiding (handled in index.astro), everything fits with ZERO scroll. */
+
   @media (max-width: 1023px) {
+    /* Elements that collapse when keyboard opens */
+    #mobile-settings-bar {
+      max-height: 60px;
+      overflow: hidden;
+      transition: max-height 0.22s ease, opacity 0.18s ease, margin-bottom 0.22s ease;
+    }
+    #session-progress {
+      max-height: 60px;
+      overflow: hidden;
+      transition: max-height 0.22s ease, opacity 0.18s ease, margin-bottom 0.22s ease;
+    }
     #hint-zone {
       max-height: 200px;
       overflow: hidden;
-      transition: max-height 0.25s ease, opacity 0.2s ease;
+      transition: max-height 0.22s ease, opacity 0.18s ease;
     }
-    :global(.kb-open) #hint-zone {
-      max-height: 0;
-      opacity: 0;
+    #prompt-area {
+      transition: padding 0.22s ease;
+    }
+
+    /* Collapsed state */
+    :global(body.kb-open) #mobile-settings-bar {
+      max-height: 0 !important;
+      opacity: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    :global(body.kb-open) #session-progress {
+      max-height: 0 !important;
+      opacity: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    :global(body.kb-open) #hint-zone {
+      max-height: 0 !important;
+      opacity: 0 !important;
+    }
+    :global(body.kb-open) #prompt-area {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
     }
   }
 </style>
@@ -410,6 +443,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 
   // ── Session end screen ─────────────────────────────────────────────────────
   function showSessionEnd() {
+    setKbOpen(false);
     answerEl.blur(); // close the keyboard so the summary shows at full height
     pcCard.classList.add('hidden');
     sessionProgEl.classList.add('hidden');
@@ -718,15 +752,18 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   //   Press Enter → readOnly keeps focus → keyboard stays → user types next answer immediately
   //   Tap button  → input blurs naturally → keyboard closes → new card at full height
 
-  answerEl.addEventListener('focus', () => {
-    pcRoot?.classList.add('kb-open');
-  });
+  // kb-open goes on BOTH pcRoot (for scoped CSS selectors) and body
+  // (so index.astro's nav + tab-content padding can react via CSS)
+  const setKbOpen = (open) => {
+    document.body.classList.toggle('kb-open', open);
+    pcRoot?.classList.toggle('kb-open', open);
+  };
+
+  answerEl.addEventListener('focus', () => setKbOpen(true));
 
   answerEl.addEventListener('blur', () => {
     setTimeout(() => {
-      if (document.activeElement !== answerEl) {
-        pcRoot?.classList.remove('kb-open');
-      }
+      if (document.activeElement !== answerEl) setKbOpen(false);
     }, 50);
   });
 
