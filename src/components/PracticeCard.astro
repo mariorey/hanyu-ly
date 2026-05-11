@@ -186,25 +186,25 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   .dir-btn.active { @apply bg-indigo-600 text-white border-indigo-500; }
   .btn-reveal.on  { @apply bg-white/10 border-white/20 text-white; }
 
-  /* ── Keyboard-open compact mode (mobile only) ── */
+  /* ── Keyboard-open compact mode (mobile only) ──
+     .kb-open is added/removed via JS on focus/blur of the answer input.
+     Using :global() so Astro's scoped CSS doesn't break the descendant selector. */
   @media (max-width: 1023px) {
-    /* When keyboard is open, collapse the prompt to a compact strip */
-    .kb-open #prompt-area {
-      flex: 0 0 auto;
-      min-height: 0;
-      padding-top: 0.25rem;
-      padding-bottom: 0.25rem;
+    :global(.kb-open) #prompt-area {
+      flex: 0 0 auto !important;
+      min-height: 0 !important;
+      padding-top: 0.25rem !important;
+      padding-bottom: 0.25rem !important;
     }
-    .kb-open #prompt-text {
+    :global(.kb-open) #prompt-text {
       font-size: 1.5rem !important;
-      line-height: 1.4;
+      line-height: 1.4 !important;
     }
-    .kb-open #prompt-hint {
-      display: none;
+    :global(.kb-open) #prompt-hint {
+      display: none !important;
     }
-    /* Hide hint buttons when keyboard is open (not needed while typing) */
-    .kb-open #hint-zone {
-      display: none;
+    :global(.kb-open) #hint-zone {
+      display: none !important;
     }
   }
 </style>
@@ -684,22 +684,23 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   });
 
   // ── Keyboard detection (mobile) ────────────────────────────────────────────
-  // When the virtual keyboard opens the visualViewport shrinks.
-  // We add/remove `.kb-open` on #pc-root so CSS can compact the prompt,
-  // keeping the question visible above the input without any scroll.
-  if (typeof window !== 'undefined' && 'visualViewport' in window) {
-    const root = $('pc-root');
-    let kbOpen = false;
-    window.visualViewport.addEventListener('resize', () => {
-      // keyboard height = difference between window height and visual viewport height
-      const kbH = window.innerHeight - window.visualViewport.height;
-      const shouldCompact = kbH > 120; // threshold to distinguish keyboard from browser UI chrome
-      if (shouldCompact !== kbOpen) {
-        kbOpen = shouldCompact;
-        root?.classList.toggle('kb-open', kbOpen);
+  // focus/blur on the answer input is the most reliable way to detect the
+  // virtual keyboard on iOS Safari. When the input gets focus we add .kb-open
+  // to #pc-root so the CSS can compact the prompt and free up vertical space.
+  const pcRoot = $('pc-root');
+
+  answerEl.addEventListener('focus', () => {
+    pcRoot?.classList.add('kb-open');
+  });
+
+  answerEl.addEventListener('blur', () => {
+    // Small delay so tapping hint buttons doesn't flicker the layout
+    setTimeout(() => {
+      if (document.activeElement !== answerEl) {
+        pcRoot?.classList.remove('kb-open');
       }
-    });
-  }
+    }, 200);
+  });
 
   // ── Init ───────────────────────────────────────────────────────────────────
   loadSRS();
