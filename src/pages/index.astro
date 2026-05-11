@@ -42,6 +42,23 @@ const items = vocabulary as VocabItem[];
       .nav-btn { transition: color 0.15s, border-color 0.15s; }
       .nav-btn.active .nav-icon { color: #818cf8; }
       .nav-btn.active .nav-label { color: #818cf8; }
+
+      /* ── Keyboard-open: hide nav + free up its space ── */
+      nav {
+        transition: transform 0.25s ease, opacity 0.2s ease;
+      }
+      body.kb-open nav {
+        transform: translateY(110%);
+        opacity: 0;
+        pointer-events: none;
+      }
+      /* Remove the padding reserved for the nav so the card fills the freed space */
+      .tab-content.active {
+        transition: padding-bottom 0.22s ease;
+      }
+      body.kb-open .tab-content.active {
+        padding-bottom: 0.5rem !important;
+      }
     </style>
   </head>
   <body class="h-dvh bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col text-white overflow-hidden">

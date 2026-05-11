@@ -213,7 +213,8 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
       transition: max-height 0.22s ease, opacity 0.18s ease;
     }
     #prompt-area {
-      transition: padding 0.22s ease;
+      /* flex-grow is animatable — this smoothly shrinks the gap when kb opens */
+      transition: padding 0.22s ease, flex-grow 0.22s ease, min-height 0.22s ease;
     }
 
     /* Collapsed state */
@@ -234,6 +235,14 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
     :global(body.kb-open) #prompt-area {
       padding-top: 0 !important;
       padding-bottom: 0 !important;
+      /* Stop the prompt from eating up all the flex space — shrink to content */
+      flex: 0 0 auto !important;
+      min-height: 0 !important;
+    }
+    /* With the prompt no longer flex-1, center the remaining content in the card */
+    :global(body.kb-open) #pc-card {
+      justify-content: center !important;
+      gap: 0.5rem !important;
     }
   }
 </style>
