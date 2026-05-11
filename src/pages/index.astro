@@ -21,13 +21,23 @@ const items = vocabulary as VocabItem[];
         to   { opacity: 1; transform: translateY(0); }
       }
       .tab-content { display: none; }
+      /* Mobile: stretch full height so cards can fill the screen */
       .tab-content.active {
         display: flex;
         flex: 1;
-        align-items: center;
-        justify-content: center;
-        padding: 1.5rem 1rem 5rem;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.75rem 0.75rem 4.5rem;
         animation: fadeIn 0.2s ease;
+      }
+      /* Desktop: center content */
+      @media (min-width: 1024px) {
+        .tab-content.active {
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          padding: 1.5rem 1rem 5rem;
+        }
       }
       .nav-btn { transition: color 0.15s, border-color 0.15s; }
       .nav-btn.active .nav-icon { color: #818cf8; }

@@ -7,47 +7,30 @@ const serialized = JSON.stringify(words);
 const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 ---
 
-<div id="pc-root" class="w-full flex flex-col gap-3">
+<!-- pc-root fills the full height given by the tab-content -->
+<div id="pc-root" class="flex-1 min-h-0 flex flex-col lg:w-full lg:gap-3">
 
-  <!-- ── MOBILE: settings toggle ── -->
-  <div class="lg:hidden flex justify-end">
-    <button id="pc-settings-toggle"
-      class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
-      ⚙️ <span>Ajustes</span>
-    </button>
-  </div>
-
-  <!-- ── MOBILE: settings panel (slide-down) ── -->
-  <div id="pc-settings-panel" class="lg:hidden overflow-hidden"
-    style="max-height:0; transition:max-height 0.25s ease, opacity 0.2s ease; opacity:0">
-    <div class="bg-white/5 border border-white/10 rounded-2xl p-4 mb-1 grid grid-cols-2 gap-4">
-
-      <div class="flex flex-col gap-2">
-        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Tema</span>
-        <div class="relative">
-          <select id="tema-mob"
-            class="w-full px-3 py-2 pr-7 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none focus:border-indigo-500 appearance-none cursor-pointer">
-            <option value="all">Todos</option>
-            {temas.map(t => <option value={t}>{t.replace('tema','Tema ')}</option>)}
-          </select>
-          <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">▾</span>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Dirección</span>
-        <div class="flex flex-col gap-1">
-          <button class="dir-btn active text-left" data-dir="random">🔀 Aleat.</button>
-          <button class="dir-btn text-left" data-dir="zh-to-es">中 → ES</button>
-          <button class="dir-btn text-left" data-dir="es-to-zh">ES → 中</button>
-        </div>
-      </div>
-
+  <!-- ── MOBILE: compact always-visible settings bar ── -->
+  <div class="lg:hidden shrink-0 flex gap-2 items-center mb-2">
+    <!-- Tema select -->
+    <div class="relative flex-1 min-w-0">
+      <select id="tema-mob"
+        class="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-sm outline-none appearance-none cursor-pointer truncate">
+        <option value="all">Todos los temas</option>
+        {temas.map(t => <option value={t}>{t.replace('tema','Tema ')}</option>)}
+      </select>
+      <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">▾</span>
+    </div>
+    <!-- Direction micro-buttons -->
+    <div class="flex gap-1 shrink-0">
+      <button class="dir-btn active" data-dir="random" title="Aleatorio">🔀</button>
+      <button class="dir-btn" data-dir="zh-to-es" title="Chino → Español">中→ES</button>
+      <button class="dir-btn" data-dir="es-to-zh" title="Español → Chino">ES→中</button>
     </div>
   </div>
 
-  <!-- ── 3-COLUMN GRID (desktop) / single col (mobile) ── -->
-  <div class="lg:grid lg:grid-cols-[208px_1fr_208px] lg:gap-5 lg:items-start">
+  <!-- ── 3-col grid (desktop) / full-height flex (mobile) ── -->
+  <div class="flex-1 min-h-0 flex flex-col lg:grid lg:grid-cols-[208px_1fr_208px] lg:gap-5 lg:items-start">
 
     <!-- Col 1: sidebar (desktop only) -->
     <aside class="hidden lg:flex flex-col gap-4">
@@ -67,9 +50,9 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
       <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2">
         <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Dirección</span>
         <div class="flex flex-col gap-1.5">
-          <button class="dir-btn active" data-dir="random">🔀 Aleatorio</button>
-          <button class="dir-btn" data-dir="zh-to-es">中文 → Español</button>
-          <button class="dir-btn" data-dir="es-to-zh">Español → 中 / Pīn</button>
+          <button class="dir-btn dir-btn-full active" data-dir="random">🔀 Aleatorio</button>
+          <button class="dir-btn dir-btn-full" data-dir="zh-to-es">中文 → Español</button>
+          <button class="dir-btn dir-btn-full" data-dir="es-to-zh">Español → 中 / Pīn</button>
         </div>
       </div>
 
@@ -80,11 +63,11 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 
     </aside>
 
-    <!-- Col 2: THE CARD — always centered -->
-    <div class="flex flex-col items-center gap-3">
+    <!-- Col 2: card area — fills height on mobile, auto on desktop -->
+    <div class="flex-1 min-h-0 flex flex-col lg:h-auto lg:items-center lg:gap-3">
 
-      <!-- Session progress bar -->
-      <div id="session-progress" class="w-full max-w-[520px]">
+      <!-- Progress bar -->
+      <div id="session-progress" class="shrink-0 w-full lg:max-w-[520px] mb-2 lg:mb-0">
         <div class="flex justify-between items-center mb-1.5 text-xs">
           <span class="text-slate-400"><span id="session-pos">0</span> / <span id="session-total">0</span></span>
           <span id="session-accuracy-text" class="font-semibold"></span>
@@ -94,81 +77,95 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
         </div>
       </div>
 
-      <div id="pc-card" class="w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
+      <!-- THE CARD: flex-1 on mobile so it fills remaining space; auto on desktop -->
+      <div id="pc-card"
+        class="flex-1 min-h-0 flex flex-col w-full max-w-[520px]
+               bg-white/5 border border-white/10 rounded-2xl
+               p-4 gap-3 lg:flex-none lg:p-6 lg:gap-4">
 
-        <div class="flex items-center gap-2 flex-wrap">
-          <span id="type-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/10"></span>
-          <span id="srs-badge" class="text-xs font-medium px-2 py-0.5 rounded-full border"></span>
+        <!-- Badges row -->
+        <div class="shrink-0 flex items-center gap-2 flex-wrap">
+          <span id="type-badge"  class="text-xs font-medium px-2 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/10"></span>
+          <span id="srs-badge"   class="text-xs font-medium px-2 py-0.5 rounded-full border"></span>
           <span id="extra-badge" class="hidden text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">extra</span>
         </div>
 
-        <div class="text-center py-8 min-h-[9rem] flex flex-col items-center justify-center gap-3">
+        <!-- PROMPT: grows to fill available space, centered -->
+        <div class="flex-1 min-h-[6rem] flex flex-col items-center justify-center text-center gap-2 py-2">
           <span id="prompt-text"></span>
           <span id="prompt-hint" class="text-xs text-slate-400 tracking-wide uppercase"></span>
         </div>
 
-        <div class="flex flex-col gap-1 text-center min-h-[3.25rem]">
-          <p class="h-6"><span id="pinyin-text"  class="text-base italic text-indigo-300 invisible"></span></p>
-          <p class="h-6"><span id="meaning-text" class="text-sm text-emerald-300 invisible"></span></p>
+        <!-- HINT ZONE (shown while answering) -->
+        <div id="hint-zone" class="shrink-0 flex flex-col gap-2">
+          <div class="flex gap-2">
+            <button id="btn-pinyin"  class="btn-reveal flex-1 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Pinyin</button>
+            <button id="btn-meaning" class="btn-reveal flex-1 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Significado</button>
+          </div>
+          <div class="flex flex-col gap-0.5 text-center">
+            <p class="h-5 leading-5"><span id="pinyin-text"  class="text-base italic text-indigo-300 invisible"></span></p>
+            <p class="h-5 leading-5"><span id="meaning-text" class="text-sm text-emerald-300 invisible"></span></p>
+          </div>
         </div>
 
-        <input id="answer-input" type="text"
-          autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
-          placeholder="Escribe tu respuesta…"
-          class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 text-base outline-none focus:border-indigo-500 transition-colors"
-        />
-
-        <div id="result-banner" class="hidden rounded-xl px-4 py-3 text-sm text-center">
-          <p id="result-line" class="font-semibold"></p>
+        <!-- RESULT BANNER (shown after checking, replaces hint zone) -->
+        <div id="result-banner" class="hidden shrink-0 rounded-xl px-4 py-3 text-sm text-center">
+          <p id="result-line"    class="font-semibold"></p>
           <p id="correct-answer" class="mt-0.5 text-slate-400"></p>
         </div>
 
-        <div class="flex gap-2">
-          <button id="btn-pinyin"  class="btn-reveal flex-1 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Pinyin</button>
-          <button id="btn-meaning" class="btn-reveal flex-1 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Significado</button>
-        </div>
+        <!-- Input field -->
+        <input id="answer-input" type="text"
+          autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+          placeholder="Escribe tu respuesta…"
+          class="shrink-0 w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 text-base outline-none focus:border-indigo-500 transition-colors"
+        />
 
-        <div id="row-check">
-          <button id="btn-check" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">
+        <!-- Action buttons (always at the bottom of the card) -->
+        <div id="row-check" class="shrink-0">
+          <button id="btn-check" class="w-full py-3.5 rounded-xl text-base font-semibold bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white transition-colors">
             Comprobar →
           </button>
         </div>
 
-        <div id="row-next" class="hidden">
-          <button id="btn-next" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">
+        <div id="row-next" class="hidden shrink-0">
+          <button id="btn-next" class="w-full py-3.5 rounded-xl text-base font-semibold bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white transition-colors">
             Siguiente →
           </button>
         </div>
 
-        <div id="row-selfassess" class="hidden flex gap-2">
-          <button id="btn-knew"  class="flex-1 py-3 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors">✓ Lo sabía</button>
-          <button id="btn-didnt" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors">✗ No lo sabía</button>
+        <div id="row-selfassess" class="hidden shrink-0 flex gap-2">
+          <button id="btn-knew"  class="flex-1 py-3.5 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white transition-colors">✓ Lo sabía</button>
+          <button id="btn-didnt" class="flex-1 py-3.5 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white transition-colors">✗ No lo sabía</button>
         </div>
 
       </div>
 
       <!-- Session end screen -->
-      <div id="session-end" class="hidden w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-6 flex-col gap-5">
-        <div class="text-center py-2">
+      <div id="session-end"
+        class="hidden flex-1 min-h-0 overflow-y-auto w-full max-w-[520px]
+               bg-white/5 border border-white/10 rounded-2xl
+               p-5 lg:p-6 flex-col gap-5">
+        <div class="shrink-0 text-center py-2">
           <div id="session-end-emoji" class="text-5xl mb-3">🎉</div>
           <h2 id="session-end-title" class="text-xl font-bold text-white">Sesión completada</h2>
           <p id="session-end-subtitle" class="text-slate-400 text-sm mt-1"></p>
         </div>
-        <div id="session-stats" class="grid grid-cols-2 gap-3"></div>
-        <div id="session-leveled" class="hidden flex-col gap-2">
+        <div id="session-stats" class="shrink-0 grid grid-cols-2 gap-3"></div>
+        <div id="session-leveled" class="hidden shrink-0 flex-col gap-2">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide">↑ Listas para subir de nivel</h3>
             <button id="btn-confirm-levelup" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-violet-600 hover:bg-violet-500 text-white transition-colors">↑ Subir nivel</button>
           </div>
           <div id="session-leveled-list" class="flex flex-wrap gap-1.5"></div>
         </div>
-        <div id="session-errors-section" class="hidden flex-col gap-2">
+        <div id="session-errors-section" class="hidden shrink-0 flex-col gap-2">
           <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide">⚠ Para repasar</h3>
           <div id="session-errors-list" class="flex flex-wrap gap-1.5"></div>
         </div>
-        <div class="flex flex-col gap-2">
-          <button id="btn-retry-errors" class="hidden w-full py-3 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors">🔁 Repasar errores</button>
-          <button id="btn-new-session" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">▶ Nueva sesión</button>
+        <div class="shrink-0 flex flex-col gap-2">
+          <button id="btn-retry-errors" class="hidden w-full py-3.5 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors">🔁 Repasar errores</button>
+          <button id="btn-new-session"  class="w-full py-3.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">▶ Nueva sesión</button>
           <button id="btn-practice-all" class="w-full py-3 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Practicar todas (sin SRS)</button>
         </div>
       </div>
@@ -183,8 +180,9 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 
 <style>
   .dir-btn {
-    @apply w-full px-3 py-1.5 rounded-lg text-xs font-medium border border-white/10 text-slate-400 hover:bg-white/5 transition-colors;
+    @apply px-2.5 py-1.5 rounded-lg text-xs font-medium border border-white/10 text-slate-400 hover:bg-white/5 transition-colors;
   }
+  .dir-btn-full { @apply w-full text-left; }
   .dir-btn.active { @apply bg-indigo-600 text-white border-indigo-500; }
   .btn-reveal.on  { @apply bg-white/10 border-white/20 text-white; }
 </style>
@@ -203,7 +201,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   const ALL_ITEMS = JSON.parse(serialized);
 
   let srsData = {};
-  let pendingLevelUps = []; // items acertados que el usuario puede subir manualmente
+  let pendingLevelUps = [];
 
   function loadSRS()  { try { srsData = JSON.parse(localStorage.getItem(SRS_KEY)||'{}'); } catch { srsData={}; } }
   function saveSRS()  { localStorage.setItem(SRS_KEY, JSON.stringify(srsData)); }
@@ -211,14 +209,12 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 
   function updateSRS(item, correct) {
     const rec = getSRS(item);
-    // Nunca subimos de nivel automáticamente: el usuario decide en el resumen
     const newBox = correct
       ? rec.box
       : (sessionSourceBox === 4 ? 3 : rec.box);
     const next = new Date(Date.now() + INTERVALS[newBox]*86400000).toISOString().slice(0,10);
     srsData[item.chinese] = { box:newBox, nextDate:next };
     saveSRS();
-    // Registrar candidatos a subir (acertadas y que no estén ya en el máximo)
     if (correct && rec.box < 4 && !pendingLevelUps.includes(item)) {
       pendingLevelUps.push(item);
     }
@@ -233,53 +229,44 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   // ── Session state ──────────────────────────────────────────────────────────
   let sessionItems     = [];
   let sessionIndex     = 0;
-  let sessionResults   = [];  // [{item, correct, boxBefore, boxAfter}]
-  let allFiltered      = [];  // full tema set for "practice all"
-  let sessionSourceBox = null; // set when launched from a specific SRS box
-  let direction      = 'zh-to-es';
-  let activeDirection = 'random';
-  let activeTema      = 'all';
-  let phase           = 'answering';
-  let pinyinOn        = false;
-  let meaningOn       = false;
+  let sessionResults   = [];
+  let allFiltered      = [];
+  let sessionSourceBox = null;
+  let direction        = 'zh-to-es';
+  let activeDirection  = 'random';
+  let activeTema       = 'all';
+  let phase            = 'answering';
+  let pinyinOn         = false;
+  let meaningOn        = false;
 
   const $  = id => document.getElementById(id);
-  const promptEl       = $('prompt-text');
-  const hintEl         = $('prompt-hint');
-  const pinyinEl       = $('pinyin-text');
-  const meaningEl      = $('meaning-text');
-  const answerEl       = $('answer-input');
-  const typeBadge      = $('type-badge');
-  const srsBadge       = $('srs-badge');
-  const extraBadge     = $('extra-badge');
-  const resultBanner   = $('result-banner');
-  const resultLine     = $('result-line');
-  const correctAnswer  = $('correct-answer');
-  const btnPinyin      = $('btn-pinyin');
-  const btnMeaning     = $('btn-meaning');
-  const btnCheck       = $('btn-check');
-  const btnNext        = $('btn-next');
-  const btnKnew        = $('btn-knew');
-  const btnDidnt       = $('btn-didnt');
-  const rowCheck       = $('row-check');
-  const rowNext        = $('row-next');
-  const rowSelfassess  = $('row-selfassess');
-  const srsCounts      = $('srs-counts');
-  const temaDesk       = $('tema-desk');
-  const temaMob        = $('tema-mob');
-  const settingsToggle = $('pc-settings-toggle');
-  const settingsPanel  = $('pc-settings-panel');
-  const pcCard         = $('pc-card');
-  const sessionEndEl   = $('session-end');
-  const sessionProgEl  = $('session-progress');
-
-  // ── Settings panel (mobile) ────────────────────────────────────────────────
-  let settingsOpen = false;
-  settingsToggle.addEventListener('click', () => {
-    settingsOpen = !settingsOpen;
-    settingsPanel.style.maxHeight = settingsOpen ? '300px' : '0';
-    settingsPanel.style.opacity   = settingsOpen ? '1'     : '0';
-  });
+  const promptEl      = $('prompt-text');
+  const hintEl        = $('prompt-hint');
+  const pinyinEl      = $('pinyin-text');
+  const meaningEl     = $('meaning-text');
+  const answerEl      = $('answer-input');
+  const typeBadge     = $('type-badge');
+  const srsBadge      = $('srs-badge');
+  const extraBadge    = $('extra-badge');
+  const resultBanner  = $('result-banner');
+  const resultLine    = $('result-line');
+  const correctAnswer = $('correct-answer');
+  const btnPinyin     = $('btn-pinyin');
+  const btnMeaning    = $('btn-meaning');
+  const btnCheck      = $('btn-check');
+  const btnNext       = $('btn-next');
+  const btnKnew       = $('btn-knew');
+  const btnDidnt      = $('btn-didnt');
+  const rowCheck      = $('row-check');
+  const rowNext       = $('row-next');
+  const rowSelfassess = $('row-selfassess');
+  const srsCounts     = $('srs-counts');
+  const temaDesk      = $('tema-desk');
+  const temaMob       = $('tema-mob');
+  const pcCard        = $('pc-card');
+  const sessionEndEl  = $('session-end');
+  const sessionProgEl = $('session-progress');
+  const hintZone      = $('hint-zone');
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   function shuffle(arr) {
@@ -322,6 +309,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   }
 
   function renderSRSCounts() {
+    if (!srsCounts) return;
     srsCounts.innerHTML = '';
     for (let b=0;b<5;b++) {
       const group = ALL_ITEMS.filter(i=>(srsData[i.chinese]?.box??0)===b);
@@ -330,7 +318,6 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
       const wrapper = document.createElement('div');
       wrapper.className = 'flex flex-col';
 
-      // Clickable header row
       const header = document.createElement('button');
       header.className = `rounded-lg px-3 py-1.5 border ${BOX_CLASSES[b]} flex items-center justify-between w-full cursor-pointer hover:opacity-80 transition-opacity`;
       header.innerHTML = `
@@ -340,7 +327,6 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
           <span class="text-[10px] opacity-50 transition-transform duration-200 inline-block" data-arrow>▾</span>
         </div>`;
 
-      // Expandable panel
       const panel = document.createElement('div');
       panel.className = 'overflow-hidden';
       panel.style.cssText = 'max-height:0;opacity:0;transition:max-height 0.25s ease,opacity 0.2s ease';
@@ -371,7 +357,6 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
       wrapper.appendChild(panel);
       srsCounts.appendChild(wrapper);
 
-      // Toggle
       let open = false;
       header.addEventListener('click', () => {
         open = !open;
@@ -502,6 +487,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
     answerEl.disabled = false;
     answerEl.value    = '';
     resultBanner.classList.add('hidden');
+    hintZone.classList.remove('hidden');   // show hint buttons again
     rowCheck.classList.remove('hidden');
     rowNext.classList.add('hidden');
     rowSelfassess.classList.add('hidden');
@@ -511,6 +497,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   function goWordResult(correct, item) {
     phase = 'checked';
     answerEl.disabled = true;
+    hintZone.classList.add('hidden');      // hide hints, show result
     const boxBefore   = getSRS(item).box;
     updateSRS(item, correct);
     const boxAfter    = getSRS(item).box;
@@ -522,12 +509,12 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
       ? `${item.meaning}  —  ${item.pinyin}`
       : `${item.chinese}  /  ${item.pinyin}`;
     if (correct) {
-      resultBanner.className    = 'rounded-xl px-4 py-3 text-sm text-center bg-emerald-500/10 border border-emerald-500/20';
+      resultBanner.className    = 'shrink-0 rounded-xl px-4 py-3 text-sm text-center bg-emerald-500/10 border border-emerald-500/20';
       resultLine.className      = 'font-semibold text-emerald-400';
       resultLine.textContent    = '✓ Correcto';
       correctAnswer.textContent = answerText;
     } else {
-      resultBanner.className    = 'rounded-xl px-4 py-3 text-sm text-center bg-rose-500/10 border border-rose-500/20';
+      resultBanner.className    = 'shrink-0 rounded-xl px-4 py-3 text-sm text-center bg-rose-500/10 border border-rose-500/20';
       resultLine.className      = 'font-semibold text-rose-400';
       resultLine.textContent    = '✗ Incorrecto';
       correctAnswer.textContent = answerText;
@@ -539,6 +526,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   function goPhraseAssess() {
     phase = 'selfassess';
     answerEl.disabled = true;
+    hintZone.classList.add('hidden');      // hide hints
     meaningOn = true;
     setReveal(meaningEl, btnMeaning, true);
     rowCheck.classList.add('hidden');
@@ -634,10 +622,11 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   temaDesk?.addEventListener('change', e => onTemaChange(e.target.value));
   temaMob?.addEventListener('change',  e => onTemaChange(e.target.value));
 
-  // Direction buttons
+  // Direction buttons (mobile + desktop share same data-dir attribute)
   document.querySelectorAll('.dir-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const dir = btn.dataset.dir;
+      if (!dir) return;
       document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll(`.dir-btn[data-dir="${dir}"]`).forEach(b => b.classList.add('active'));
       activeDirection = dir;
@@ -646,7 +635,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
     });
   });
 
-  // Confirmar subida de nivel manual
+  // Confirm level-up
   $('btn-confirm-levelup').addEventListener('click', () => {
     pendingLevelUps.forEach(item => {
       const rec = getSRS(item);
