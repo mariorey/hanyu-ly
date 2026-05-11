@@ -21,7 +21,6 @@
   { "type": "word", "chinese": "认识", "pinyin": "rènshi", "meaning": "conocer", "tags": ["tema2"] },
   { "type": "word", "chinese": "高兴", "pinyin": "gāoxìng", "meaning": "contento / alegre", "tags": ["tema2"] },
   { "type": "word", "chinese": "怎么样", "pinyin": "zěnmeyàng", "meaning": "cómo estás / qué tal", "tags": ["tema2"] },
-
   { "type": "phrase", "chinese": "认识你很高兴。", "pinyin": "rènshi nǐ hěn gāoxìng.", "meaning": "mucho gusto en conocerte.", "tags": ["tema2"] },
 
   { "type": "word", "chinese": "是", "pinyin": "shì", "meaning": "ser", "tags": ["tema3"] },
