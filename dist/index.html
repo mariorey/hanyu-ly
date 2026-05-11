@@ -1,189 +1,310 @@
-<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>汉语练习</title><link rel="stylesheet" href="/_astro/index.DV-yBpQP.css"></head> <body class="min-h-dvh bg-stone-100 flex flex-col items-center justify-center px-4 py-12 font-sans"> <header class="text-center mb-10"> <h1 class="text-3xl font-bold text-stone-900 tracking-tight" style="font-family: 'PingFang SC', 'Noto Sans SC', sans-serif;">
-汉语练习
-</h1> <p class="text-sm text-stone-400 mt-1">Mandarin practice</p> </header> <main class="w-full max-w-md bg-white rounded-2xl border border-stone-200 shadow-sm p-8"> <div class="flex flex-col gap-5" data-astro-cid-u6gw6vf2> <!-- Filter tabs --> <div class="flex gap-2" role="group" aria-label="Filtrar vocabulario" data-astro-cid-u6gw6vf2> <button class="tab active" data-filter="all" data-astro-cid-u6gw6vf2>Todo</button> <button class="tab" data-filter="word" data-astro-cid-u6gw6vf2>Palabras</button> <button class="tab" data-filter="phrase" data-astro-cid-u6gw6vf2>Frases</button> </div> <!-- Tema filter --> <div class="flex items-center gap-2.5" data-astro-cid-u6gw6vf2> <span class="text-xs text-stone-400 shrink-0" data-astro-cid-u6gw6vf2>Tema:</span> <div class="flex gap-1 flex-wrap" data-astro-cid-u6gw6vf2> <button class="tema-btn active" data-tema="all" data-astro-cid-u6gw6vf2>Todos</button> <button class="tema-btn" data-tema="tema2" data-astro-cid-u6gw6vf2>T2</button> <button class="tema-btn" data-tema="tema3" data-astro-cid-u6gw6vf2>T3</button> <button class="tema-btn" data-tema="tema4" data-astro-cid-u6gw6vf2>T4</button> <button class="tema-btn" data-tema="tema5" data-astro-cid-u6gw6vf2>T5</button> <button class="tema-btn" data-tema="tema6" data-astro-cid-u6gw6vf2>T6</button> <button class="tema-btn" data-tema="tema7" data-astro-cid-u6gw6vf2>T7</button> <button class="tema-btn" data-tema="tema9" data-astro-cid-u6gw6vf2>T9</button> <button class="tema-btn" data-tema="tema10" data-astro-cid-u6gw6vf2>T10</button> </div> </div> <!-- Direction mode --> <div class="flex items-center gap-2.5" data-astro-cid-u6gw6vf2> <span class="text-xs text-stone-400 shrink-0" data-astro-cid-u6gw6vf2>Modo:</span> <div class="flex gap-1" data-astro-cid-u6gw6vf2> <button class="mode-btn active" data-mode="mix" data-astro-cid-u6gw6vf2>Mezcla</button> <button class="mode-btn" data-mode="zh-to-es" data-astro-cid-u6gw6vf2>汉→ES</button> <button class="mode-btn" data-mode="es-to-zh" data-astro-cid-u6gw6vf2>ES→汉</button> </div> </div> <!-- Session size selector --> <div class="flex items-center gap-2.5" data-astro-cid-u6gw6vf2> <span class="text-xs text-stone-400 shrink-0" data-astro-cid-u6gw6vf2>Sesión:</span> <div class="flex gap-1" data-astro-cid-u6gw6vf2> <button class="size-btn" data-size="10" data-astro-cid-u6gw6vf2>10</button> <button class="size-btn active" data-size="20" data-astro-cid-u6gw6vf2>20</button> <button class="size-btn" data-size="50" data-astro-cid-u6gw6vf2>50</button> <button class="size-btn" data-size="0" data-astro-cid-u6gw6vf2>∞</button> </div> </div> <!-- ── PRACTICE VIEW ─────────────────────────────────────────────────── --> <div id="practice-view" class="flex flex-col gap-5" data-astro-cid-u6gw6vf2> <!-- Type badge + SRS badge + counter --> <div class="flex justify-between items-center" data-astro-cid-u6gw6vf2> <div class="flex gap-1.5" data-astro-cid-u6gw6vf2> <span id="type-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-stone-100 text-stone-500 border border-stone-200" data-astro-cid-u6gw6vf2></span> <span id="srs-badge" class="text-xs font-medium px-2 py-0.5 rounded-full border" data-astro-cid-u6gw6vf2></span> </div> <span class="text-xs text-stone-400" data-astro-cid-u6gw6vf2> <span id="current-index" data-astro-cid-u6gw6vf2>1</span> / <span id="total-count" data-astro-cid-u6gw6vf2>1</span> </span> </div> <!-- Prompt --> <div class="text-center py-6 min-h-[9rem] flex flex-col items-center justify-center gap-3" data-astro-cid-u6gw6vf2> <span id="prompt-text" data-astro-cid-u6gw6vf2></span> <span id="prompt-hint" class="text-xs text-stone-400 tracking-wide uppercase" data-astro-cid-u6gw6vf2></span> <button id="btn-audio" aria-label="Escuchar pronunciación" class="mt-1 w-8 h-8 rounded-full border border-stone-200 bg-stone-50 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors flex items-center justify-center text-sm leading-none" data-astro-cid-u6gw6vf2>🔊</button> </div> <!-- Pinyin / meaning reveals --> <div class="flex flex-col gap-1 text-center min-h-[3.25rem]" data-astro-cid-u6gw6vf2> <p class="h-6" data-astro-cid-u6gw6vf2><span id="pinyin-text" class="text-base italic text-red-700   invisible" data-astro-cid-u6gw6vf2></span></p> <p class="h-6" data-astro-cid-u6gw6vf2><span id="meaning-text" class="text-sm        text-emerald-700 invisible" data-astro-cid-u6gw6vf2></span></p> </div> <!-- Input --> <input id="answer-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="Tu respuesta" class="w-full px-4 py-3 rounded-lg border border-stone-200 bg-stone-50 text-stone-900 placeholder-stone-300 text-base outline-none focus:border-stone-500 transition-colors" data-astro-cid-u6gw6vf2> <!-- Result banner (words, shown after auto-check) --> <div id="result-banner" class="hidden rounded-lg px-4 py-3 text-sm text-center" data-astro-cid-u6gw6vf2> <p id="result-line" class="font-semibold" data-astro-cid-u6gw6vf2></p> <p id="correct-answer" class="mt-0.5 text-stone-500" data-astro-cid-u6gw6vf2></p> </div> <!-- Reveal buttons --> <div class="flex gap-2" data-astro-cid-u6gw6vf2> <button id="btn-pinyin" class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors" data-astro-cid-u6gw6vf2>Pinyin</button> <button id="btn-meaning" class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors" data-astro-cid-u6gw6vf2>Significado</button> </div> <!-- Phase: answering --> <div id="row-check" data-astro-cid-u6gw6vf2> <button id="btn-check" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors" data-astro-cid-u6gw6vf2>
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-j7pv25f6> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>汉语练习 · HSK1</title><link rel="stylesheet" href="/_astro/index.Dgrzk7ok.css"><script type="module">const n=document.querySelectorAll(".nav-btn"),o=document.querySelectorAll(".tab-content");n.forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.tab;n.forEach(a=>a.classList.remove("active")),e.classList.add("active"),o.forEach(a=>{a.classList.toggle("active",a.id===`tab-${t}`)})})});const c="hanyu-streak-v1";function l(){try{return JSON.parse(localStorage.getItem(c)||'{"count":0,"lastDate":""}')}catch{return{count:0,lastDate:""}}}function r(){const e=new Date().toISOString().slice(0,10),t=l(),a=new Date(Date.now()-864e5).toISOString().slice(0,10);return t.lastDate===e||(t.lastDate===a?(t.count+=1,t.lastDate=e):(t.lastDate,t.count=1,t.lastDate=e)),localStorage.setItem(c,JSON.stringify(t)),t.count}const i=r(),s=document.getElementById("streak-count");s&&(s.textContent=String(i));
+</script></head> <body class="min-h-dvh bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col text-white" data-astro-cid-j7pv25f6> <!-- Header --> <header class="flex items-center justify-between px-4 py-3 border-b border-white/10 backdrop-blur-sm sticky top-0 z-10 bg-slate-900/60" data-astro-cid-j7pv25f6> <div class="flex items-center gap-2" data-astro-cid-j7pv25f6> <span class="text-2xl font-bold tracking-tight" style="font-family: 'PingFang SC', 'Noto Sans SC', sans-serif;" data-astro-cid-j7pv25f6>汉语练习</span> <span class="text-xs text-indigo-300 font-medium bg-indigo-900/50 px-2 py-0.5 rounded-full border border-indigo-700/50" data-astro-cid-j7pv25f6>HSK1</span> </div> <div id="streak-badge" class="flex items-center gap-1.5 bg-amber-500/20 border border-amber-500/30 rounded-full px-3 py-1" data-astro-cid-j7pv25f6> <span class="text-base" data-astro-cid-j7pv25f6>🔥</span> <span id="streak-count" class="text-sm font-bold text-amber-300" data-astro-cid-j7pv25f6>0</span> <span class="text-xs text-amber-400/80" data-astro-cid-j7pv25f6>días</span> </div> </header> <!-- Content area --> <main class="flex-1 overflow-y-auto flex flex-col" data-astro-cid-j7pv25f6> <div id="tab-vocab" class="tab-content active" data-astro-cid-j7pv25f6> <div id="pc-root" class="w-full flex flex-col gap-3" data-astro-cid-u6gw6vf2> <!-- ── MOBILE: settings toggle ── --> <div class="lg:hidden flex justify-end" data-astro-cid-u6gw6vf2> <button id="pc-settings-toggle" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors" data-astro-cid-u6gw6vf2>
+⚙️ <span data-astro-cid-u6gw6vf2>Ajustes</span> </button> </div> <!-- ── MOBILE: settings panel (slide-down) ── --> <div id="pc-settings-panel" class="lg:hidden overflow-hidden" style="max-height:0; transition:max-height 0.25s ease, opacity 0.2s ease; opacity:0" data-astro-cid-u6gw6vf2> <div class="bg-white/5 border border-white/10 rounded-2xl p-4 mb-1 grid grid-cols-2 gap-4" data-astro-cid-u6gw6vf2> <div class="flex flex-col gap-2" data-astro-cid-u6gw6vf2> <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-u6gw6vf2>Tema</span> <div class="relative" data-astro-cid-u6gw6vf2> <select id="tema-mob" class="w-full px-3 py-2 pr-7 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none focus:border-indigo-500 appearance-none cursor-pointer" data-astro-cid-u6gw6vf2> <option value="all" data-astro-cid-u6gw6vf2>Todos</option> <option value="tema10" data-astro-cid-u6gw6vf2>Tema 10</option><option value="tema11" data-astro-cid-u6gw6vf2>Tema 11</option><option value="tema2" data-astro-cid-u6gw6vf2>Tema 2</option><option value="tema3" data-astro-cid-u6gw6vf2>Tema 3</option><option value="tema4" data-astro-cid-u6gw6vf2>Tema 4</option><option value="tema5" data-astro-cid-u6gw6vf2>Tema 5</option><option value="tema6" data-astro-cid-u6gw6vf2>Tema 6</option><option value="tema7" data-astro-cid-u6gw6vf2>Tema 7</option><option value="tema8" data-astro-cid-u6gw6vf2>Tema 8</option><option value="tema9" data-astro-cid-u6gw6vf2>Tema 9</option> </select> <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" data-astro-cid-u6gw6vf2>▾</span> </div> </div> <div class="flex flex-col gap-2" data-astro-cid-u6gw6vf2> <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-u6gw6vf2>Dirección</span> <div class="flex flex-col gap-1" data-astro-cid-u6gw6vf2> <button class="dir-btn active text-left" data-dir="random" data-astro-cid-u6gw6vf2>🔀 Aleat.</button> <button class="dir-btn text-left" data-dir="zh-to-es" data-astro-cid-u6gw6vf2>中 → ES</button> <button class="dir-btn text-left" data-dir="es-to-zh" data-astro-cid-u6gw6vf2>ES → 中</button> </div> </div> </div> </div> <!-- ── 3-COLUMN GRID (desktop) / single col (mobile) ── --> <div class="lg:grid lg:grid-cols-[208px_1fr_208px] lg:gap-5 lg:items-start" data-astro-cid-u6gw6vf2> <!-- Col 1: sidebar (desktop only) --> <aside class="hidden lg:flex flex-col gap-4" data-astro-cid-u6gw6vf2> <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2" data-astro-cid-u6gw6vf2> <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-u6gw6vf2>Tema</span> <div class="relative" data-astro-cid-u6gw6vf2> <select id="tema-desk" class="w-full px-3 py-2 pr-8 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none focus:border-indigo-500 appearance-none cursor-pointer" data-astro-cid-u6gw6vf2> <option value="all" data-astro-cid-u6gw6vf2>Todos</option> <option value="tema10" data-astro-cid-u6gw6vf2>Tema 10</option><option value="tema11" data-astro-cid-u6gw6vf2>Tema 11</option><option value="tema2" data-astro-cid-u6gw6vf2>Tema 2</option><option value="tema3" data-astro-cid-u6gw6vf2>Tema 3</option><option value="tema4" data-astro-cid-u6gw6vf2>Tema 4</option><option value="tema5" data-astro-cid-u6gw6vf2>Tema 5</option><option value="tema6" data-astro-cid-u6gw6vf2>Tema 6</option><option value="tema7" data-astro-cid-u6gw6vf2>Tema 7</option><option value="tema8" data-astro-cid-u6gw6vf2>Tema 8</option><option value="tema9" data-astro-cid-u6gw6vf2>Tema 9</option> </select> <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" data-astro-cid-u6gw6vf2>▾</span> </div> </div> <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2" data-astro-cid-u6gw6vf2> <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-u6gw6vf2>Dirección</span> <div class="flex flex-col gap-1.5" data-astro-cid-u6gw6vf2> <button class="dir-btn active" data-dir="random" data-astro-cid-u6gw6vf2>🔀 Aleatorio</button> <button class="dir-btn" data-dir="zh-to-es" data-astro-cid-u6gw6vf2>中文 → Español</button> <button class="dir-btn" data-dir="es-to-zh" data-astro-cid-u6gw6vf2>Español → 中 / Pīn</button> </div> </div> <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-3" data-astro-cid-u6gw6vf2> <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-u6gw6vf2>Progreso SRS</h3> <div id="srs-counts" class="flex flex-col gap-1.5 text-xs" data-astro-cid-u6gw6vf2></div> </div> </aside> <!-- Col 2: THE CARD — always centered --> <div class="flex flex-col items-center gap-3" data-astro-cid-u6gw6vf2> <!-- Session progress bar --> <div id="session-progress" class="w-full max-w-[520px]" data-astro-cid-u6gw6vf2> <div class="flex justify-between items-center mb-1.5 text-xs" data-astro-cid-u6gw6vf2> <span class="text-slate-400" data-astro-cid-u6gw6vf2><span id="session-pos" data-astro-cid-u6gw6vf2>0</span> / <span id="session-total" data-astro-cid-u6gw6vf2>0</span></span> <span id="session-accuracy-text" class="font-semibold" data-astro-cid-u6gw6vf2></span> </div> <div class="h-1.5 bg-white/10 rounded-full overflow-hidden" data-astro-cid-u6gw6vf2> <div id="session-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-500" style="width:0%" data-astro-cid-u6gw6vf2></div> </div> </div> <div id="pc-card" class="w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-5" data-astro-cid-u6gw6vf2> <div class="flex items-center gap-2 flex-wrap" data-astro-cid-u6gw6vf2> <span id="type-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/10" data-astro-cid-u6gw6vf2></span> <span id="srs-badge" class="text-xs font-medium px-2 py-0.5 rounded-full border" data-astro-cid-u6gw6vf2></span> <span id="extra-badge" class="hidden text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30" data-astro-cid-u6gw6vf2>extra</span> </div> <div class="text-center py-8 min-h-[9rem] flex flex-col items-center justify-center gap-3" data-astro-cid-u6gw6vf2> <span id="prompt-text" data-astro-cid-u6gw6vf2></span> <span id="prompt-hint" class="text-xs text-slate-400 tracking-wide uppercase" data-astro-cid-u6gw6vf2></span> </div> <div class="flex flex-col gap-1 text-center min-h-[3.25rem]" data-astro-cid-u6gw6vf2> <p class="h-6" data-astro-cid-u6gw6vf2><span id="pinyin-text" class="text-base italic text-indigo-300 invisible" data-astro-cid-u6gw6vf2></span></p> <p class="h-6" data-astro-cid-u6gw6vf2><span id="meaning-text" class="text-sm text-emerald-300 invisible" data-astro-cid-u6gw6vf2></span></p> </div> <input id="answer-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="Escribe tu respuesta…" class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 text-base outline-none focus:border-indigo-500 transition-colors" data-astro-cid-u6gw6vf2> <div id="result-banner" class="hidden rounded-xl px-4 py-3 text-sm text-center" data-astro-cid-u6gw6vf2> <p id="result-line" class="font-semibold" data-astro-cid-u6gw6vf2></p> <p id="correct-answer" class="mt-0.5 text-slate-400" data-astro-cid-u6gw6vf2></p> </div> <div class="flex gap-2" data-astro-cid-u6gw6vf2> <button id="btn-pinyin" class="btn-reveal flex-1 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors" data-astro-cid-u6gw6vf2>Pinyin</button> <button id="btn-meaning" class="btn-reveal flex-1 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors" data-astro-cid-u6gw6vf2>Significado</button> </div> <div id="row-check" data-astro-cid-u6gw6vf2> <button id="btn-check" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors" data-astro-cid-u6gw6vf2>
 Comprobar →
-</button> </div> <!-- Phase: word checked → next --> <div id="row-next" class="hidden" data-astro-cid-u6gw6vf2> <button id="btn-next" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors" data-astro-cid-u6gw6vf2>
+</button> </div> <div id="row-next" class="hidden" data-astro-cid-u6gw6vf2> <button id="btn-next" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors" data-astro-cid-u6gw6vf2>
 Siguiente →
-</button> </div> <!-- Phase: phrase self-assess --> <div id="row-selfassess" class="hidden flex gap-2" data-astro-cid-u6gw6vf2> <button id="btn-knew" class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors" data-astro-cid-u6gw6vf2>✓ Lo sabía</button> <button id="btn-didnt" class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-red-500    text-white hover:bg-red-600    transition-colors" data-astro-cid-u6gw6vf2>✗ No lo sabía</button> </div> </div> <!-- ── SUMMARY VIEW ───────────────────────────────────────────────────── --> <div id="summary-view" class="hidden flex flex-col gap-5 py-2" data-astro-cid-u6gw6vf2> <div class="text-center" data-astro-cid-u6gw6vf2> <p class="text-5xl font-bold text-stone-900" id="summary-pct" data-astro-cid-u6gw6vf2>—</p> <p class="text-sm text-stone-400 mt-1" data-astro-cid-u6gw6vf2>de acierto esta sesión</p> </div> <div class="grid grid-cols-2 gap-3" data-astro-cid-u6gw6vf2> <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center" data-astro-cid-u6gw6vf2> <p class="text-2xl font-bold text-emerald-700" id="summary-correct" data-astro-cid-u6gw6vf2>0</p> <p class="text-xs text-emerald-600 mt-0.5" data-astro-cid-u6gw6vf2>correctas</p> </div> <div class="bg-red-50 border border-red-100 rounded-xl p-4 text-center" data-astro-cid-u6gw6vf2> <p class="text-2xl font-bold text-red-700" id="summary-wrong" data-astro-cid-u6gw6vf2>0</p> <p class="text-xs text-red-600 mt-0.5" data-astro-cid-u6gw6vf2>falladas</p> </div> </div> <!-- SRS breakdown --> <div class="bg-stone-50 border border-stone-100 rounded-xl p-4" data-astro-cid-u6gw6vf2> <p class="text-xs text-stone-400 font-medium uppercase tracking-wide mb-3" data-astro-cid-u6gw6vf2>Progreso total</p> <div class="flex gap-2 text-center text-xs text-stone-500" data-astro-cid-u6gw6vf2> <div class="flex-1 bg-white border border-stone-200 rounded-lg py-2.5" data-astro-cid-u6gw6vf2> <strong id="srs-count-0" class="block text-lg text-stone-700 font-bold" data-astro-cid-u6gw6vf2>0</strong>nuevas
-</div> <div class="flex-1 bg-amber-50 border border-amber-100 rounded-lg py-2.5" data-astro-cid-u6gw6vf2> <strong id="srs-count-1" class="block text-lg text-amber-700 font-bold" data-astro-cid-u6gw6vf2>0</strong>aprendiendo
-</div> <div class="flex-1 bg-emerald-50 border border-emerald-100 rounded-lg py-2.5" data-astro-cid-u6gw6vf2> <strong id="srs-count-2" class="block text-lg text-emerald-700 font-bold" data-astro-cid-u6gw6vf2>0</strong>dominadas
-</div> </div> </div> <div class="flex flex-col gap-2" data-astro-cid-u6gw6vf2> <button id="btn-review-mistakes" class="hidden w-full py-2.5 rounded-lg text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors" data-astro-cid-u6gw6vf2></button> <button id="btn-new-session" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors" data-astro-cid-u6gw6vf2>Nueva sesión</button> </div> </div> </div>  <script>(function(){const serialized = "[{\"type\":\"word\",\"chinese\":\"我\",\"pinyin\":\"wǒ\",\"meaning\":\"yo\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"你\",\"pinyin\":\"nǐ\",\"meaning\":\"tú\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"他\",\"pinyin\":\"tā\",\"meaning\":\"él\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"她\",\"pinyin\":\"tā\",\"meaning\":\"ella\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"好\",\"pinyin\":\"hǎo\",\"meaning\":\"bien / bueno\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"吗\",\"pinyin\":\"ma\",\"meaning\":\"partícula interrogativa\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"呢\",\"pinyin\":\"ne\",\"meaning\":\"partícula interrogativa\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"再见\",\"pinyin\":\"zàijiàn\",\"meaning\":\"adiós\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"叫\",\"pinyin\":\"jiào\",\"meaning\":\"llamarse\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"什么\",\"pinyin\":\"shénme\",\"meaning\":\"qué\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"名字\",\"pinyin\":\"míngzi\",\"meaning\":\"nombre\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"很\",\"pinyin\":\"hěn\",\"meaning\":\"muy\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"谢谢\",\"pinyin\":\"xièxiè\",\"meaning\":\"gracias\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"不客气\",\"pinyin\":\"búkèqi\",\"meaning\":\"de nada\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"对不起\",\"pinyin\":\"duìbuqǐ\",\"meaning\":\"perdón / lo siento\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"没关系\",\"pinyin\":\"méiguānxi\",\"meaning\":\"no pasa nada\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"姓\",\"pinyin\":\"xìng\",\"meaning\":\"apellido / apellidarse\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"还可以\",\"pinyin\":\"hái kěyǐ\",\"meaning\":\"no está mal\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"马马虎虎\",\"pinyin\":\"mǎmǎhǔhǔ\",\"meaning\":\"no muy bien\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"认识\",\"pinyin\":\"rènshi\",\"meaning\":\"conocer\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"高兴\",\"pinyin\":\"gāoxìng\",\"meaning\":\"contento / alegre\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"怎么样\",\"pinyin\":\"zěnmeyàng\",\"meaning\":\"cómo estás / qué tal\",\"tags\":[\"tema2\"]},{\"type\":\"phrase\",\"chinese\":\"认识你很高兴。\",\"pinyin\":\"rènshi nǐ hěn gāoxìng.\",\"meaning\":\"mucho gusto en conocerte.\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"是\",\"pinyin\":\"shì\",\"meaning\":\"ser\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"哪\",\"pinyin\":\"nǎ\",\"meaning\":\"cuál / qué\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"人\",\"pinyin\":\"rén\",\"meaning\":\"persona\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"和\",\"pinyin\":\"hé\",\"meaning\":\"y\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"会\",\"pinyin\":\"huì\",\"meaning\":\"saber / poder\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"说\",\"pinyin\":\"shuō\",\"meaning\":\"hablar / decir\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"中国\",\"pinyin\":\"Zhōngguó\",\"meaning\":\"China\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"汉语\",\"pinyin\":\"hànyǔ\",\"meaning\":\"idioma chino\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"不\",\"pinyin\":\"bù\",\"meaning\":\"no\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"一点儿\",\"pinyin\":\"yīdiǎnr\",\"meaning\":\"un poco\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"国\",\"pinyin\":\"guó\",\"meaning\":\"país\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"你好。你怎么样？\",\"pinyin\":\"nǐ hǎo. nǐ zěnmeyàng?\",\"meaning\":\"hola. ¿cómo estás?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我很好，你呢？\",\"pinyin\":\"wǒ hěn hǎo, nǐ ne?\",\"meaning\":\"estoy muy bien, ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我还可以。你叫什么名字？\",\"pinyin\":\"wǒ hái kěyǐ. nǐ jiào shénme míngzi?\",\"meaning\":\"estoy más o menos. ¿cómo te llamas?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我叫李东东。你呢？\",\"pinyin\":\"wǒ jiào Lǐ Dōngdōng. nǐ ne?\",\"meaning\":\"me llamo Li Dongdong. ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"你姓什么？\",\"pinyin\":\"nǐ xìng shénme?\",\"meaning\":\"¿cuál es tu apellido?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我姓陈。\",\"pinyin\":\"wǒ xìng Chén.\",\"meaning\":\"mi apellido es Chen.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我也很高兴认识你。你是哪国人？\",\"pinyin\":\"wǒ yě hěn gāoxìng rènshi nǐ. nǐ shì nǎ guó rén?\",\"meaning\":\"también estoy encantado de conocerte. ¿de qué país eres?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我是中国人。你呢？\",\"pinyin\":\"wǒ shì Zhōngguó rén. nǐ ne?\",\"meaning\":\"soy chino. ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我是西班牙人。你会说西班牙语吗？\",\"pinyin\":\"wǒ shì Xībānyá rén. nǐ huì shuō Xībānyáyǔ ma?\",\"meaning\":\"soy español. ¿hablas español?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"对不起，我不会说西班牙语。\",\"pinyin\":\"duìbuqǐ, wǒ bú huì shuō Xībānyáyǔ.\",\"meaning\":\"lo siento, no hablo español.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我会说英语，你也会说吗？\",\"pinyin\":\"wǒ huì shuō Yīngyǔ, nǐ yě huì shuō ma?\",\"meaning\":\"hablo inglés, ¿tú también hablas?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我们说英语，好吗？\",\"pinyin\":\"wǒmen shuō Yīngyǔ, hǎo ma?\",\"meaning\":\"hablamos en inglés, ¿de acuerdo?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"不，我们说汉语好。\",\"pinyin\":\"bù, wǒmen shuō Hànyǔ hǎo.\",\"meaning\":\"no, mejor hablamos en chino.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我也好，我不认识她。\",\"pinyin\":\"wǒ yě hǎo, wǒ bù rènshi tā.\",\"meaning\":\"también estoy bien, no la conozco.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"不认识吗？她叫小燕。\",\"pinyin\":\"bù rènshi ma? tā jiào Xiǎoyàn.\",\"meaning\":\"¿no la conoces? se llama Xiaoyan.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"你是哪国人？\",\"pinyin\":\"nǐ shì nǎ guó rén?\",\"meaning\":\"¿de qué país eres?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我是西班牙人，你呢？\",\"pinyin\":\"wǒ shì Xībānyá rén, nǐ ne?\",\"meaning\":\"soy español, ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"你会说英语吗？\",\"pinyin\":\"nǐ huì shuō Yīngyǔ ma?\",\"meaning\":\"¿hablas inglés?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我不会说英语，我会说汉语，日语和一点法语，你呢？\",\"pinyin\":\"wǒ bú huì shuō Yīngyǔ, wǒ huì shuō Hànyǔ, Rìyǔ hé yīdiǎn Fǎyǔ, nǐ ne?\",\"meaning\":\"no hablo inglés, hablo chino, japonés y un poco de francés. ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我会说汉语，西班牙语和英语。\",\"pinyin\":\"wǒ huì shuō Hànyǔ, Xībānyáyǔ hé Yīngyǔ.\",\"meaning\":\"hablo chino, español e inglés.\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"谁\",\"pinyin\":\"shéi\",\"meaning\":\"quién\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"写\",\"pinyin\":\"xiě\",\"meaning\":\"escribir\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"请\",\"pinyin\":\"qǐng\",\"meaning\":\"por favor\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"字\",\"pinyin\":\"zì\",\"meaning\":\"carácter chino\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"朋友\",\"pinyin\":\"péngyou\",\"meaning\":\"amigo / amiga\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"怎么\",\"pinyin\":\"zěnme\",\"meaning\":\"cómo\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"这\",\"pinyin\":\"zhè\",\"meaning\":\"este / esto\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"那\",\"pinyin\":\"nà\",\"meaning\":\"aquel / eso\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"做\",\"pinyin\":\"zuò\",\"meaning\":\"hacer\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"的\",\"pinyin\":\"de\",\"meaning\":\"partícula posesiva\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"工作\",\"pinyin\":\"gōngzuò\",\"meaning\":\"trabajo / trabajar\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"在\",\"pinyin\":\"zài\",\"meaning\":\"en / estar en\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"哪儿\",\"pinyin\":\"nǎr\",\"meaning\":\"dónde\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"住\",\"pinyin\":\"zhù\",\"meaning\":\"vivir / residir\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"北京\",\"pinyin\":\"Běijīng\",\"meaning\":\"Pekín\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"号\",\"pinyin\":\"hào\",\"meaning\":\"número\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"老师\",\"pinyin\":\"lǎoshī\",\"meaning\":\"profesor\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"学校\",\"pinyin\":\"xuéxiào\",\"meaning\":\"escuela / colegio\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"医生\",\"pinyin\":\"yīshēng\",\"meaning\":\"médico\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"医院\",\"pinyin\":\"yīyuàn\",\"meaning\":\"hospital\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"问\",\"pinyin\":\"wèn\",\"meaning\":\"preguntar\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"也\",\"pinyin\":\"yě\",\"meaning\":\"también\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"汉字\",\"pinyin\":\"hànzì\",\"meaning\":\"caracteres chinos\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"路\",\"pinyin\":\"lù\",\"meaning\":\"calle\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"您\",\"pinyin\":\"nín\",\"meaning\":\"usted\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"公司\",\"pinyin\":\"gōngsī\",\"meaning\":\"empresa / compañía\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"学生\",\"pinyin\":\"xuéshēng\",\"meaning\":\"estudiante\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"律师\",\"pinyin\":\"lǜshī\",\"meaning\":\"abogado\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"零\",\"pinyin\":\"líng\",\"meaning\":\"cero / 0\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"一\",\"pinyin\":\"yī\",\"meaning\":\"uno / 1\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"二\",\"pinyin\":\"èr\",\"meaning\":\"dos / 2\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"三\",\"pinyin\":\"sān\",\"meaning\":\"tres / 3\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"四\",\"pinyin\":\"sì\",\"meaning\":\"cuatro / 4\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"五\",\"pinyin\":\"wǔ\",\"meaning\":\"cinco / 5\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"六\",\"pinyin\":\"liù\",\"meaning\":\"seis / 6\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"七\",\"pinyin\":\"qī\",\"meaning\":\"siete / 7\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"八\",\"pinyin\":\"bā\",\"meaning\":\"ocho / 8\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"九\",\"pinyin\":\"jiǔ\",\"meaning\":\"nueve / 9\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"十\",\"pinyin\":\"shí\",\"meaning\":\"diez / 10\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"你是谁？\",\"pinyin\":\"nǐ shì shéi?\",\"meaning\":\"¿quién eres?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我是老师。\",\"pinyin\":\"wǒ shì lǎoshī.\",\"meaning\":\"soy profesor.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"他是老师的朋友。\",\"pinyin\":\"tā shì lǎoshī de péngyou.\",\"meaning\":\"él es el amigo del profesor.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"这是我写的汉字。\",\"pinyin\":\"zhè shì wǒ xiě de hànzì.\",\"meaning\":\"esto es el carácter que escribí.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"那个人做什么工作？\",\"pinyin\":\"nàgè rén zuò shénme gōngzuò?\",\"meaning\":\"¿a qué se dedica esa persona?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"你住在哪儿？\",\"pinyin\":\"nǐ zhù zài nǎr?\",\"meaning\":\"¿dónde vives?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"老师在学校工作。\",\"pinyin\":\"lǎoshī zài xuéxiào gōngzuò.\",\"meaning\":\"el profesor trabaja en el colegio.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我在公司工作。\",\"pinyin\":\"wǒ zài gōngsī gōngzuò.\",\"meaning\":\"trabajo en la empresa.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"医生在医院工作。\",\"pinyin\":\"yīshēng zài yīyuàn gōngzuò.\",\"meaning\":\"el médico trabaja en el hospital.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我在家。\",\"pinyin\":\"wǒ zài jiā.\",\"meaning\":\"estoy en casa.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我在家学习。\",\"pinyin\":\"wǒ zài jiā xuéxí.\",\"meaning\":\"estudio en casa.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我在学习。\",\"pinyin\":\"wǒ zài xuéxí.\",\"meaning\":\"estoy estudiando.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"律师在哪儿？\",\"pinyin\":\"lǜshī zài nǎr?\",\"meaning\":\"¿dónde está el abogado?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"律师在医院。\",\"pinyin\":\"lǜshī zài yīyuàn.\",\"meaning\":\"el abogado está en el hospital.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我是汉语学生。你呢？\",\"pinyin\":\"wǒ shì Hànyǔ xuéshēng. nǐ ne?\",\"meaning\":\"soy estudiante de chino. ¿y tú?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"你会写汉字吗？\",\"pinyin\":\"nǐ huì xiě hànzì ma?\",\"meaning\":\"¿sabes escribir caracteres chinos?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我会一点儿。\",\"pinyin\":\"wǒ huì yīdiǎnr.\",\"meaning\":\"sé un poco.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"请问，这个字怎么写？\",\"pinyin\":\"qǐngwèn, zhège zì zěnme xiě?\",\"meaning\":\"perdona, ¿cómo se escribe este carácter?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"对不起，这个字我不会写。\",\"pinyin\":\"duìbuqǐ, zhège zì wǒ bú huì xiě.\",\"meaning\":\"lo siento, no sé escribir este carácter.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"那个是我的朋友。\",\"pinyin\":\"nàgè shì wǒ de péngyou.\",\"meaning\":\"ese es mi amigo.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"他做什么工作？\",\"pinyin\":\"tā zuò shénme gōngzuò?\",\"meaning\":\"¿a qué se dedica?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"他在哪儿工作？\",\"pinyin\":\"tā zài nǎr gōngzuò?\",\"meaning\":\"¿dónde trabaja?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"他在医院工作。\",\"pinyin\":\"tā zài yīyuàn gōngzuò.\",\"meaning\":\"trabaja en el hospital.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"王老师您住在哪儿？\",\"pinyin\":\"Wáng lǎoshī nín zhù zài nǎr?\",\"meaning\":\"maestro Wang, ¿dónde vive usted?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我住在北京，在云南路68号。\",\"pinyin\":\"wǒ zhù zài Běijīng, zài Yúnnán lù 68 hào.\",\"meaning\":\"vivo en Pekín, en la calle Yunnan número 68.\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"家\",\"pinyin\":\"jiā\",\"meaning\":\"casa / hogar\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"有\",\"pinyin\":\"yǒu\",\"meaning\":\"haber / tener\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"几\",\"pinyin\":\"jǐ\",\"meaning\":\"cuántos (menos de 10)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"多\",\"pinyin\":\"duō\",\"meaning\":\"mucho / más\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"少\",\"pinyin\":\"shǎo\",\"meaning\":\"poco / menos\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"多少\",\"pinyin\":\"duōshǎo\",\"meaning\":\"cuánto / cuántos (más de 10)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"儿子\",\"pinyin\":\"érzi\",\"meaning\":\"hijo\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"女儿\",\"pinyin\":\"nǚ'ér\",\"meaning\":\"hija\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"小\",\"pinyin\":\"xiǎo\",\"meaning\":\"pequeño\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"岁\",\"pinyin\":\"suì\",\"meaning\":\"años de edad\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"了\",\"pinyin\":\"le\",\"meaning\":\"partícula de acción acabada\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"大\",\"pinyin\":\"dà\",\"meaning\":\"grande\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"爸爸\",\"pinyin\":\"bàba\",\"meaning\":\"papá / padre\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"妻子\",\"pinyin\":\"qīzi\",\"meaning\":\"esposa\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"电话\",\"pinyin\":\"diànhuà\",\"meaning\":\"teléfono\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"号码\",\"pinyin\":\"hàomǎ\",\"meaning\":\"número (de teléfono)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"口\",\"pinyin\":\"kǒu\",\"meaning\":\"boca / clasificador de personas\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"您家有几口人？\",\"pinyin\":\"nín jiā yǒu jǐ kǒu rén?\",\"meaning\":\"¿cuántas personas hay en su familia?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"我家有四口人：我妻子，儿子，女儿和我。\",\"pinyin\":\"wǒ jiā yǒu sì kǒu rén: wǒ qīzi, érzi, nǚ'ér hé wǒ.\",\"meaning\":\"mi familia tiene cuatro personas: mi esposa, mi hijo, mi hija y yo.\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"你几岁了？\",\"pinyin\":\"nǐ jǐ suì le?\",\"meaning\":\"¿cuántos años tienes?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"我六岁了。\",\"pinyin\":\"wǒ liù suì le.\",\"meaning\":\"tengo seis años.\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"您多大了？\",\"pinyin\":\"nín duō dà le?\",\"meaning\":\"¿cuántos años tiene usted?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"我三十岁了。\",\"pinyin\":\"wǒ sānshí suì le.\",\"meaning\":\"tengo treinta años.\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"你爸爸在家吗？\",\"pinyin\":\"nǐ bàba zài jiā ma?\",\"meaning\":\"¿está tu papá en casa?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"不在家。\",\"pinyin\":\"bù zài jiā.\",\"meaning\":\"no está en casa.\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"你爸爸的电话号码是多少？\",\"pinyin\":\"nǐ bàba de diànhuà hàomǎ shì duōshǎo?\",\"meaning\":\"¿cuál es el número de teléfono de tu papá?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"这个人是谁？\",\"pinyin\":\"zhège rén shì shéi?\",\"meaning\":\"¿quién es esta persona?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"这是什么？\",\"pinyin\":\"zhè shì shénme?\",\"meaning\":\"¿qué es esto?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"你家有几口人？\",\"pinyin\":\"nǐ jiā yǒu jǐ kǒu rén?\",\"meaning\":\"¿cuántas personas hay en tu familia?\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"月\",\"pinyin\":\"yuè\",\"meaning\":\"mes\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"年\",\"pinyin\":\"nián\",\"meaning\":\"año\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"去\",\"pinyin\":\"qù\",\"meaning\":\"ir\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"学习\",\"pinyin\":\"xuéxí\",\"meaning\":\"estudiar\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"来\",\"pinyin\":\"lái\",\"meaning\":\"venir\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"时候\",\"pinyin\":\"shíhòu\",\"meaning\":\"tiempo / momento\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"昨天\",\"pinyin\":\"zuótiān\",\"meaning\":\"ayer\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"今天\",\"pinyin\":\"jīntiān\",\"meaning\":\"hoy\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"明天\",\"pinyin\":\"míngtiān\",\"meaning\":\"mañana\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"上午\",\"pinyin\":\"shàngwǔ\",\"meaning\":\"por la mañana\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"中午\",\"pinyin\":\"zhōngwǔ\",\"meaning\":\"mediodía\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"下午\",\"pinyin\":\"xiàwǔ\",\"meaning\":\"por la tarde\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"上班\",\"pinyin\":\"shàngbān\",\"meaning\":\"ir a trabajar\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"丈夫\",\"pinyin\":\"zhàngfu\",\"meaning\":\"marido / esposo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"哥哥\",\"pinyin\":\"gēge\",\"meaning\":\"hermano mayor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"弟弟\",\"pinyin\":\"dìdi\",\"meaning\":\"hermano menor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"姐姐\",\"pinyin\":\"jiějie\",\"meaning\":\"hermana mayor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"妹妹\",\"pinyin\":\"mèimei\",\"meaning\":\"hermana menor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"兄弟姐妹\",\"pinyin\":\"xiōngdìjiěmèi\",\"meaning\":\"hermanos (en general)\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"星期\",\"pinyin\":\"xīngqī\",\"meaning\":\"semana\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"星期天\",\"pinyin\":\"xīngqītiān\",\"meaning\":\"domingo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"早上\",\"pinyin\":\"zǎoshang\",\"meaning\":\"por la mañana temprano\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"晚上\",\"pinyin\":\"wǎnshang\",\"meaning\":\"por la noche\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"早\",\"pinyin\":\"zǎo\",\"meaning\":\"temprano\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"晚\",\"pinyin\":\"wǎn\",\"meaning\":\"tarde / noche\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"天\",\"pinyin\":\"tiān\",\"meaning\":\"cielo / día\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"今天是几月几号？\",\"pinyin\":\"jīntiān shì jǐ yuè jǐ hào?\",\"meaning\":\"¿qué fecha es hoy?\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"今天是2026年4月21号。\",\"pinyin\":\"jīntiān shì 2026 nián 4 yuè 21 hào.\",\"meaning\":\"hoy es 21 de abril de 2026.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"你有兄弟姐妹吗？\",\"pinyin\":\"nǐ yǒu xiōngdìjiěmèi ma?\",\"meaning\":\"¿tienes hermanos?\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"我有兄弟姐妹。\",\"pinyin\":\"wǒ yǒu xiōngdìjiěmèi.\",\"meaning\":\"tengo hermanos.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"他会说汉语和一点儿英语。\",\"pinyin\":\"tā huì shuō Hànyǔ hé yīdiǎnr Yīngyǔ.\",\"meaning\":\"habla chino y un poco de inglés.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"他在北京的医院工作。\",\"pinyin\":\"tā zài Běijīng de yīyuàn gōngzuò.\",\"meaning\":\"trabaja en el hospital de Pekín.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"他家有五口人。\",\"pinyin\":\"tā jiā yǒu wǔ kǒu rén.\",\"meaning\":\"su familia tiene cinco personas.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"他的妻子四十八岁了。\",\"pinyin\":\"tā de qīzi sìshíbā suì le.\",\"meaning\":\"su esposa tiene cuarenta y ocho años.\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"个\",\"pinyin\":\"gè\",\"meaning\":\"clasificador general\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"瓶\",\"pinyin\":\"píng\",\"meaning\":\"botella (clasificador)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"杯\",\"pinyin\":\"bēi\",\"meaning\":\"taza / vaso (clasificador)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"水\",\"pinyin\":\"shuǐ\",\"meaning\":\"agua\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"家人\",\"pinyin\":\"jiārén\",\"meaning\":\"familia\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"小朋友\",\"pinyin\":\"xiǎopéngyǒu\",\"meaning\":\"amiguito\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"好朋友\",\"pinyin\":\"hǎopéngyǒu\",\"meaning\":\"mejor amigo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"日\",\"pinyin\":\"rì\",\"meaning\":\"sol / día (tiempo puntual)\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"上\",\"pinyin\":\"shàng\",\"meaning\":\"arriba / subir\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"下\",\"pinyin\":\"xià\",\"meaning\":\"abajo / bajar\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"中\",\"pinyin\":\"zhōng\",\"meaning\":\"medio / centro\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"下班\",\"pinyin\":\"xiàbān\",\"meaning\":\"salir del trabajo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"上学\",\"pinyin\":\"shàngxué\",\"meaning\":\"ir a la escuela\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"下学\",\"pinyin\":\"xiàxué\",\"meaning\":\"salir de la escuela\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"明天是几月几号？\",\"pinyin\":\"míngtiān shì jǐ yuè jǐ hào?\",\"meaning\":\"¿qué fecha es mañana?\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"这个星期天是几月几号？\",\"pinyin\":\"zhège xīngqītiān shì jǐ yuè jǐ hào?\",\"meaning\":\"¿qué fecha es este domingo?\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"我住在中国的时候很高兴。\",\"pinyin\":\"wǒ zhù zài Zhōngguó de shíhou hěn gāoxìng.\",\"meaning\":\"cuando vivía en China estaba muy contento.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"她住在英国的时候不会说西班牙语。\",\"pinyin\":\"tā zhù zài Yīngguó de shíhou bú huì shuō Xībānyáyǔ.\",\"meaning\":\"cuando ella vivía en Inglaterra no sabía hablar español.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"我十五岁的时候不会写汉字。\",\"pinyin\":\"wǒ shíwǔ suì de shíhou bú huì xiě hànzì.\",\"meaning\":\"cuando tenía quince años no sabía escribir caracteres.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"你什么时候上班？\",\"pinyin\":\"nǐ shénme shíhou shàngbān?\",\"meaning\":\"¿cuándo vas a trabajar?\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"现在\",\"pinyin\":\"xiànzài\",\"meaning\":\"ahora\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"几点\",\"pinyin\":\"jǐ diǎn\",\"meaning\":\"¿qué hora?\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"点钟\",\"pinyin\":\"diǎnzhōng\",\"meaning\":\"hora en punto\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"点半\",\"pinyin\":\"diǎnbàn\",\"meaning\":\"hora y media\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"分钟\",\"pinyin\":\"fēnzhōng\",\"meaning\":\"minutos\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"时间\",\"pinyin\":\"shíjiān\",\"meaning\":\"tiempo\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"对\",\"pinyin\":\"duì\",\"meaning\":\"correcto / está bien\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"因为\",\"pinyin\":\"yīnwèi\",\"meaning\":\"porque\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"节日\",\"pinyin\":\"jiérì\",\"meaning\":\"día festivo / feriado\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"看\",\"pinyin\":\"kàn\",\"meaning\":\"mirar / ver\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"电影\",\"pinyin\":\"diànyǐng\",\"meaning\":\"película\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"喜欢\",\"pinyin\":\"xǐhuān\",\"meaning\":\"gustar\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"想\",\"pinyin\":\"xiǎng\",\"meaning\":\"querer / pensar (sin acción inmediata)\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"吃\",\"pinyin\":\"chī\",\"meaning\":\"comer\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"喝\",\"pinyin\":\"hē\",\"meaning\":\"beber\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"爱\",\"pinyin\":\"ài\",\"meaning\":\"amar / encantar\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"知道\",\"pinyin\":\"zhīdào\",\"meaning\":\"saber (un hecho)\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"要\",\"pinyin\":\"yào\",\"meaning\":\"tener que / querer (con intención de actuar)\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"饭\",\"pinyin\":\"fàn\",\"meaning\":\"arroz cocinado / comida\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"米\",\"pinyin\":\"mǐ\",\"meaning\":\"arroz crudo\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"米饭\",\"pinyin\":\"mǐfàn\",\"meaning\":\"arroz cocinado\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"都\",\"pinyin\":\"dōu\",\"meaning\":\"todos / todo\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"还\",\"pinyin\":\"hái\",\"meaning\":\"todavía / más / aún\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"菜\",\"pinyin\":\"cài\",\"meaning\":\"plato de comida / verdura\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"中国菜\",\"pinyin\":\"Zhōngguócài\",\"meaning\":\"comida china\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"面条\",\"pinyin\":\"miàntiáo\",\"meaning\":\"fideos\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"东西\",\"pinyin\":\"dōngxi\",\"meaning\":\"cosas / objetos\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"东\",\"pinyin\":\"dōng\",\"meaning\":\"este (punto cardinal)\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"西\",\"pinyin\":\"xī\",\"meaning\":\"oeste (punto cardinal)\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"喂\",\"pinyin\":\"wéi\",\"meaning\":\"hola / diga (al teléfono)\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"小姐\",\"pinyin\":\"xiǎojiě\",\"meaning\":\"señorita\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"先生\",\"pinyin\":\"xiānsheng\",\"meaning\":\"señor\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"水果\",\"pinyin\":\"shuǐguǒ\",\"meaning\":\"frutas\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"太\",\"pinyin\":\"tài\",\"meaning\":\"demasiado\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"看见\",\"pinyin\":\"kànjiàn\",\"meaning\":\"ver (resultado)\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"见\",\"pinyin\":\"jiàn\",\"meaning\":\"ver / encontrar\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"身体\",\"pinyin\":\"shēntǐ\",\"meaning\":\"cuerpo / salud\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你几点上班？\",\"pinyin\":\"nǐ jǐ diǎn shàngbān?\",\"meaning\":\"¿a qué hora vas al trabajo?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你什么时候下班？\",\"pinyin\":\"nǐ shénme shíhou xiàbān?\",\"meaning\":\"¿cuándo sales del trabajo?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我晚上下班。\",\"pinyin\":\"wǒ wǎnshang xiàbān.\",\"meaning\":\"salgo del trabajo por la noche.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你这个星期怎么样？有时间吗？\",\"pinyin\":\"nǐ zhège xīngqī zěnmeyàng? yǒu shíjiān ma?\",\"meaning\":\"¿cómo estás esta semana? ¿tienes tiempo?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"很好，我有时间。\",\"pinyin\":\"hěn hǎo, wǒ yǒu shíjiān.\",\"meaning\":\"muy bien, tengo tiempo.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你明天几点上班？\",\"pinyin\":\"nǐ míngtiān jǐ diǎn shàngbān?\",\"meaning\":\"¿a qué hora vas al trabajo mañana?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我明天不上班，因为是节日。\",\"pinyin\":\"wǒ míngtiān bú shàngbān, yīnwèi shì jiérì.\",\"meaning\":\"mañana no voy al trabajo porque es festivo.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你喜欢看电影吗？\",\"pinyin\":\"nǐ xǐhuān kàn diànyǐng ma?\",\"meaning\":\"¿te gusta ver películas?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我很喜欢看电影。\",\"pinyin\":\"wǒ hěn xǐhuān kàn diànyǐng.\",\"meaning\":\"me gusta mucho ver películas.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你喜欢的电影叫什么名字？\",\"pinyin\":\"nǐ xǐhuān de diànyǐng jiào shénme míngzi?\",\"meaning\":\"¿cómo se llama la película que te gusta?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你想喝什么？\",\"pinyin\":\"nǐ xiǎng hē shénme?\",\"meaning\":\"¿qué quieres beber?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"她爱吃什么？\",\"pinyin\":\"tā ài chī shénme?\",\"meaning\":\"¿qué le encanta comer a ella?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你知道他的名字吗？\",\"pinyin\":\"nǐ zhīdào tā de míngzi ma?\",\"meaning\":\"¿sabes su nombre?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我要吃饭。\",\"pinyin\":\"wǒ yào chīfàn.\",\"meaning\":\"voy a comer. (tengo que comer)\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我想吃饭。\",\"pinyin\":\"wǒ xiǎng chīfàn.\",\"meaning\":\"quiero comer. (pensamiento, sin acción inmediata)\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我明天要上班。\",\"pinyin\":\"wǒ míngtiān yào shàngbān.\",\"meaning\":\"mañana tengo que trabajar.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你吃饭了吗？\",\"pinyin\":\"nǐ chīfàn le ma?\",\"meaning\":\"¿ya comiste? (también es forma de saludar)\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我们都会说英语。\",\"pinyin\":\"wǒmen dōu huì shuō Yīngyǔ.\",\"meaning\":\"todos nosotros sabemos hablar inglés.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我还想吃。\",\"pinyin\":\"wǒ hái xiǎng chī.\",\"meaning\":\"quiero comer más.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我还没吃。\",\"pinyin\":\"wǒ hái méi chī.\",\"meaning\":\"todavía no he comido.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我还有一个星期。\",\"pinyin\":\"wǒ hái yǒu yí ge xīngqī.\",\"meaning\":\"todavía tengo una semana.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"这个菜太好吃。\",\"pinyin\":\"zhège cài tài hǎochī.\",\"meaning\":\"esta comida está demasiado deliciosa.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"这件衣服太大了。\",\"pinyin\":\"zhè jiàn yīfu tài dà le.\",\"meaning\":\"esta ropa es demasiado grande.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你的身体怎么样？\",\"pinyin\":\"nǐ de shēntǐ zěnmeyàng?\",\"meaning\":\"¿cómo está tu salud?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我的身体好了。\",\"pinyin\":\"wǒ de shēntǐ hǎo le.\",\"meaning\":\"mi salud está mejor.\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"前\",\"pinyin\":\"qián\",\"meaning\":\"delante / antes\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"后\",\"pinyin\":\"hòu\",\"meaning\":\"detrás / después\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"里\",\"pinyin\":\"lǐ\",\"meaning\":\"dentro / interior\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"外\",\"pinyin\":\"wài\",\"meaning\":\"afuera / exterior\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"旁\",\"pinyin\":\"páng\",\"meaning\":\"al lado\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"左\",\"pinyin\":\"zuǒ\",\"meaning\":\"izquierda\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"右\",\"pinyin\":\"yòu\",\"meaning\":\"derecha\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"上面\",\"pinyin\":\"shàngmiàn\",\"meaning\":\"arriba / encima\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"下面\",\"pinyin\":\"xiàmiàn\",\"meaning\":\"abajo / debajo\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"前面\",\"pinyin\":\"qiánmiàn\",\"meaning\":\"delante / enfrente\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"后面\",\"pinyin\":\"hòumiàn\",\"meaning\":\"detrás\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"里面\",\"pinyin\":\"lǐmiàn\",\"meaning\":\"dentro\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"外面\",\"pinyin\":\"wàimiàn\",\"meaning\":\"afuera\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"旁边\",\"pinyin\":\"pángbiān\",\"meaning\":\"al lado\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"左边\",\"pinyin\":\"zuǒbiān\",\"meaning\":\"lado izquierdo\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"右边\",\"pinyin\":\"yòubiān\",\"meaning\":\"lado derecho\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"同学\",\"pinyin\":\"tóngxué\",\"meaning\":\"compañero de estudio\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"电脑\",\"pinyin\":\"diànnǎo\",\"meaning\":\"ordenador\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"电视\",\"pinyin\":\"diànshì\",\"meaning\":\"televisión\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"书\",\"pinyin\":\"shū\",\"meaning\":\"libro\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"书包\",\"pinyin\":\"shūbāo\",\"meaning\":\"mochila\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"笔记本\",\"pinyin\":\"bǐjìběn\",\"meaning\":\"cuaderno\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"铅笔\",\"pinyin\":\"qiānbǐ\",\"meaning\":\"lápiz\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"笔\",\"pinyin\":\"bǐ\",\"meaning\":\"bolígrafo / lapicera\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"杯子\",\"pinyin\":\"bēizi\",\"meaning\":\"vaso / taza\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"桌子\",\"pinyin\":\"zhuōzi\",\"meaning\":\"mesa\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"椅子\",\"pinyin\":\"yǐzi\",\"meaning\":\"silla\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"沙发\",\"pinyin\":\"shāfā\",\"meaning\":\"sofá\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"猫\",\"pinyin\":\"māo\",\"meaning\":\"gato\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"狗\",\"pinyin\":\"gǒu\",\"meaning\":\"perro\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"鸟\",\"pinyin\":\"niǎo\",\"meaning\":\"pájaro\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"鱼\",\"pinyin\":\"yú\",\"meaning\":\"pez / pescado\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"本\",\"pinyin\":\"běn\",\"meaning\":\"clasificador: libros / cuadernos\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"台\",\"pinyin\":\"tái\",\"meaning\":\"clasificador: TV / ordenador\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"只\",\"pinyin\":\"zhī\",\"meaning\":\"clasificador: animales\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"玩\",\"pinyin\":\"wán\",\"meaning\":\"jugar\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"坐\",\"pinyin\":\"zuò\",\"meaning\":\"sentar / coger el transporte\",\"tags\":[\"tema9\"]},{\"type\":\"phrase\",\"chinese\":\"狗在家外面。\",\"pinyin\":\"gǒu zài jiā wàimiàn.\",\"meaning\":\"el perro está fuera de casa.\",\"tags\":[\"tema9\"]},{\"type\":\"phrase\",\"chinese\":\"家外面有一只狗。\",\"pinyin\":\"jiā wàimiàn yǒu yì zhī gǒu.\",\"meaning\":\"fuera de casa hay un perro.\",\"tags\":[\"tema9\"]},{\"type\":\"phrase\",\"chinese\":\"我的同学在老师旁边。\",\"pinyin\":\"wǒ de tóngxué zài lǎoshī pángbiān.\",\"meaning\":\"mi compañero está al lado del profesor.\",\"tags\":[\"tema9\"]},{\"type\":\"phrase\",\"chinese\":\"铅笔在电脑前面。\",\"pinyin\":\"qiānbǐ zài diànnǎo qiánmiàn.\",\"meaning\":\"el lápiz está delante del ordenador.\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"买\",\"pinyin\":\"mǎi\",\"meaning\":\"comprar\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"卖\",\"pinyin\":\"mài\",\"meaning\":\"vender\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"钱\",\"pinyin\":\"qián\",\"meaning\":\"dinero\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"块\",\"pinyin\":\"kuài\",\"meaning\":\"clasificador de moneda / yuan coloquial\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"元\",\"pinyin\":\"yuán\",\"meaning\":\"yuan (¥)\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"两\",\"pinyin\":\"liǎng\",\"meaning\":\"dos (con clasificador)\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"苹果\",\"pinyin\":\"píngguǒ\",\"meaning\":\"manzana\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"衣服\",\"pinyin\":\"yīfu\",\"meaning\":\"ropa\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"件\",\"pinyin\":\"jiàn\",\"meaning\":\"clasificador: prendas de ropa\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"些\",\"pinyin\":\"xiē\",\"meaning\":\"algunos / unos\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"便宜\",\"pinyin\":\"piányì\",\"meaning\":\"barato\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"我想买苹果，苹果多少钱？\",\"pinyin\":\"wǒ xiǎng mǎi píngguǒ, píngguǒ duōshǎo qián?\",\"meaning\":\"quiero comprar manzanas, ¿cuánto cuestan?\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"一个两块，三个五块。\",\"pinyin\":\"yí ge liǎng kuài, sān ge wǔ kuài.\",\"meaning\":\"una vale 2 yuanes, tres valen 5 yuanes.\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"这件衣服多少钱？\",\"pinyin\":\"zhè jiàn yīfu duōshǎo qián?\",\"meaning\":\"¿cuánto vale esta ropa?\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"这件衣服八十块。\",\"pinyin\":\"zhè jiàn yīfu bāshí kuài.\",\"meaning\":\"esta ropa vale ochenta yuanes.\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"那些衣服多少钱？\",\"pinyin\":\"nà xiē yīfu duōshǎo qián?\",\"meaning\":\"¿cuánto cuestan aquellas ropas?\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"我卖一些书。\",\"pinyin\":\"wǒ mài yì xiē shū.\",\"meaning\":\"vendo unos libros.\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"他在卖几台电脑。\",\"pinyin\":\"tā zài mài jǐ tái diànnǎo.\",\"meaning\":\"él está vendiendo unos cuantos ordenadores.\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"便宜一点儿。\",\"pinyin\":\"piányì yì diǎnr.\",\"meaning\":\"un poco más barato.\",\"tags\":[\"tema10\"]}]";
+</button> </div> <div id="row-selfassess" class="hidden flex gap-2" data-astro-cid-u6gw6vf2> <button id="btn-knew" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors" data-astro-cid-u6gw6vf2>✓ Lo sabía</button> <button id="btn-didnt" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors" data-astro-cid-u6gw6vf2>✗ No lo sabía</button> </div> </div> <!-- Session end screen --> <div id="session-end" class="hidden w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-6 flex-col gap-5" data-astro-cid-u6gw6vf2> <div class="text-center py-2" data-astro-cid-u6gw6vf2> <div id="session-end-emoji" class="text-5xl mb-3" data-astro-cid-u6gw6vf2>🎉</div> <h2 id="session-end-title" class="text-xl font-bold text-white" data-astro-cid-u6gw6vf2>Sesión completada</h2> <p id="session-end-subtitle" class="text-slate-400 text-sm mt-1" data-astro-cid-u6gw6vf2></p> </div> <div id="session-stats" class="grid grid-cols-2 gap-3" data-astro-cid-u6gw6vf2></div> <div id="session-leveled" class="hidden flex-col gap-2" data-astro-cid-u6gw6vf2> <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-u6gw6vf2>↑ Subieron de nivel</h3> <div id="session-leveled-list" class="flex flex-wrap gap-1.5" data-astro-cid-u6gw6vf2></div> </div> <div id="session-errors-section" class="hidden flex-col gap-2" data-astro-cid-u6gw6vf2> <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-u6gw6vf2>⚠ Para repasar</h3> <div id="session-errors-list" class="flex flex-wrap gap-1.5" data-astro-cid-u6gw6vf2></div> </div> <div class="flex flex-col gap-2" data-astro-cid-u6gw6vf2> <button id="btn-retry-errors" class="hidden w-full py-3 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors" data-astro-cid-u6gw6vf2>🔁 Repasar errores</button> <button id="btn-new-session" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors" data-astro-cid-u6gw6vf2>▶ Nueva sesión</button> <button id="btn-practice-all" class="w-full py-3 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors" data-astro-cid-u6gw6vf2>Practicar todas (sin SRS)</button> </div> </div> </div> <!-- Col 3: mirror spacer (desktop only) --> <div class="hidden lg:block" data-astro-cid-u6gw6vf2></div> </div> </div>  <script>(function(){const serialized = "[{\"type\":\"word\",\"chinese\":\"我\",\"pinyin\":\"wǒ\",\"meaning\":\"yo\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"你\",\"pinyin\":\"nǐ\",\"meaning\":\"tú\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"他\",\"pinyin\":\"tā\",\"meaning\":\"él\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"她\",\"pinyin\":\"tā\",\"meaning\":\"ella\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"好\",\"pinyin\":\"hǎo\",\"meaning\":\"bien / bueno\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"吗\",\"pinyin\":\"ma\",\"meaning\":\"partícula interrogativa\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"呢\",\"pinyin\":\"ne\",\"meaning\":\"partícula interrogativa\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"再见\",\"pinyin\":\"zàijiàn\",\"meaning\":\"adiós\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"叫\",\"pinyin\":\"jiào\",\"meaning\":\"llamarse\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"什么\",\"pinyin\":\"shénme\",\"meaning\":\"qué\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"名字\",\"pinyin\":\"míngzi\",\"meaning\":\"nombre\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"很\",\"pinyin\":\"hěn\",\"meaning\":\"muy\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"谢谢\",\"pinyin\":\"xièxiè\",\"meaning\":\"gracias\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"不客气\",\"pinyin\":\"búkèqi\",\"meaning\":\"de nada\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"对不起\",\"pinyin\":\"duìbuqǐ\",\"meaning\":\"perdón / lo siento\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"没关系\",\"pinyin\":\"méiguānxi\",\"meaning\":\"no pasa nada\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"姓\",\"pinyin\":\"xìng\",\"meaning\":\"apellido / apellidarse\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"还可以\",\"pinyin\":\"hái kěyǐ\",\"meaning\":\"no está mal\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"马马虎虎\",\"pinyin\":\"mǎmǎhǔhǔ\",\"meaning\":\"no muy bien\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"认识\",\"pinyin\":\"rènshi\",\"meaning\":\"conocer\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"高兴\",\"pinyin\":\"gāoxìng\",\"meaning\":\"contento / alegre\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"怎么样\",\"pinyin\":\"zěnmeyàng\",\"meaning\":\"cómo estás / qué tal\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"是\",\"pinyin\":\"shì\",\"meaning\":\"ser\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"哪\",\"pinyin\":\"nǎ\",\"meaning\":\"cuál / qué\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"人\",\"pinyin\":\"rén\",\"meaning\":\"persona\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"和\",\"pinyin\":\"hé\",\"meaning\":\"y\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"会\",\"pinyin\":\"huì\",\"meaning\":\"saber / poder / partícula de futuro\",\"tags\":[\"tema3\",\"tema11\"]},{\"type\":\"word\",\"chinese\":\"说\",\"pinyin\":\"shuō\",\"meaning\":\"hablar / decir\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"中国\",\"pinyin\":\"Zhōngguó\",\"meaning\":\"China\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"汉语\",\"pinyin\":\"hànyǔ\",\"meaning\":\"idioma chino\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"不\",\"pinyin\":\"bù\",\"meaning\":\"no\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"一点儿\",\"pinyin\":\"yīdiǎnr\",\"meaning\":\"un poco\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"国\",\"pinyin\":\"guó\",\"meaning\":\"país\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"谁\",\"pinyin\":\"shéi\",\"meaning\":\"quién\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"写\",\"pinyin\":\"xiě\",\"meaning\":\"escribir\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"请\",\"pinyin\":\"qǐng\",\"meaning\":\"por favor\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"字\",\"pinyin\":\"zì\",\"meaning\":\"carácter chino\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"朋友\",\"pinyin\":\"péngyou\",\"meaning\":\"amigo / amiga\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"怎么\",\"pinyin\":\"zěnme\",\"meaning\":\"cómo\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"这\",\"pinyin\":\"zhè\",\"meaning\":\"este / esto\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"那\",\"pinyin\":\"nà\",\"meaning\":\"aquel / eso\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"做\",\"pinyin\":\"zuò\",\"meaning\":\"hacer\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"的\",\"pinyin\":\"de\",\"meaning\":\"partícula posesiva\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"工作\",\"pinyin\":\"gōngzuò\",\"meaning\":\"trabajo / trabajar\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"在\",\"pinyin\":\"zài\",\"meaning\":\"en / estar en\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"哪儿\",\"pinyin\":\"nǎr\",\"meaning\":\"dónde\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"住\",\"pinyin\":\"zhù\",\"meaning\":\"vivir / residir\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"北京\",\"pinyin\":\"Běijīng\",\"meaning\":\"Pekín\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"号\",\"pinyin\":\"hào\",\"meaning\":\"número\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"老师\",\"pinyin\":\"lǎoshī\",\"meaning\":\"profesor\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"学校\",\"pinyin\":\"xuéxiào\",\"meaning\":\"escuela / colegio\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"医生\",\"pinyin\":\"yīshēng\",\"meaning\":\"médico\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"医院\",\"pinyin\":\"yīyuàn\",\"meaning\":\"hospital\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"问\",\"pinyin\":\"wèn\",\"meaning\":\"preguntar\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"也\",\"pinyin\":\"yě\",\"meaning\":\"también\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"汉字\",\"pinyin\":\"hànzì\",\"meaning\":\"caracteres chinos\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"路\",\"pinyin\":\"lù\",\"meaning\":\"calle\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"您\",\"pinyin\":\"nín\",\"meaning\":\"usted\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"公司\",\"pinyin\":\"gōngsī\",\"meaning\":\"empresa / compañía\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"学生\",\"pinyin\":\"xuéshēng\",\"meaning\":\"estudiante\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"律师\",\"pinyin\":\"lǜshī\",\"meaning\":\"abogado\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"零\",\"pinyin\":\"líng\",\"meaning\":\"cero / 0\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"一\",\"pinyin\":\"yī\",\"meaning\":\"uno / 1\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"二\",\"pinyin\":\"èr\",\"meaning\":\"dos / 2\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"三\",\"pinyin\":\"sān\",\"meaning\":\"tres / 3\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"四\",\"pinyin\":\"sì\",\"meaning\":\"cuatro / 4\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"五\",\"pinyin\":\"wǔ\",\"meaning\":\"cinco / 5\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"六\",\"pinyin\":\"liù\",\"meaning\":\"seis / 6\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"七\",\"pinyin\":\"qī\",\"meaning\":\"siete / 7\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"八\",\"pinyin\":\"bā\",\"meaning\":\"ocho / 8\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"九\",\"pinyin\":\"jiǔ\",\"meaning\":\"nueve / 9\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"十\",\"pinyin\":\"shí\",\"meaning\":\"diez / 10\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"家\",\"pinyin\":\"jiā\",\"meaning\":\"casa / hogar\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"有\",\"pinyin\":\"yǒu\",\"meaning\":\"haber / tener\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"几\",\"pinyin\":\"jǐ\",\"meaning\":\"cuántos (menos de 10)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"多\",\"pinyin\":\"duō\",\"meaning\":\"mucho / más\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"少\",\"pinyin\":\"shǎo\",\"meaning\":\"poco / menos\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"多少\",\"pinyin\":\"duōshǎo\",\"meaning\":\"cuánto / cuántos (más de 10)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"儿子\",\"pinyin\":\"érzi\",\"meaning\":\"hijo\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"女儿\",\"pinyin\":\"nǚ'ér\",\"meaning\":\"hija\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"小\",\"pinyin\":\"xiǎo\",\"meaning\":\"pequeño\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"岁\",\"pinyin\":\"suì\",\"meaning\":\"años de edad\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"了\",\"pinyin\":\"le\",\"meaning\":\"partícula de acción acabada\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"大\",\"pinyin\":\"dà\",\"meaning\":\"grande\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"爸爸\",\"pinyin\":\"bàba\",\"meaning\":\"papá / padre\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"妻子\",\"pinyin\":\"qīzi\",\"meaning\":\"esposa\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"电话\",\"pinyin\":\"diànhuà\",\"meaning\":\"teléfono\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"号码\",\"pinyin\":\"hàomǎ\",\"meaning\":\"número (de teléfono)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"口\",\"pinyin\":\"kǒu\",\"meaning\":\"boca / clasificador de personas\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"个\",\"pinyin\":\"gè\",\"meaning\":\"clasificador general\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"瓶\",\"pinyin\":\"píng\",\"meaning\":\"botella (clasificador)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"杯\",\"pinyin\":\"bēi\",\"meaning\":\"taza / vaso (clasificador)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"家人\",\"pinyin\":\"jiārén\",\"meaning\":\"familia\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"月\",\"pinyin\":\"yuè\",\"meaning\":\"mes\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"年\",\"pinyin\":\"nián\",\"meaning\":\"año\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"去\",\"pinyin\":\"qù\",\"meaning\":\"ir\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"学习\",\"pinyin\":\"xuéxí\",\"meaning\":\"estudiar\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"来\",\"pinyin\":\"lái\",\"meaning\":\"venir\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"时候\",\"pinyin\":\"shíhòu\",\"meaning\":\"tiempo / momento\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"昨天\",\"pinyin\":\"zuótiān\",\"meaning\":\"ayer\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"今天\",\"pinyin\":\"jīntiān\",\"meaning\":\"hoy\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"明天\",\"pinyin\":\"míngtiān\",\"meaning\":\"mañana\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"上午\",\"pinyin\":\"shàngwǔ\",\"meaning\":\"por la mañana\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"中午\",\"pinyin\":\"zhōngwǔ\",\"meaning\":\"mediodía\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"下午\",\"pinyin\":\"xiàwǔ\",\"meaning\":\"por la tarde\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"上班\",\"pinyin\":\"shàngbān\",\"meaning\":\"ir a trabajar\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"下班\",\"pinyin\":\"xiàbān\",\"meaning\":\"salir del trabajo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"丈夫\",\"pinyin\":\"zhàngfu\",\"meaning\":\"marido / esposo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"哥哥\",\"pinyin\":\"gēge\",\"meaning\":\"hermano mayor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"弟弟\",\"pinyin\":\"dìdi\",\"meaning\":\"hermano menor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"姐姐\",\"pinyin\":\"jiějie\",\"meaning\":\"hermana mayor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"妹妹\",\"pinyin\":\"mèimei\",\"meaning\":\"hermana menor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"兄弟姐妹\",\"pinyin\":\"xiōngdìjiěmèi\",\"meaning\":\"hermanos (en general)\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"星期\",\"pinyin\":\"xīngqī\",\"meaning\":\"semana\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"星期天\",\"pinyin\":\"xīngqītiān\",\"meaning\":\"domingo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"早上\",\"pinyin\":\"zǎoshang\",\"meaning\":\"por la mañana temprano\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"晚上\",\"pinyin\":\"wǎnshang\",\"meaning\":\"por la noche\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"早\",\"pinyin\":\"zǎo\",\"meaning\":\"temprano\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"晚\",\"pinyin\":\"wǎn\",\"meaning\":\"tarde / noche\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"小朋友\",\"pinyin\":\"xiǎopéngyǒu\",\"meaning\":\"amiguito\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"好朋友\",\"pinyin\":\"hǎopéngyǒu\",\"meaning\":\"mejor amigo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"日\",\"pinyin\":\"rì\",\"meaning\":\"sol / día (tiempo puntual)\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"中\",\"pinyin\":\"zhōng\",\"meaning\":\"medio / centro\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"现在\",\"pinyin\":\"xiànzài\",\"meaning\":\"ahora\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"点\",\"pinyin\":\"diǎn\",\"meaning\":\"hora (clasificador)\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"回\",\"pinyin\":\"huí\",\"meaning\":\"volver\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"没有\",\"pinyin\":\"méiyǒu\",\"meaning\":\"no tener / no haber\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"看\",\"pinyin\":\"kàn\",\"meaning\":\"mirar\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"电影\",\"pinyin\":\"diànyǐng\",\"meaning\":\"película\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"能\",\"pinyin\":\"néng\",\"meaning\":\"poder / ser capaz de\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"分钟\",\"pinyin\":\"fēnzhōng\",\"meaning\":\"minuto\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"半\",\"pinyin\":\"bàn\",\"meaning\":\"medio / mitad\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"早上好\",\"pinyin\":\"zǎoshang hǎo\",\"meaning\":\"buenos días\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"钟\",\"pinyin\":\"zhōng\",\"meaning\":\"en punto\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"时间\",\"pinyin\":\"shíjiān\",\"meaning\":\"tiempo\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"上学\",\"pinyin\":\"shàngxué\",\"meaning\":\"ir a la escuela\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"天\",\"pinyin\":\"tiān\",\"meaning\":\"cielo / día\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"想\",\"pinyin\":\"xiǎng\",\"meaning\":\"desear / pensar\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"喝\",\"pinyin\":\"hē\",\"meaning\":\"beber\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"杯子\",\"pinyin\":\"bēizi\",\"meaning\":\"vaso / taza (clasificador)\",\"tags\":[\"tema8\",\"tema9\"]},{\"type\":\"word\",\"chinese\":\"吃\",\"pinyin\":\"chī\",\"meaning\":\"comer\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"茶\",\"pinyin\":\"chá\",\"meaning\":\"té\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"水\",\"pinyin\":\"shuǐ\",\"meaning\":\"agua\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"米饭\",\"pinyin\":\"mǐfàn\",\"meaning\":\"arroz\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"爱\",\"pinyin\":\"ài\",\"meaning\":\"amar / gustar mucho\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"东西\",\"pinyin\":\"dōngxi\",\"meaning\":\"cosa\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"菜\",\"pinyin\":\"cài\",\"meaning\":\"plato de comida / verduras\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"都\",\"pinyin\":\"dōu\",\"meaning\":\"todo / todos\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"喂\",\"pinyin\":\"wèi\",\"meaning\":\"¡Hola! / ¿Diga?\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"小姐\",\"pinyin\":\"xiǎojiě\",\"meaning\":\"señorita\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"水果\",\"pinyin\":\"shuǐguǒ\",\"meaning\":\"fruta\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"看见\",\"pinyin\":\"kànjiàn\",\"meaning\":\"ver\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"先生\",\"pinyin\":\"xiānsheng\",\"meaning\":\"señor\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"太\",\"pinyin\":\"tài\",\"meaning\":\"demasiado\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"好吃\",\"pinyin\":\"hǎochī\",\"meaning\":\"delicioso\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"还\",\"pinyin\":\"hái\",\"meaning\":\"todavía / más aún\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"知道\",\"pinyin\":\"zhīdào\",\"meaning\":\"saber\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"身体\",\"pinyin\":\"shēntǐ\",\"meaning\":\"cuerpo / salud\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"晚上好\",\"pinyin\":\"wǎnshang hǎo\",\"meaning\":\"buenas noches\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"同学\",\"pinyin\":\"tóngxué\",\"meaning\":\"compañero de estudios\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"电脑\",\"pinyin\":\"diànnǎo\",\"meaning\":\"ordenador / computadora\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"里\",\"pinyin\":\"lǐ\",\"meaning\":\"dentro\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"书\",\"pinyin\":\"shū\",\"meaning\":\"libro\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"后面\",\"pinyin\":\"hòumiàn\",\"meaning\":\"detrás\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"前面\",\"pinyin\":\"qiánmiàn\",\"meaning\":\"delante\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"坐\",\"pinyin\":\"zuò\",\"meaning\":\"sentarse\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"桌子\",\"pinyin\":\"zhuōzi\",\"meaning\":\"mesa\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"上\",\"pinyin\":\"shàng\",\"meaning\":\"encima / arriba\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"下\",\"pinyin\":\"xià\",\"meaning\":\"debajo\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"椅子\",\"pinyin\":\"yǐzi\",\"meaning\":\"silla\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"本\",\"pinyin\":\"běn\",\"meaning\":\"clasificador de libros y revistas\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"玩\",\"pinyin\":\"wán\",\"meaning\":\"jugar\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"左边\",\"pinyin\":\"zuǒbiān\",\"meaning\":\"izquierda\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"右边\",\"pinyin\":\"yòubiān\",\"meaning\":\"derecha\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"台\",\"pinyin\":\"tái\",\"meaning\":\"clasificador de TV, ordenador, etc.\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"外面\",\"pinyin\":\"wàimiàn\",\"meaning\":\"fuera\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"只\",\"pinyin\":\"zhī\",\"meaning\":\"clasificador de animales y aves\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"买\",\"pinyin\":\"mǎi\",\"meaning\":\"comprar\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"钱\",\"pinyin\":\"qián\",\"meaning\":\"dinero\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"块\",\"pinyin\":\"kuài\",\"meaning\":\"trozo (clasificador)\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"些\",\"pinyin\":\"xiē\",\"meaning\":\"unos\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"苹果\",\"pinyin\":\"píngguǒ\",\"meaning\":\"manzana\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"衣服\",\"pinyin\":\"yīfú\",\"meaning\":\"ropa\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"漂亮\",\"pinyin\":\"piàoliang\",\"meaning\":\"bonito / guapa\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"卖\",\"pinyin\":\"mài\",\"meaning\":\"vender\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"元\",\"pinyin\":\"yuán\",\"meaning\":\"yuan (moneda de China)\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"天气\",\"pinyin\":\"tiānqì\",\"meaning\":\"clima / tiempo\",\"tags\":[\"tema11\"]},{\"type\":\"word\",\"chinese\":\"热\",\"pinyin\":\"rè\",\"meaning\":\"calor / caliente\",\"tags\":[\"tema11\"]},{\"type\":\"word\",\"chinese\":\"冷\",\"pinyin\":\"lěng\",\"meaning\":\"frío\",\"tags\":[\"tema11\"]},{\"type\":\"word\",\"chinese\":\"下雨\",\"pinyin\":\"xiàyǔ\",\"meaning\":\"lluvia / llover\",\"tags\":[\"tema11\"]},{\"type\":\"word\",\"chinese\":\"不冷不热\",\"pinyin\":\"bù lěng bù rè\",\"meaning\":\"templado / ni frío ni calor\",\"tags\":[\"tema11\"]}]";
 
-  // ── Constants ─────────────────────────────────────────────────────────────
-  const ALL_ITEMS   = JSON.parse(serialized);
-  const SRS_KEY     = 'hanyu-srs-v1';
-  const INTERVALS   = [0, 1, 4];
-  const BOX_LABEL   = ['nueva', 'aprendiendo', 'dominada'];
+  const INTERVALS   = [0, 1, 3, 7, 14];
+  const BOX_LABEL   = ['nueva','aprendiendo','revisando','consolidando','dominada'];
   const BOX_CLASSES = [
-    'bg-stone-100 text-stone-500 border-stone-200',
-    'bg-amber-100 text-amber-700 border-amber-200',
-    'bg-emerald-100 text-emerald-700 border-emerald-200',
+    'bg-slate-700/50 text-slate-300 border-slate-600',
+    'bg-amber-500/20 text-amber-300 border-amber-500/30',
+    'bg-blue-500/20 text-blue-300 border-blue-500/30',
+    'bg-violet-500/20 text-violet-300 border-violet-500/30',
+    'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
   ];
-  const CHINESE_CLS = 'font-chinese text-chinese-lg font-medium text-stone-900';
-  const MEANING_CLS = 'text-2xl font-medium text-stone-700 leading-snug';
+  const SRS_KEY  = 'hanyu-srs-v1';
+  const ALL_ITEMS = JSON.parse(serialized);
 
-  // ── State ─────────────────────────────────────────────────────────────────
-  let srsData       = {};
-  let filtered      = [];
-  let currentIndex  = 0;
-  let direction     = 'zh-to-es';
-  let phase         = 'answering';
-  let pinyinOn      = false;
-  let meaningOn     = false;
-  let mistakes      = [];
-  let sessionRight  = 0;
-  let sessionWrong  = 0;
-  let activeFilter  = 'all';
-  let reviewMode    = false;
-  let sessionLimit   = 20;
-  let activeTema     = 'all';
-  let directionMode  = 'mix';   // 'mix' | 'zh-to-es' | 'es-to-zh'
-  let currentChinese = '';       // Chinese text of current card (for audio)
+  let srsData = {};
+  function loadSRS()  { try { srsData = JSON.parse(localStorage.getItem(SRS_KEY)||'{}'); } catch { srsData={}; } }
+  function saveSRS()  { localStorage.setItem(SRS_KEY, JSON.stringify(srsData)); }
+  function getSRS(it) { return srsData[it.chinese] ?? { box:0, nextDate:'' }; }
 
-  // ── DOM ───────────────────────────────────────────────────────────────────
-  const $ = id => document.getElementById(id);
-  const practiceView      = $('practice-view');
-  const summaryView       = $('summary-view');
-  const promptEl          = $('prompt-text');
-  const hintEl            = $('prompt-hint');
-  const pinyinEl          = $('pinyin-text');
-  const meaningEl         = $('meaning-text');
-  const answerEl          = $('answer-input');
-  const typeBadge         = $('type-badge');
-  const srsBadge          = $('srs-badge');
-  const counterCur        = $('current-index');
-  const counterTot        = $('total-count');
-  const resultBanner      = $('result-banner');
-  const resultLine        = $('result-line');
-  const correctAnswerEl   = $('correct-answer');
-  const btnPinyin         = $('btn-pinyin');
-  const btnMeaning        = $('btn-meaning');
-  const btnAudio          = $('btn-audio');
-  const btnCheck          = $('btn-check');
-  const btnNext           = $('btn-next');
-  const btnKnew           = $('btn-knew');
-  const btnDidnt          = $('btn-didnt');
-  const rowCheck          = $('row-check');
-  const rowNext           = $('row-next');
-  const rowSelfassess     = $('row-selfassess');
-  const summaryPct        = $('summary-pct');
-  const summaryCorrect    = $('summary-correct');
-  const summaryWrong      = $('summary-wrong');
-  const srsCount          = [0,1,2].map(i => $(`srs-count-${i}`));
-  const btnReviewMistakes = $('btn-review-mistakes');
-  const btnNewSession     = $('btn-new-session');
-  const tabs              = document.querySelectorAll('.tab');
-  const sizeBtns          = document.querySelectorAll('.size-btn');
-  const temaBtns          = document.querySelectorAll('.tema-btn');
-
-  // ── Audio ─────────────────────────────────────────────────────────────────
-  const hasSpeech = typeof speechSynthesis !== 'undefined';
-
-  if (!hasSpeech) btnAudio.style.display = 'none';
-
-  function speak(text) {
-    if (!hasSpeech) return;
-    speechSynthesis.cancel();
-    const utt  = new SpeechSynthesisUtterance(text);
-    utt.lang   = 'zh-CN';
-    utt.rate   = 0.8;
-    utt.onstart = () => btnAudio.classList.add('speaking');
-    utt.onend   = () => btnAudio.classList.remove('speaking');
-    speechSynthesis.speak(utt);
-  }
-
-  // ── SRS ───────────────────────────────────────────────────────────────────
-  function loadSRS() {
-    try { srsData = JSON.parse(localStorage.getItem(SRS_KEY) || '{}'); }
-    catch { srsData = {}; }
-  }
-
-  function saveSRS() {
-    localStorage.setItem(SRS_KEY, JSON.stringify(srsData));
-  }
-
-  function getRecord(chinese) {
-    return srsData[chinese] ?? { box: 0, due: new Date(0).toISOString() };
-  }
-
-  function isDue(chinese) {
-    return new Date(getRecord(chinese).due) <= new Date();
-  }
-
-  function recordResult(chinese, correct) {
-    const rec    = getRecord(chinese);
-    const newBox = correct ? Math.min(rec.box + 1, 2) : 0;
-    const due    = new Date();
-    if (newBox > 0) due.setDate(due.getDate() + INTERVALS[newBox]);
-    srsData[chinese] = { box: newBox, due: due.toISOString() };
+  function updateSRS(item, correct) {
+    const rec = getSRS(item);
+    const newBox = correct
+      ? Math.min(rec.box+1, 4)
+      : (sessionSourceBox === 4 ? 3 : rec.box);
+    const next = new Date(Date.now() + INTERVALS[newBox]*86400000).toISOString().slice(0,10);
+    srsData[item.chinese] = { box:newBox, nextDate:next };
     saveSRS();
   }
 
-  // ── Normalisation ─────────────────────────────────────────────────────────
-  function normalise(s) {
-    return s
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[1-5]/g, '')
-      .toLowerCase()
-      .replace(/[.,!?¿¡；，。！？''…]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+  function isDue(item) {
+    const rec = getSRS(item);
+    if (!rec.nextDate) return true;
+    return rec.nextDate <= new Date().toISOString().slice(0,10);
   }
 
-  function isCorrect(input, item) {
-    const norm = normalise(input);
-    if (!norm) return false;
-    if (direction === 'zh-to-es') {
-      // Accept Spanish meaning
-      if (item.meaning.split(/[\/,]/).map(s => normalise(s.trim())).some(o => o === norm)) return true;
-      // Also accept pinyin: with tones, without tones, with/without spaces
-      // e.g. "nǐ hǎo" / "ni hao" / "nihao" / "ni3 hao3" / "ni3hao3" all accepted
-      const normPinyin = normalise(item.pinyin);
-      return norm === normPinyin || norm.replace(/\s/g, '') === normPinyin.replace(/\s/g, '');
-    }
-    return normalise(item.chinese) === norm || normalise(item.pinyin) === norm;
-  }
+  // ── Session state ──────────────────────────────────────────────────────────
+  let sessionItems     = [];
+  let sessionIndex     = 0;
+  let sessionResults   = [];  // [{item, correct, boxBefore, boxAfter}]
+  let allFiltered      = [];  // full tema set for "practice all"
+  let sessionSourceBox = null; // set when launched from a specific SRS box
+  let direction      = 'zh-to-es';
+  let activeDirection = 'random';
+  let activeTema      = 'all';
+  let phase           = 'answering';
+  let pinyinOn        = false;
+  let meaningOn       = false;
 
-  // ── Session building ──────────────────────────────────────────────────────
+  const $  = id => document.getElementById(id);
+  const promptEl       = $('prompt-text');
+  const hintEl         = $('prompt-hint');
+  const pinyinEl       = $('pinyin-text');
+  const meaningEl      = $('meaning-text');
+  const answerEl       = $('answer-input');
+  const typeBadge      = $('type-badge');
+  const srsBadge       = $('srs-badge');
+  const extraBadge     = $('extra-badge');
+  const resultBanner   = $('result-banner');
+  const resultLine     = $('result-line');
+  const correctAnswer  = $('correct-answer');
+  const btnPinyin      = $('btn-pinyin');
+  const btnMeaning     = $('btn-meaning');
+  const btnCheck       = $('btn-check');
+  const btnNext        = $('btn-next');
+  const btnKnew        = $('btn-knew');
+  const btnDidnt       = $('btn-didnt');
+  const rowCheck       = $('row-check');
+  const rowNext        = $('row-next');
+  const rowSelfassess  = $('row-selfassess');
+  const srsCounts      = $('srs-counts');
+  const temaDesk       = $('tema-desk');
+  const temaMob        = $('tema-mob');
+  const settingsToggle = $('pc-settings-toggle');
+  const settingsPanel  = $('pc-settings-panel');
+  const pcCard         = $('pc-card');
+  const sessionEndEl   = $('session-end');
+  const sessionProgEl  = $('session-progress');
+
+  // ── Settings panel (mobile) ────────────────────────────────────────────────
+  let settingsOpen = false;
+  settingsToggle.addEventListener('click', () => {
+    settingsOpen = !settingsOpen;
+    settingsPanel.style.maxHeight = settingsOpen ? '300px' : '0';
+    settingsPanel.style.opacity   = settingsOpen ? '1'     : '0';
+  });
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
   function shuffle(arr) {
     const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
+    for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
     return a;
   }
 
-  function getPool() {
-    let pool = activeFilter === 'all' ? ALL_ITEMS : ALL_ITEMS.filter(i => i.type === activeFilter);
-    if (activeTema !== 'all') pool = pool.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTema));
-    return pool;
+  function normalise(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[1-5]/g,'')
+      .toLowerCase().replace(/[.,!?¿¡；，。！？''…]/g,'').replace(/\s+/g,' ').trim();
   }
 
-  function buildSession(pool) {
-    const due      = pool.filter(i =>  srsData[i.chinese] &&  isDue(i.chinese));
-    const newCards = pool.filter(i => !srsData[i.chinese]);
-    const notDue   = pool.filter(i =>  srsData[i.chinese] && !isDue(i.chinese));
-    const session  = [...shuffle(due), ...shuffle(newCards)];
-    const base     = session.length > 0 ? session : shuffle(notDue);
-    return sessionLimit > 0 ? base.slice(0, sessionLimit) : base;
+  function isCorrect(input, item) {
+    const norm           = normalise(input);
+    if (!norm) return false;
+    const pinyinNorm     = normalise(item.pinyin);
+    const pinyinNoSpaces = pinyinNorm.replace(/\s/g,'');
+    const normNoSpaces   = norm.replace(/\s/g,'');
+    if (direction === 'zh-to-es')
+      return item.meaning.split(/[\/,]/).map(normalise).some(o => o === norm)
+          || norm === pinyinNorm || normNoSpaces === pinyinNoSpaces;
+    return normalise(item.chinese) === norm
+        || norm === pinyinNorm
+        || normNoSpaces === pinyinNoSpaces;
   }
 
-  // ── Reveal toggles ────────────────────────────────────────────────────────
-  function setReveal(el, btn, visible) {
-    el.classList.toggle('invisible', !visible);
-    btn.classList.toggle('on', visible);
-  }
-
+  function setReveal(el, btn, v) { el.classList.toggle('invisible',!v); btn.classList.toggle('on',v); }
   function resetReveals() {
-    pinyinOn  = false;
-    meaningOn = false;
+    pinyinOn = false; meaningOn = false;
     setReveal(pinyinEl, btnPinyin, false);
     setReveal(meaningEl, btnMeaning, false);
   }
 
-  // ── Phase transitions ─────────────────────────────────────────────────────
+  // ── SRS ────────────────────────────────────────────────────────────────────
+  function renderSRSBadge(item) {
+    const b = getSRS(item).box;
+    srsBadge.className   = `text-xs font-medium px-2 py-0.5 rounded-full border ${BOX_CLASSES[b]}`;
+    srsBadge.textContent = BOX_LABEL[b];
+  }
+
+  function renderSRSCounts() {
+    srsCounts.innerHTML = '';
+    for (let b=0;b<5;b++) {
+      const group = ALL_ITEMS.filter(i=>(srsData[i.chinese]?.box??0)===b);
+      const count = group.length;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col';
+
+      // Clickable header row
+      const header = document.createElement('button');
+      header.className = `rounded-lg px-3 py-1.5 border ${BOX_CLASSES[b]} flex items-center justify-between w-full cursor-pointer hover:opacity-80 transition-opacity`;
+      header.innerHTML = `
+        <span class="text-[10px] opacity-80">${BOX_LABEL[b]}</span>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm">${count}</span>
+          <span class="text-[10px] opacity-50 transition-transform duration-200 inline-block" data-arrow>▾</span>
+        </div>`;
+
+      // Expandable panel
+      const panel = document.createElement('div');
+      panel.className = 'overflow-hidden';
+      panel.style.cssText = 'max-height:0;opacity:0;transition:max-height 0.25s ease,opacity 0.2s ease';
+
+      const inner = document.createElement('div');
+      inner.className = 'pt-2 pb-1 flex flex-col gap-2';
+
+      if (count > 0) {
+        const chips = document.createElement('div');
+        chips.className = 'flex flex-wrap gap-1';
+        chips.innerHTML = group.map(i =>
+          `<span class="text-xs px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-300"
+            style="font-family:'PingFang SC','Noto Sans SC',sans-serif">${i.chinese}</span>`
+        ).join('');
+        inner.appendChild(chips);
+
+        const studyBtn = document.createElement('button');
+        studyBtn.className = 'w-full py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors';
+        studyBtn.textContent = `Estudiar estas ${count} →`;
+        studyBtn.addEventListener('click', e => { e.stopPropagation(); startSession(group, b); });
+        inner.appendChild(studyBtn);
+      } else {
+        inner.innerHTML = `<p class="text-xs text-slate-500 text-center py-0.5">Ninguna todavía</p>`;
+      }
+
+      panel.appendChild(inner);
+      wrapper.appendChild(header);
+      wrapper.appendChild(panel);
+      srsCounts.appendChild(wrapper);
+
+      // Toggle
+      let open = false;
+      header.addEventListener('click', () => {
+        open = !open;
+        panel.style.maxHeight = open ? panel.scrollHeight + 'px' : '0';
+        panel.style.opacity   = open ? '1' : '0';
+        const arrow = header.querySelector('[data-arrow]');
+        if (arrow) arrow.style.transform = open ? 'rotate(180deg)' : '';
+      });
+    }
+  }
+
+  // ── Progress bar ───────────────────────────────────────────────────────────
+  function renderProgress() {
+    const done    = sessionIndex;
+    const total   = sessionItems.length;
+    const correct = sessionResults.filter(r => r.correct).length;
+    const pct     = total > 0 ? Math.round(done / total * 100) : 0;
+    const acc     = done > 0  ? Math.round(correct / done * 100) : null;
+
+    $('session-pos').textContent   = String(done);
+    $('session-total').textContent = String(total);
+    $('session-bar').style.width   = `${pct}%`;
+
+    const accEl = $('session-accuracy-text');
+    if (acc !== null) {
+      accEl.textContent = `${acc}% ✓`;
+      accEl.className   = `font-semibold text-xs ${acc>=80?'text-emerald-400':acc>=50?'text-amber-400':'text-rose-400'}`;
+    } else {
+      accEl.textContent = '';
+    }
+  }
+
+  // ── Session end screen ─────────────────────────────────────────────────────
+  function showSessionEnd() {
+    pcCard.classList.add('hidden');
+    sessionProgEl.classList.add('hidden');
+    sessionEndEl.classList.remove('hidden');
+    sessionEndEl.classList.add('flex');
+
+    const total    = sessionResults.length;
+    const correct  = sessionResults.filter(r => r.correct).length;
+    const errors   = sessionResults.filter(r => !r.correct).map(r => r.item);
+    const leveled  = sessionResults.filter(r => r.boxAfter > r.boxBefore).map(r => r.item);
+    const accuracy = total > 0 ? Math.round(correct / total * 100) : 0;
+    const noDue    = total === 0;
+
+    $('session-end-emoji').textContent    = noDue ? '✨' : accuracy>=80 ? '🎉' : accuracy>=50 ? '💪' : '📚';
+    $('session-end-title').textContent    = noDue ? '¡Todo al día!' : '¡Sesión completada!';
+    $('session-end-subtitle').textContent = noDue
+      ? 'No hay tarjetas pendientes. Usa "Practicar todas" para repasar.'
+      : `${correct} de ${total} correctas`;
+
+    const statsEl = $('session-stats');
+    statsEl.innerHTML = '';
+    if (!noDue) {
+      const addStat = (label, value, cls) => {
+        const div = document.createElement('div');
+        div.className = 'rounded-xl p-3 bg-white/5 border border-white/10 text-center';
+        div.innerHTML = `<div class="text-2xl font-bold ${cls}">${value}</div><div class="text-xs text-slate-400 mt-0.5">${label}</div>`;
+        statsEl.appendChild(div);
+      };
+      const accCls = accuracy>=80?'text-emerald-400':accuracy>=50?'text-amber-400':'text-rose-400';
+      addStat('Precisión', `${accuracy}%`,     accCls);
+      addStat('Correctas', `${correct}`,        'text-emerald-400');
+      addStat('Errores',   `${errors.length}`,  errors.length>0  ? 'text-rose-400'   : 'text-slate-300');
+      addStat('↑ Nivel',   `${leveled.length}`, leveled.length>0 ? 'text-violet-400' : 'text-slate-300');
+    }
+
+    const leveledSec = $('session-leveled');
+    if (leveled.length > 0) {
+      leveledSec.classList.remove('hidden'); leveledSec.classList.add('flex');
+      $('session-leveled-list').innerHTML = leveled.map(i =>
+        `<span class="text-sm px-2 py-1 rounded-lg bg-violet-500/20 text-violet-300 border border-violet-500/30"
+          style="font-family:'PingFang SC','Noto Sans SC',sans-serif">${i.chinese}</span>`
+      ).join('');
+    } else {
+      leveledSec.classList.add('hidden'); leveledSec.classList.remove('flex');
+    }
+
+    const errorsSec = $('session-errors-section');
+    const retryBtn  = $('btn-retry-errors');
+    if (errors.length > 0) {
+      errorsSec.classList.remove('hidden'); errorsSec.classList.add('flex');
+      $('session-errors-list').innerHTML = errors.map(i =>
+        `<span class="text-sm px-2 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30"
+          style="font-family:'PingFang SC','Noto Sans SC',sans-serif">${i.chinese}</span>`
+      ).join('');
+      retryBtn.classList.remove('hidden');
+    } else {
+      errorsSec.classList.add('hidden'); errorsSec.classList.remove('flex');
+      retryBtn.classList.add('hidden');
+    }
+  }
+
+  // ── Start / restart session ────────────────────────────────────────────────
+  function startSession(items, sourceBox = null) {
+    sessionItems     = shuffle(items);
+    sessionIndex     = 0;
+    sessionResults   = [];
+    sessionSourceBox = sourceBox;
+    sessionEndEl.classList.add('hidden');
+    sessionEndEl.classList.remove('flex');
+
+    if (sessionItems.length === 0) {
+      pcCard.classList.add('hidden');
+      sessionProgEl.classList.add('hidden');
+      showSessionEnd();
+      return;
+    }
+
+    pcCard.classList.remove('hidden');
+    sessionProgEl.classList.remove('hidden');
+    renderProgress();
+    renderCurrent();
+  }
+
+  function applyFilter(tema) {
+    let base = ALL_ITEMS.slice();
+    if (tema && tema !== 'all') base = base.filter(i => i.tags?.includes(tema));
+    allFiltered = base;
+    startSession(base.filter(isDue));
+  }
+
+  // ── Phase transitions ──────────────────────────────────────────────────────
   function goAnswering() {
     phase = 'answering';
     answerEl.disabled = false;
@@ -198,25 +319,33 @@ Siguiente →
   function goWordResult(correct, item) {
     phase = 'checked';
     answerEl.disabled = true;
+    const boxBefore   = getSRS(item).box;
+    updateSRS(item, correct);
+    const boxAfter    = getSRS(item).box;
+    sessionResults.push({ item, correct, boxBefore, boxAfter });
+    renderSRSBadge(item);
+    renderSRSCounts();
     resultBanner.classList.remove('hidden');
+    const answerText = direction === 'zh-to-es'
+      ? `${item.meaning}  —  ${item.pinyin}`
+      : `${item.chinese}  /  ${item.pinyin}`;
     if (correct) {
-      resultBanner.className      = 'rounded-lg px-4 py-3 text-sm text-center bg-emerald-50 border border-emerald-200';
-      resultLine.textContent      = '✓ Correcto';
-      resultLine.className        = 'font-semibold text-emerald-700';
-      correctAnswerEl.textContent = '';
+      resultBanner.className    = 'rounded-xl px-4 py-3 text-sm text-center bg-emerald-500/10 border border-emerald-500/20';
+      resultLine.className      = 'font-semibold text-emerald-400';
+      resultLine.textContent    = '✓ Correcto';
+      correctAnswer.textContent = answerText;
     } else {
-      resultBanner.className      = 'rounded-lg px-4 py-3 text-sm text-center bg-red-50 border border-red-200';
-      resultLine.textContent      = '✗ Incorrecto';
-      resultLine.className        = 'font-semibold text-red-700';
-      const expected = direction === 'zh-to-es' ? item.meaning : `${item.chinese}  /  ${item.pinyin}`;
-      correctAnswerEl.textContent = `Respuesta: ${expected}`;
+      resultBanner.className    = 'rounded-xl px-4 py-3 text-sm text-center bg-rose-500/10 border border-rose-500/20';
+      resultLine.className      = 'font-semibold text-rose-400';
+      resultLine.textContent    = '✗ Incorrecto';
+      correctAnswer.textContent = answerText;
     }
     rowCheck.classList.add('hidden');
     rowNext.classList.remove('hidden');
   }
 
   function goPhraseAssess() {
-    phase = 'checked';
+    phase = 'selfassess';
     answerEl.disabled = true;
     meaningOn = true;
     setReveal(meaningEl, btnMeaning, true);
@@ -224,187 +353,711 @@ Siguiente →
     rowSelfassess.classList.remove('hidden');
   }
 
-  // ── Summary ───────────────────────────────────────────────────────────────
-  function showSummary() {
-    speechSynthesis?.cancel();
-    practiceView.classList.add('hidden');
-    summaryView.classList.remove('hidden');
+  // ── Render current card ────────────────────────────────────────────────────
+  const ZH_CLS = 'text-4xl font-medium text-white';
+  const ES_CLS = 'text-2xl font-medium text-slate-200 leading-snug';
 
-    const total = sessionRight + sessionWrong;
-    summaryPct.textContent     = total === 0 ? '—' : `${Math.round((sessionRight / total) * 100)}%`;
-    summaryCorrect.textContent = String(sessionRight);
-    summaryWrong.textContent   = String(sessionWrong);
-
-    const pool   = getPool();
-    const counts = [0, 0, 0];
-    for (const item of pool) {
-      const box = srsData[item.chinese] ? getRecord(item.chinese).box : 0;
-      counts[box]++;
-    }
-    srsCount.forEach((el, i) => { el.textContent = String(counts[i]); });
-
-    if (mistakes.length > 0) {
-      btnReviewMistakes.textContent = `Repasar errores (${mistakes.length})`;
-      btnReviewMistakes.classList.remove('hidden');
-    } else {
-      btnReviewMistakes.classList.add('hidden');
-    }
-  }
-
-  // ── Render ────────────────────────────────────────────────────────────────
   function renderCurrent() {
-    if (!filtered.length) return;
-
-    const item   = filtered[currentIndex];
+    if (!sessionItems.length) return;
+    const item   = sessionItems[sessionIndex];
     const isWord = item.type === 'word';
-    const box    = srsData[item.chinese] ? getRecord(item.chinese).box : 0;
-
-    currentChinese = item.chinese;
 
     typeBadge.textContent = isWord ? 'palabra' : 'frase';
-    srsBadge.textContent  = BOX_LABEL[box];
-    srsBadge.className    = `text-xs font-medium px-2 py-0.5 rounded-full border ${BOX_CLASSES[box]}`;
+    renderSRSBadge(item);
+    extraBadge.classList.toggle('hidden', !item.extra);
 
-    counterCur.textContent = String(currentIndex + 1);
-    counterTot.textContent = String(filtered.length);
+    if (isWord) direction = activeDirection==='random' ? (Math.random()<.5?'zh-to-es':'es-to-zh') : activeDirection;
+    else        direction = 'zh-to-es';
 
-    if (isWord) direction = directionMode === 'mix' ? (Math.random() < 0.5 ? 'zh-to-es' : 'es-to-zh') : directionMode;
-
-    const showChinese = !isWord || direction === 'zh-to-es';
-    promptEl.className   = showChinese ? CHINESE_CLS : MEANING_CLS;
-    promptEl.textContent = showChinese ? item.chinese : item.meaning;
-    hintEl.textContent   = isWord ? (showChinese ? 'escribe el significado' : 'escribe en chino o en pinyin') : '';
-
-    // Audio button: hide when Chinese is the answer (would be a spoiler)
-    btnAudio.classList.toggle('invisible', !showChinese);
+    if (direction === 'zh-to-es') {
+      promptEl.className        = ZH_CLS;
+      promptEl.style.fontFamily = "'PingFang SC','Noto Sans SC',sans-serif";
+      promptEl.textContent      = item.chinese;
+      hintEl.textContent        = isWord ? 'escribe el significado o pinyin' : '';
+      answerEl.placeholder      = 'Escribe el significado en español…';
+    } else {
+      promptEl.className        = ES_CLS;
+      promptEl.style.fontFamily = '';
+      promptEl.textContent      = item.meaning;
+      hintEl.textContent        = 'escribe en chino o pinyin';
+      answerEl.placeholder      = 'Escribe en chino o en pinyin…';
+    }
 
     pinyinEl.textContent  = item.pinyin;
     meaningEl.textContent = item.meaning;
-
-    answerEl.placeholder = isWord
-      ? (direction === 'zh-to-es' ? 'Escribe el significado en español…' : 'Escribe en chino o en pinyin…')
-      : 'Responde o traduce la frase…';
-
     resetReveals();
     goAnswering();
   }
 
-  // ── Advance ───────────────────────────────────────────────────────────────
-  function advance() {
-    speechSynthesis?.cancel();
-    currentIndex++;
-    if (currentIndex >= filtered.length) showSummary();
-    else renderCurrent();
-  }
-
-  function onResult(correct, item) {
-    if (correct) sessionRight++;
-    else { sessionWrong++; mistakes.push(item); }
-    recordResult(item.chinese, correct);
-  }
-
-  // ── Init session ──────────────────────────────────────────────────────────
-  function initSession(pool, isReview = false) {
-    reviewMode   = isReview;
-    filtered     = isReview ? shuffle(pool) : buildSession(pool);
-    currentIndex = 0;
-    sessionRight = 0;
-    sessionWrong = 0;
-    mistakes = [];
-    summaryView.classList.add('hidden');
-    practiceView.classList.remove('hidden');
+  function nextItem() {
+    sessionIndex++;
+    renderProgress();
+    if (sessionIndex >= sessionItems.length) { showSessionEnd(); return; }
     renderCurrent();
   }
 
-  function applyFilter(filter) {
-    activeFilter = filter;
-    initSession(getPool());
-  }
-
-  // ── Events ────────────────────────────────────────────────────────────────
-  btnAudio.addEventListener('click', () => speak(currentChinese));
-
-  btnPinyin.addEventListener('click', () => {
-    pinyinOn = !pinyinOn;
-    setReveal(pinyinEl, btnPinyin, pinyinOn);
-  });
-
-  btnMeaning.addEventListener('click', () => {
-    meaningOn = !meaningOn;
-    setReveal(meaningEl, btnMeaning, meaningOn);
-  });
+  // ── Events ─────────────────────────────────────────────────────────────────
+  btnPinyin.addEventListener('click',  () => { pinyinOn  = !pinyinOn;  setReveal(pinyinEl,  btnPinyin,  pinyinOn); });
+  btnMeaning.addEventListener('click', () => { meaningOn = !meaningOn; setReveal(meaningEl, btnMeaning, meaningOn); });
 
   btnCheck.addEventListener('click', () => {
-    const item = filtered[currentIndex];
-    if (item.type === 'word') {
-      const correct = isCorrect(answerEl.value, item);
-      onResult(correct, item);
-      goWordResult(correct, item);
-    } else {
-      goPhraseAssess();
-    }
+    const item = sessionItems[sessionIndex];
+    item.type === 'word' ? goWordResult(isCorrect(answerEl.value, item), item) : goPhraseAssess();
   });
 
-  btnNext.addEventListener('click', advance);
-  btnKnew.addEventListener('click',  () => { onResult(true,  filtered[currentIndex]); advance(); });
-  btnDidnt.addEventListener('click', () => { onResult(false, filtered[currentIndex]); advance(); });
+  btnNext.addEventListener('click', nextItem);
 
-  answerEl.addEventListener('keydown', e => {
+  btnKnew.addEventListener('click', () => {
+    const item      = sessionItems[sessionIndex];
+    const boxBefore = getSRS(item).box;
+    updateSRS(item, true);
+    sessionResults.push({ item, correct:true, boxBefore, boxAfter:getSRS(item).box });
+    renderSRSCounts();
+    nextItem();
+  });
+
+  btnDidnt.addEventListener('click', () => {
+    const item      = sessionItems[sessionIndex];
+    const boxBefore = getSRS(item).box;
+    updateSRS(item, false);
+    sessionResults.push({ item, correct:false, boxBefore, boxAfter:getSRS(item).box });
+    renderSRSCounts();
+    nextItem();
+  });
+
+  // Session end buttons
+  $('btn-retry-errors').addEventListener('click', () => {
+    startSession(sessionResults.filter(r => !r.correct).map(r => r.item));
+  });
+  $('btn-new-session').addEventListener('click',  () => applyFilter(activeTema));
+  $('btn-practice-all').addEventListener('click', () => startSession(allFiltered));
+
+  // Tema selects
+  function onTemaChange(val) {
+    activeTema = val;
+    if (temaDesk) temaDesk.value = val;
+    if (temaMob)  temaMob.value  = val;
+    applyFilter(val);
+  }
+  temaDesk?.addEventListener('change', e => onTemaChange(e.target.value));
+  temaMob?.addEventListener('change',  e => onTemaChange(e.target.value));
+
+  // Direction buttons
+  document.querySelectorAll('.dir-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = btn.dataset.dir;
+      document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll(`.dir-btn[data-dir="${dir}"]`).forEach(b => b.classList.add('active'));
+      activeDirection = dir;
+      if (!sessionEndEl.classList.contains('hidden')) return;
+      renderCurrent();
+    });
+  });
+
+  // Enter key
+  document.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
+    if (e.target.tagName === 'SELECT') return;
+    const tabContent = $('pc-root')?.closest('.tab-content');
+    if (tabContent && !tabContent.classList.contains('active')) return;
+    if (e.target===btnCheck || e.target===btnNext || e.target===btnKnew || e.target===btnDidnt) return;
     if (phase === 'answering') btnCheck.click();
     else if (phase === 'checked') btnNext.click();
   });
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      applyFilter(tab.dataset.filter);
-    });
-  });
-
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      directionMode = btn.dataset.mode;
-      initSession(getPool());
-    });
-  });
-
-  temaBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      temaBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeTema = btn.dataset.tema;
-      initSession(getPool());
-    });
-  });
-
-  sizeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      sizeBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      sessionLimit = Number(btn.dataset.size);
-      initSession(getPool());
-    });
-  });
-
-  btnNewSession.addEventListener('click', () => {
-    const pool = getPool();
-    pool.forEach(item => { delete srsData[item.chinese]; });
-    saveSRS();
-    initSession(pool);
-  });
-  btnReviewMistakes.addEventListener('click', () => {
-    summaryView.classList.add('hidden');
-    practiceView.classList.remove('hidden');
-    initSession(mistakes, true);
-  });
-
-  // ── Boot ──────────────────────────────────────────────────────────────────
+  // ── Init ───────────────────────────────────────────────────────────────────
   loadSRS();
   applyFilter('all');
-})();</script> </main> <footer class="mt-8 text-xs text-stone-400">
-Press <kbd class="px-1.5 py-0.5 rounded border border-stone-300 text-stone-500 font-mono text-xs">Enter</kbd> to advance
-</footer> </body></html>
+  renderSRSCounts();
+})();</script> </div> <div id="tab-sentences" class="tab-content" data-astro-cid-j7pv25f6> <div id="sp-root" class="w-full flex flex-col gap-3" data-astro-cid-ulwgcf32> <!-- ── MOBILE: settings toggle ── --> <div class="lg:hidden flex justify-end" data-astro-cid-ulwgcf32> <button id="sp-settings-toggle" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors" data-astro-cid-ulwgcf32>
+⚙️ <span data-astro-cid-ulwgcf32>Ajustes</span> </button> </div> <!-- ── MOBILE: settings panel ── --> <div id="sp-settings-panel" class="lg:hidden overflow-hidden" style="max-height:0; transition:max-height 0.25s ease, opacity 0.2s ease; opacity:0" data-astro-cid-ulwgcf32> <div class="bg-white/5 border border-white/10 rounded-2xl p-4 mb-1 grid grid-cols-2 gap-4" data-astro-cid-ulwgcf32> <div class="flex flex-col gap-2" data-astro-cid-ulwgcf32> <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-ulwgcf32>Tema</span> <div class="relative" data-astro-cid-ulwgcf32> <select id="sp-tema-mob" class="w-full px-3 py-2 pr-7 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none focus:border-indigo-500 appearance-none cursor-pointer" data-astro-cid-ulwgcf32> <option value="all" data-astro-cid-ulwgcf32>Todos</option>  </select> <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" data-astro-cid-ulwgcf32>▾</span> </div> </div> <div class="flex flex-col gap-2" data-astro-cid-ulwgcf32> <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-ulwgcf32>Dirección</span> <div class="flex flex-col gap-1" data-astro-cid-ulwgcf32> <button class="sp-dir-btn active text-left" data-dir="es-to-zh" data-astro-cid-ulwgcf32>ES → 中</button> <button class="sp-dir-btn text-left" data-dir="zh-to-pin" data-astro-cid-ulwgcf32>中 → Pīn</button> <button class="sp-dir-btn text-left" data-dir="zh-to-es" data-astro-cid-ulwgcf32>中 → ES</button> </div> </div> </div> </div> <!-- ── 3-COLUMN GRID (desktop) / single col (mobile) ── --> <div class="lg:grid lg:grid-cols-[208px_1fr_208px] lg:gap-5 lg:items-start" data-astro-cid-ulwgcf32> <!-- Col 1: sidebar (desktop only) --> <aside class="hidden lg:flex flex-col gap-4" data-astro-cid-ulwgcf32> <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2" data-astro-cid-ulwgcf32> <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-ulwgcf32>Tema</span> <div class="relative" data-astro-cid-ulwgcf32> <select id="sp-tema-desk" class="w-full px-3 py-2 pr-8 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none focus:border-indigo-500 appearance-none cursor-pointer" data-astro-cid-ulwgcf32> <option value="all" data-astro-cid-ulwgcf32>Todos</option>  </select> <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" data-astro-cid-ulwgcf32>▾</span> </div> </div> <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2" data-astro-cid-ulwgcf32> <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide" data-astro-cid-ulwgcf32>Dirección</span> <div class="flex flex-col gap-1.5" data-astro-cid-ulwgcf32> <button class="sp-dir-btn active" data-dir="es-to-zh" data-astro-cid-ulwgcf32>Español → 中 / Pīn</button> <button class="sp-dir-btn" data-dir="zh-to-pin" data-astro-cid-ulwgcf32>中文 → Pinyin</button> <button class="sp-dir-btn" data-dir="zh-to-es" data-astro-cid-ulwgcf32>中文 → Español</button> </div> </div> </aside> <!-- Col 2: card — truly centered --> <div class="flex justify-center flex-col gap-4 items-center" data-astro-cid-ulwgcf32> <!-- Practice card --> <div id="sp-practice" class="w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-5" data-astro-cid-ulwgcf32> <div class="flex justify-between items-center" data-astro-cid-ulwgcf32> <span id="sp-counter" class="text-xs text-slate-400" data-astro-cid-ulwgcf32>1 / 1</span> <span id="sp-warning" class="hidden text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-2 py-0.5" data-astro-cid-ulwgcf32></span> </div> <div class="text-center py-4" data-astro-cid-ulwgcf32> <p class="text-xs text-slate-400 uppercase tracking-wide mb-2" data-astro-cid-ulwgcf32>Traduce al chino</p> <p id="sp-prompt" class="text-xl font-medium text-white leading-snug" data-astro-cid-ulwgcf32></p> </div> <input id="sp-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="Escribe en chino o en pinyin…" class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 text-base outline-none focus:border-indigo-500 transition-colors" data-astro-cid-ulwgcf32> <div id="sp-result" class="hidden rounded-xl px-4 py-3 text-sm" data-astro-cid-ulwgcf32> <p id="sp-result-line" class="font-semibold mb-2" data-astro-cid-ulwgcf32></p> <p id="sp-correct-chinese" class="mt-1 text-base leading-relaxed" style="font-family:'PingFang SC','Noto Sans SC',sans-serif;font-size:1.15rem;" data-astro-cid-ulwgcf32></p> <p id="sp-correct-pinyin" class="mt-1 text-slate-400 italic text-sm" data-astro-cid-ulwgcf32></p> <p id="sp-diff-legend" class="hidden mt-2 text-[10px] text-slate-500" data-astro-cid-ulwgcf32> <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1" data-astro-cid-ulwgcf32></span>correcto
+<span class="inline-block w-2 h-2 rounded-full bg-rose-400 ml-2 mr-1" data-astro-cid-ulwgcf32></span>faltaba/incorrecto
+</p> </div> <div id="sp-row-check" data-astro-cid-ulwgcf32> <button id="sp-btn-check" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors" data-astro-cid-ulwgcf32>
+Comprobar →
+</button> </div> <div id="sp-row-next" class="hidden flex gap-2" data-astro-cid-ulwgcf32> <button id="sp-btn-reveal" class="flex-1 py-3 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors" data-astro-cid-ulwgcf32>
+Ver respuesta
+</button> <button id="sp-btn-next" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors" data-astro-cid-ulwgcf32>
+Siguiente →
+</button> </div> <div id="sp-row-selfassess" class="hidden flex gap-2" data-astro-cid-ulwgcf32> <button id="sp-btn-knew" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors" data-astro-cid-ulwgcf32>✓ Lo sabía</button> <button id="sp-btn-didnt" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors" data-astro-cid-ulwgcf32>✗ No lo sabía</button> </div> </div> <!-- Mini summary (every 5) --> <div id="sp-summary" class="hidden w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4" data-astro-cid-ulwgcf32> <h3 class="text-center font-semibold text-white" data-astro-cid-ulwgcf32>Resumen parcial</h3> <div class="grid grid-cols-3 gap-2 text-center text-xs" data-astro-cid-ulwgcf32> <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3" data-astro-cid-ulwgcf32> <p id="sp-sum-correct" class="text-2xl font-bold text-emerald-400" data-astro-cid-ulwgcf32>0</p> <p class="text-emerald-300/70 mt-0.5" data-astro-cid-ulwgcf32>correctas</p> </div> <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3" data-astro-cid-ulwgcf32> <p id="sp-sum-partial" class="text-2xl font-bold text-amber-400" data-astro-cid-ulwgcf32>0</p> <p class="text-amber-300/70 mt-0.5" data-astro-cid-ulwgcf32>parciales</p> </div> <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3" data-astro-cid-ulwgcf32> <p id="sp-sum-wrong" class="text-2xl font-bold text-rose-400" data-astro-cid-ulwgcf32>0</p> <p class="text-rose-300/70 mt-0.5" data-astro-cid-ulwgcf32>falladas</p> </div> </div> <div id="sp-weak-patterns" class="text-xs text-slate-400 text-center hidden" data-astro-cid-ulwgcf32></div> <div class="flex gap-2" data-astro-cid-ulwgcf32> <button id="sp-btn-continue" class="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors" data-astro-cid-ulwgcf32>5 más →</button> <button id="sp-btn-restart" class="flex-1 py-2.5 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors" data-astro-cid-ulwgcf32>Reiniciar</button> </div> </div> </div> <!-- Col 3: mirror spacer --> <div class="hidden lg:block" data-astro-cid-ulwgcf32></div> </div> </div>  <script>(function(){const serialized = "[]";
+
+  const ALL_SENTENCES = JSON.parse(serialized);
+  const SRS_KEY = 'hanyu-srs-sentences-v1';
+
+  let srsData = {}, pool = [], queue = [], currentIndex = 0, activeTema = 'all';
+  let batchStart = 0, batchCorrect = 0, batchPartial = 0, batchWrong = 0, errorMap = {};
+  let spPhase = 'answering'; // 'answering' | 'checked'
+  let activeDirection = 'es-to-zh'; // 'es-to-zh' | 'zh-to-pin' | 'zh-to-es'
+
+  const $ = id => document.getElementById(id);
+  const spPrompt      = $('sp-prompt');
+  const spInput       = $('sp-input');
+  const spCounter     = $('sp-counter');
+  const spWarning     = $('sp-warning');
+  const spResult      = $('sp-result');
+  const spResultLine  = $('sp-result-line');
+  const spCorrectChinese = $('sp-correct-chinese');
+  const spCorrectPinyin  = $('sp-correct-pinyin');
+  const spRowCheck    = $('sp-row-check');
+  const spRowNext     = $('sp-row-next');
+  const spRowSelfassess = $('sp-row-selfassess');
+  const spBtnCheck    = $('sp-btn-check');
+  const spBtnNext     = $('sp-btn-next');
+  const spBtnReveal   = $('sp-btn-reveal');
+  const spBtnKnew     = $('sp-btn-knew');
+  const spBtnDidnt    = $('sp-btn-didnt');
+  const spSummary     = $('sp-summary');
+  const spSumCorrect  = $('sp-sum-correct');
+  const spSumPartial  = $('sp-sum-partial');
+  const spSumWrong    = $('sp-sum-wrong');
+  const spWeakPatterns = $('sp-weak-patterns');
+  const spBtnContinue = $('sp-btn-continue');
+  const spBtnRestart  = $('sp-btn-restart');
+  const spDiffLegend  = $('sp-diff-legend');
+  const spTemaDesk    = $('sp-tema-desk');
+  const spTemaMob     = $('sp-tema-mob');
+  const spSettingsToggle = $('sp-settings-toggle');
+  const spSettingsPanel  = $('sp-settings-panel');
+
+  // Settings panel toggle (mobile)
+  let settingsOpen = false;
+  spSettingsToggle.addEventListener('click', () => {
+    settingsOpen = !settingsOpen;
+    spSettingsPanel.style.maxHeight = settingsOpen ? '200px' : '0';
+    spSettingsPanel.style.opacity   = settingsOpen ? '1' : '0';
+  });
+
+  function loadSRS() { try { srsData = JSON.parse(localStorage.getItem(SRS_KEY)||'{}'); } catch { srsData={}; } }
+  function saveSRS() { localStorage.setItem(SRS_KEY, JSON.stringify(srsData)); }
+
+  function normalise(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[1-5]/g,'')
+      .toLowerCase().replace(/[.,!?¿¡；，。！？''…]/g,'').replace(/\s+/g,' ').trim();
+  }
+
+  function isCorrect(input, item) {
+    const norm = normalise(input);
+    if (!norm) return false;
+    const c = normalise(item.chinese), p = normalise(item.pinyin);
+    if (norm === c || norm === p || norm.replace(/\s/g,'') === p.replace(/\s/g,'')) return true;
+    // Check alternatives (e.g. 的 omission, 吗/没有 swap)
+    return (item.alternatives || []).some(alt => {
+      const a = normalise(alt);
+      return norm === a || norm.replace(/\s/g,'') === a.replace(/\s/g,'');
+    });
+  }
+
+  function buildDiff(userInput, item) {
+    const normTok = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[1-5]/g,'')
+      .toLowerCase().replace(/[，。！？。]/g,' ').replace(/\s+/g,' ').trim();
+    const chineseCount = [...userInput].filter(c => /[一-鿿]/.test(c)).length;
+    const isChinese = chineseCount > 0;
+    const userTokens    = isChinese ? [...userInput.replace(/[，。！？\s]/g,'')] : normTok(userInput).split(/\s+/).filter(Boolean);
+    const correctTokens = isChinese ? [...item.chinese.replace(/[，。！？\s]/g,'')] : normTok(item.pinyin).split(/\s+/).filter(Boolean);
+    const m = userTokens.length, n = correctTokens.length;
+    const dp = Array.from({length:m+1},()=>new Array(n+1).fill(0));
+    for (let i=1;i<=m;i++) for (let j=1;j<=n;j++)
+      dp[i][j] = userTokens[i-1]===correctTokens[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j],dp[i][j-1]);
+    const matched = new Set();
+    let i=m, j=n;
+    while (i>0&&j>0) {
+      if (userTokens[i-1]===correctTokens[j-1]) { matched.add(j-1); i--; j--; }
+      else if (dp[i-1][j]>=dp[i][j-1]) i--; else j--;
+    }
+    let ci = 0;
+    return [...item.chinese].map(char => {
+      if (/[，。！？\s]/.test(char)) return {char,ok:true};
+      const ok = matched.has(ci); ci++;
+      return {char,ok};
+    });
+  }
+
+  function renderDiff(userInput, item) {
+    const diff = buildDiff(userInput, item);
+    spCorrectChinese.innerHTML = diff.map(({char,ok}) =>
+      ok ? `<span class="text-emerald-400">${char}</span>`
+         : `<span class="text-rose-400 font-bold">${char}</span>`
+    ).join('');
+    spCorrectPinyin.textContent = item.pinyin;
+  }
+
+  function isPartial(input, item) {
+    const norm = normalise(input);
+    if (!norm) return false;
+    const words = normalise(item.pinyin).split(' ');
+    return words.filter(w => norm.includes(w)).length >= Math.ceil(words.length*0.5);
+  }
+
+  function shuffle(arr) {
+    const a=[...arr];
+    for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+  }
+
+  function buildQueue() {
+    pool = activeTema==='all' ? ALL_SENTENCES : ALL_SENTENCES.filter(i=>i.tags?.includes(activeTema));
+    queue = shuffle(pool);
+    currentIndex = batchStart = batchCorrect = batchPartial = batchWrong = 0;
+    errorMap = {};
+    renderCurrent();
+  }
+
+  function renderCurrent() {
+    if (!queue.length) return;
+    spPhase = 'answering';
+    const item = queue[currentIndex % queue.length];
+    spCounter.textContent = `${currentIndex+1} / ${queue.length}`;
+    spInput.value = ''; spInput.disabled = false;
+    spResult.classList.add('hidden');
+    spRowCheck.classList.remove('hidden');
+    spRowNext.classList.add('hidden');
+    spRowSelfassess.classList.add('hidden');
+    spSummary.classList.add('hidden');
+    spWarning.classList.add('hidden');
+
+    const ZH_STYLE = "font-family:'PingFang SC','Noto Sans SC',sans-serif;font-size:1.5rem;";
+    if (activeDirection === 'es-to-zh') {
+      spPrompt.style.cssText = '';
+      spPrompt.textContent   = item.meaning;
+      spInput.placeholder    = 'Escribe en chino o en pinyin…';
+      spPrompt.previousElementSibling.textContent = 'Traduce al chino';
+    } else if (activeDirection === 'zh-to-pin') {
+      spPrompt.style.cssText = ZH_STYLE;
+      spPrompt.textContent   = item.chinese;
+      spInput.placeholder    = 'Escribe el pinyin…';
+      spPrompt.previousElementSibling.textContent = 'Escribe el pinyin';
+    } else {
+      spPrompt.style.cssText = ZH_STYLE;
+      spPrompt.textContent   = item.chinese;
+      spInput.placeholder    = 'Traduce al español…';
+      spPrompt.previousElementSibling.textContent = 'Traduce al español';
+    }
+
+    const errors = errorMap[item.chinese]||0;
+    if (errors>=2) { spWarning.textContent=`⚠️ ${errors+1} veces fallada`; spWarning.classList.remove('hidden'); }
+    spInput.focus();
+  }
+
+  function isCorrectPinyin(input, item) {
+    const norm = normalise(input);
+    const p    = normalise(item.pinyin);
+    return norm === p || norm.replace(/\s/g,'') === p.replace(/\s/g,'');
+  }
+
+  function checkAnswer() {
+    const item  = queue[currentIndex % queue.length];
+    const input = spInput.value.trim();
+    if (!input) return;
+    spPhase = 'checked';
+    spInput.disabled = true;
+    spRowCheck.classList.add('hidden');
+    spResult.classList.remove('hidden');
+
+    // ── 中 → ES: self-assess, no automated grading ─────────────────────────
+    if (activeDirection === 'zh-to-es') {
+      spResult.className = 'rounded-xl px-4 py-3 text-sm bg-slate-700/50 border border-white/10';
+      spResultLine.className = 'font-semibold text-slate-300 mb-2';
+      spResultLine.textContent = 'Traducción oficial:';
+      spCorrectChinese.innerHTML = `<span class="text-emerald-300">${item.meaning}</span>`;
+      spCorrectPinyin.textContent = item.pinyin;
+      spDiffLegend.classList.add('hidden');
+      spRowSelfassess.classList.remove('hidden');
+      return;
+    }
+
+    // ── ES → 中 or 中 → Pīn: automated grading ────────────────────────────
+    spRowNext.classList.remove('hidden');
+    const correct = activeDirection === 'zh-to-pin'
+      ? isCorrectPinyin(input, item)
+      : isCorrect(input, item);
+    const partial = !correct && isPartial(input, item);
+
+    if (correct) {
+      // Show all chars green — no diff needed
+      spCorrectChinese.innerHTML = [...item.chinese].map(c =>
+        /[，。！？\s]/.test(c) ? c : `<span class="text-emerald-400">${c}</span>`
+      ).join('');
+      spCorrectPinyin.textContent = item.pinyin;
+      spDiffLegend.classList.add('hidden');
+    } else if (activeDirection === 'zh-to-pin') {
+      spCorrectChinese.innerHTML = `<span class="text-white">${item.chinese}</span>`;
+      spCorrectPinyin.textContent = item.pinyin;
+      spDiffLegend.classList.add('hidden');
+    } else {
+      renderDiff(input, item);
+    }
+
+    if (correct) {
+      batchCorrect++;
+      spResult.className = 'rounded-xl px-4 py-3 text-sm bg-emerald-500/10 border border-emerald-500/20';
+      spResultLine.className = 'font-semibold text-emerald-400 mb-2';
+      spResultLine.textContent = '✅ ¡Correcto!';
+    } else if (partial) {
+      batchPartial++;
+      errorMap[item.chinese] = (errorMap[item.chinese]||0)+1;
+      spResult.className = 'rounded-xl px-4 py-3 text-sm bg-amber-500/10 border border-amber-500/20';
+      spResultLine.className = 'font-semibold text-amber-400 mb-2';
+      spResultLine.textContent = '⚠️ Casi — mira qué falta:';
+      spDiffLegend.classList.remove('hidden');
+    } else {
+      batchWrong++;
+      errorMap[item.chinese] = (errorMap[item.chinese]||0)+1;
+      spResult.className = 'rounded-xl px-4 py-3 text-sm bg-rose-500/10 border border-rose-500/20';
+      spResultLine.className = 'font-semibold text-rose-400 mb-2';
+      spResultLine.textContent = '❌ Incorrecto — mira qué falta:';
+      if (activeDirection !== 'zh-to-pin') spDiffLegend.classList.remove('hidden');
+    }
+  }
+
+  function advance() {
+    currentIndex++;
+    const batchSize = currentIndex - batchStart;
+    if (batchSize>0 && batchSize%5===0) {
+      showMiniSummary();
+    } else if (currentIndex>=queue.length) {
+      queue = shuffle(queue);
+      currentIndex = batchStart = 0;
+      renderCurrent();
+    } else {
+      renderCurrent();
+    }
+  }
+
+  function showMiniSummary() {
+    spSummary.classList.remove('hidden');
+    spSumCorrect.textContent = String(batchCorrect);
+    spSumPartial.textContent = String(batchPartial);
+    spSumWrong.textContent   = String(batchWrong);
+    const weak = Object.entries(errorMap).filter(([,v])=>v>=2);
+    spWeakPatterns.textContent = weak.length ? `Repasar: ${weak.map(([k])=>k).join('、')}` : '';
+    spWeakPatterns.classList.toggle('hidden', !weak.length);
+  }
+
+  function revealAnswer() {
+    const item = queue[currentIndex % queue.length];
+    spResult.classList.remove('hidden');
+    spResult.className = 'rounded-xl px-4 py-3 text-sm bg-slate-700/50 border border-white/10';
+    spResultLine.className = 'font-semibold text-slate-300 mb-2';
+    spResultLine.textContent = 'Respuesta:';
+    spCorrectChinese.innerHTML = `<span class="text-white">${item.chinese}</span>`;
+    spCorrectPinyin.textContent = item.pinyin;
+  }
+
+  spBtnCheck.addEventListener('click',   checkAnswer);
+  spBtnNext.addEventListener('click',    advance);
+  spBtnReveal.addEventListener('click',  revealAnswer);
+  spBtnContinue.addEventListener('click', () => {
+    batchStart = currentIndex; batchCorrect = batchPartial = batchWrong = 0;
+    if (currentIndex>=queue.length) currentIndex = 0;
+    renderCurrent();
+  });
+  spBtnRestart.addEventListener('click', buildQueue);
+
+  // Self-assess (中 → ES mode)
+  spBtnKnew.addEventListener('click', () => {
+    batchCorrect++;
+    advance();
+  });
+  spBtnDidnt.addEventListener('click', () => {
+    batchWrong++;
+    errorMap[queue[currentIndex % queue.length].chinese] = (errorMap[queue[currentIndex % queue.length].chinese]||0)+1;
+    advance();
+  });
+
+  // Direction buttons
+  document.querySelectorAll('.sp-dir-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = btn.dataset.dir;
+      document.querySelectorAll('.sp-dir-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll(`.sp-dir-btn[data-dir="${dir}"]`).forEach(b => b.classList.add('active'));
+      activeDirection = dir;
+      renderCurrent();
+    });
+  });
+
+  function onSpTemaChange(val) {
+    activeTema = val;
+    if (spTemaDesk) spTemaDesk.value = val;
+    if (spTemaMob)  spTemaMob.value  = val;
+    buildQueue();
+  }
+  spTemaDesk?.addEventListener('change', e => onSpTemaChange(e.target.value));
+  spTemaMob?.addEventListener('change',  e => onSpTemaChange(e.target.value));
+
+  // Enter — works in both phases (disabled input doesn't fire keydown)
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (e.target.tagName === 'SELECT') return;
+    const tabContent = $('sp-root')?.closest('.tab-content');
+    if (tabContent && !tabContent.classList.contains('active')) return;
+    if (e.target===spBtnCheck || e.target===spBtnNext || e.target===spBtnReveal) return;
+    if (spPhase === 'answering') spBtnCheck.click();
+    else if (spPhase === 'checked') spBtnNext.click();
+  });
+
+  loadSRS();
+  buildQueue();
+})();</script> </div> <div id="tab-dialogues" class="tab-content" data-astro-cid-j7pv25f6> <div class="flex flex-col gap-4 max-w-md mx-auto" data-astro-cid-5wsdo3vj> <!-- Topic filter --> <div class="flex items-center gap-2 flex-wrap" data-astro-cid-5wsdo3vj> <span class="text-xs text-slate-400 shrink-0" data-astro-cid-5wsdo3vj>Tema:</span> <button class="dp-tema active" data-tema="all" data-astro-cid-5wsdo3vj>Todos</button>  </div> <!-- Dialogue selection grid --> <div id="dp-grid" class="grid grid-cols-2 gap-3" data-astro-cid-5wsdo3vj></div> <!-- Practice view (hidden until dialogue selected) --> <div id="dp-practice" class="hidden bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-5" data-astro-cid-5wsdo3vj> <div class="flex items-center justify-between" data-astro-cid-5wsdo3vj> <button id="dp-back" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors" data-astro-cid-5wsdo3vj>
+← Diálogos
+</button> <span id="dp-counter" class="text-xs text-slate-400" data-astro-cid-5wsdo3vj>1 / 2</span> </div> <!-- Chinese prompt --> <div class="text-center py-4" data-astro-cid-5wsdo3vj> <p class="text-xs text-slate-400 uppercase tracking-wide mb-2" data-astro-cid-5wsdo3vj>Lee en pinyin</p> <p id="dp-chinese" class="text-3xl font-medium text-white" style="font-family:'PingFang SC','Noto Sans SC',sans-serif;line-height:1.4;" data-astro-cid-5wsdo3vj></p> </div> <!-- Input --> <input id="dp-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="Escribe el pinyin…" class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 text-base outline-none focus:border-indigo-500 transition-colors" data-astro-cid-5wsdo3vj> <!-- Result --> <div id="dp-result" class="hidden rounded-xl px-4 py-3 text-sm" data-astro-cid-5wsdo3vj> <p id="dp-result-line" class="font-semibold mb-1" data-astro-cid-5wsdo3vj></p> <p id="dp-pinyin-correct" class="text-base text-indigo-300 font-medium italic" data-astro-cid-5wsdo3vj></p> <p id="dp-meaning" class="text-slate-400 text-xs mt-1" data-astro-cid-5wsdo3vj></p> </div> <button id="dp-btn-check" class="w-full py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors" data-astro-cid-5wsdo3vj>
+Comprobar →
+</button> <button id="dp-btn-next" class="hidden w-full py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors" data-astro-cid-5wsdo3vj>
+Siguiente →
+</button> </div> <!-- End of dialogue --> <div id="dp-end" class="hidden bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-4 text-center" data-astro-cid-5wsdo3vj> <p class="text-4xl" data-astro-cid-5wsdo3vj>🎉</p> <p class="font-semibold text-white" data-astro-cid-5wsdo3vj>¡Diálogo completado!</p> <p id="dp-accuracy" class="text-slate-300 text-sm" data-astro-cid-5wsdo3vj></p> <div class="flex gap-2 mt-2" data-astro-cid-5wsdo3vj> <button id="dp-btn-retry" class="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors" data-astro-cid-5wsdo3vj>Reintentar</button> <button id="dp-btn-back2" class="flex-1 py-2.5 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors" data-astro-cid-5wsdo3vj>Otro diálogo</button> </div> </div> </div>  <script>(function(){const serialized = "{}";
+
+  const DIALOGUE_MAP = JSON.parse(serialized);
+  let activeTema = 'all';
+  let currentDialogueId = null;
+  let currentLines = [];
+  let currentLineIndex = 0;
+  let sessionCorrect = 0;
+  let sessionTotal = 0;
+
+  const $ = id => document.getElementById(id);
+  const dpGrid = $('dp-grid');
+  const dpPractice = $('dp-practice');
+  const dpEnd = $('dp-end');
+  const dpChinese = $('dp-chinese');
+  const dpInput = $('dp-input');
+  const dpCounter = $('dp-counter');
+  const dpResult = $('dp-result');
+  const dpResultLine = $('dp-result-line');
+  const dpPinyinCorrect = $('dp-pinyin-correct');
+  const dpMeaning = $('dp-meaning');
+  const dpBtnCheck = $('dp-btn-check');
+  const dpBtnNext = $('dp-btn-next');
+  const dpBack = $('dp-back');
+  const dpAccuracy = $('dp-accuracy');
+  const dpBtnRetry = $('dp-btn-retry');
+  const dpBtnBack2 = $('dp-btn-back2');
+
+  function normalise(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[1-5]/g, '')
+      .toLowerCase().replace(/[.,!?¿¡；，。！？''…]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  function isPinyinCorrect(input, item) {
+    const norm = normalise(input);
+    const normPinyin = normalise(item.pinyin);
+    return norm === normPinyin || norm.replace(/\s/g,'') === normPinyin.replace(/\s/g,'');
+  }
+
+  function renderGrid() {
+    dpGrid.innerHTML = '';
+    const ids = Object.keys(DIALOGUE_MAP).filter(id => {
+      if (activeTema === 'all') return true;
+      return DIALOGUE_MAP[id].some(line => line.tags?.includes(activeTema));
+    });
+
+    if (ids.length === 0) {
+      dpGrid.innerHTML = '<p class="col-span-2 text-center text-slate-400 text-sm py-4">No hay diálogos para este tema.</p>';
+      return;
+    }
+
+    ids.forEach(id => {
+      const lines = DIALOGUE_MAP[id];
+      const tema = lines[0]?.tags?.[0] ?? '';
+      const btn = document.createElement('button');
+      btn.className = 'dp-card';
+      btn.innerHTML = `
+        <span class="text-xs text-indigo-400 font-medium mb-1 block">${tema.replace('tema','T')}</span>
+        <p class="text-sm text-white font-medium leading-tight" style="font-family:'PingFang SC','Noto Sans SC',sans-serif;">${lines[0]?.chinese ?? ''}</p>
+        <p class="text-xs text-slate-500 mt-1">${lines.length} líneas</p>
+      `;
+      btn.addEventListener('click', () => startDialogue(id));
+      dpGrid.appendChild(btn);
+    });
+  }
+
+  function startDialogue(id) {
+    currentDialogueId = id;
+    currentLines = DIALOGUE_MAP[id];
+    currentLineIndex = 0;
+    sessionCorrect = 0;
+    sessionTotal = 0;
+    dpGrid.classList.add('hidden');
+    dpEnd.classList.add('hidden');
+    dpPractice.classList.remove('hidden');
+    renderLine();
+  }
+
+  function renderLine() {
+    const line = currentLines[currentLineIndex];
+    dpChinese.textContent = line.chinese;
+    dpCounter.textContent = `${currentLineIndex + 1} / ${currentLines.length}`;
+    dpInput.value = '';
+    dpInput.disabled = false;
+    dpResult.classList.add('hidden');
+    dpBtnCheck.classList.remove('hidden');
+    dpBtnNext.classList.add('hidden');
+    dpInput.focus();
+  }
+
+  function checkLine() {
+    const line = currentLines[currentLineIndex];
+    const input = dpInput.value.trim();
+    if (!input) return;
+
+    dpInput.disabled = true;
+    dpBtnCheck.classList.add('hidden');
+    dpBtnNext.classList.remove('hidden');
+    dpResult.classList.remove('hidden');
+
+    sessionTotal++;
+    dpPinyinCorrect.textContent = line.pinyin;
+    dpMeaning.textContent = line.meaning;
+
+    if (isPinyinCorrect(input, line)) {
+      sessionCorrect++;
+      dpResult.className = 'rounded-xl px-4 py-3 text-sm bg-emerald-500/10 border border-emerald-500/20';
+      dpResultLine.className = 'font-semibold text-emerald-400 mb-1';
+      dpResultLine.textContent = '✅ ¡Perfecto!';
+    } else {
+      dpResult.className = 'rounded-xl px-4 py-3 text-sm bg-amber-500/10 border border-amber-500/20';
+      dpResultLine.className = 'font-semibold text-amber-400 mb-1';
+      dpResultLine.textContent = '⚠️ Pinyin correcto:';
+    }
+  }
+
+  function advanceLine() {
+    currentLineIndex++;
+    if (currentLineIndex >= currentLines.length) {
+      showEnd();
+    } else {
+      renderLine();
+    }
+  }
+
+  function showEnd() {
+    dpPractice.classList.add('hidden');
+    dpEnd.classList.remove('hidden');
+    const pct = sessionTotal > 0 ? Math.round((sessionCorrect / sessionTotal) * 100) : 0;
+    dpAccuracy.textContent = `${sessionCorrect} / ${sessionTotal} correctas (${pct}%)`;
+  }
+
+  function showGrid() {
+    dpPractice.classList.add('hidden');
+    dpEnd.classList.add('hidden');
+    dpGrid.classList.remove('hidden');
+    renderGrid();
+  }
+
+  dpBtnCheck.addEventListener('click', checkLine);
+  dpBtnNext.addEventListener('click', advanceLine);
+  dpBack.addEventListener('click', showGrid);
+  dpBtnRetry.addEventListener('click', () => startDialogue(currentDialogueId));
+  dpBtnBack2.addEventListener('click', showGrid);
+  dpInput.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (!dpInput.disabled) checkLine();
+    else dpBtnNext.click();
+  });
+
+  document.querySelectorAll('.dp-tema').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.dp-tema').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTema = btn.dataset.tema;
+      renderGrid();
+    });
+  });
+
+  renderGrid();
+})();</script> </div> <div id="tab-progress" class="tab-content" data-astro-cid-j7pv25f6> <div class="flex flex-col gap-5 max-w-md mx-auto"> <!-- Streak section --> <div class="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-2xl p-5"> <div class="flex items-center gap-3 mb-3"> <span class="text-4xl">🔥</span> <div> <p id="pv-streak" class="text-3xl font-bold text-amber-300">0</p> <p class="text-sm text-amber-400/80">días consecutivos</p> </div> </div> <!-- Heatmap last 30 days --> <div id="pv-heatmap" class="flex gap-1 flex-wrap mt-2"></div> <p class="text-xs text-amber-400/60 mt-2">Últimos 30 días</p> </div> <!-- Overall stats --> <div class="grid grid-cols-3 gap-3"> <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 text-center"> <p id="pv-mastered" class="text-2xl font-bold text-indigo-300">0</p> <p class="text-xs text-indigo-400/70 mt-0.5">dominadas</p> </div> <div class="bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 text-center"> <p id="pv-learning" class="text-2xl font-bold text-violet-300">0</p> <p class="text-xs text-violet-400/70 mt-0.5">aprendiendo</p> </div> <div class="bg-slate-500/10 border border-slate-500/20 rounded-xl p-4 text-center"> <p id="pv-new" class="text-2xl font-bold text-slate-300">0</p> <p class="text-xs text-slate-400/70 mt-0.5">nuevas</p> </div> </div> <!-- Per-topic progress --> <div class="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4"> <h3 class="text-sm font-semibold text-white">Progreso por tema</h3> <div id="pv-topics" class="flex flex-col gap-3"></div> </div> <!-- Motivational message --> <div id="pv-message" class="text-center text-sm text-slate-400 py-2"></div> </div> <script>(function(){const serialized = "[{\"type\":\"word\",\"chinese\":\"我\",\"pinyin\":\"wǒ\",\"meaning\":\"yo\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"你\",\"pinyin\":\"nǐ\",\"meaning\":\"tú\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"他\",\"pinyin\":\"tā\",\"meaning\":\"él\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"她\",\"pinyin\":\"tā\",\"meaning\":\"ella\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"好\",\"pinyin\":\"hǎo\",\"meaning\":\"bien / bueno\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"吗\",\"pinyin\":\"ma\",\"meaning\":\"partícula interrogativa\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"呢\",\"pinyin\":\"ne\",\"meaning\":\"partícula interrogativa\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"再见\",\"pinyin\":\"zàijiàn\",\"meaning\":\"adiós\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"叫\",\"pinyin\":\"jiào\",\"meaning\":\"llamarse\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"什么\",\"pinyin\":\"shénme\",\"meaning\":\"qué\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"名字\",\"pinyin\":\"míngzi\",\"meaning\":\"nombre\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"很\",\"pinyin\":\"hěn\",\"meaning\":\"muy\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"谢谢\",\"pinyin\":\"xièxiè\",\"meaning\":\"gracias\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"不客气\",\"pinyin\":\"búkèqi\",\"meaning\":\"de nada\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"对不起\",\"pinyin\":\"duìbuqǐ\",\"meaning\":\"perdón / lo siento\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"没关系\",\"pinyin\":\"méiguānxi\",\"meaning\":\"no pasa nada\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"姓\",\"pinyin\":\"xìng\",\"meaning\":\"apellido / apellidarse\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"还可以\",\"pinyin\":\"hái kěyǐ\",\"meaning\":\"no está mal\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"马马虎虎\",\"pinyin\":\"mǎmǎhǔhǔ\",\"meaning\":\"no muy bien\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"认识\",\"pinyin\":\"rènshi\",\"meaning\":\"conocer\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"高兴\",\"pinyin\":\"gāoxìng\",\"meaning\":\"contento / alegre\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"怎么样\",\"pinyin\":\"zěnmeyàng\",\"meaning\":\"cómo estás / qué tal\",\"tags\":[\"tema2\"]},{\"type\":\"phrase\",\"chinese\":\"认识你很高兴。\",\"pinyin\":\"rènshi nǐ hěn gāoxìng.\",\"meaning\":\"mucho gusto en conocerte.\",\"tags\":[\"tema2\"]},{\"type\":\"word\",\"chinese\":\"是\",\"pinyin\":\"shì\",\"meaning\":\"ser\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"哪\",\"pinyin\":\"nǎ\",\"meaning\":\"cuál / qué\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"人\",\"pinyin\":\"rén\",\"meaning\":\"persona\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"和\",\"pinyin\":\"hé\",\"meaning\":\"y\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"会\",\"pinyin\":\"huì\",\"meaning\":\"saber / poder / partícula de futuro\",\"tags\":[\"tema3\",\"tema11\"]},{\"type\":\"word\",\"chinese\":\"说\",\"pinyin\":\"shuō\",\"meaning\":\"hablar / decir\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"中国\",\"pinyin\":\"Zhōngguó\",\"meaning\":\"China\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"汉语\",\"pinyin\":\"hànyǔ\",\"meaning\":\"idioma chino\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"不\",\"pinyin\":\"bù\",\"meaning\":\"no\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"一点儿\",\"pinyin\":\"yīdiǎnr\",\"meaning\":\"un poco\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"国\",\"pinyin\":\"guó\",\"meaning\":\"país\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"你好。你怎么样？\",\"pinyin\":\"nǐ hǎo. nǐ zěnmeyàng?\",\"meaning\":\"hola. ¿cómo estás?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我很好，你呢？\",\"pinyin\":\"wǒ hěn hǎo, nǐ ne?\",\"meaning\":\"estoy muy bien, ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我还可以。你叫什么名字？\",\"pinyin\":\"wǒ hái kěyǐ. nǐ jiào shénme míngzi?\",\"meaning\":\"estoy más o menos. ¿cómo te llamas?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我叫李东东。你呢？\",\"pinyin\":\"wǒ jiào Lǐ Dōngdōng. nǐ ne?\",\"meaning\":\"me llamo Li Dongdong. ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"你姓什么？\",\"pinyin\":\"nǐ xìng shénme?\",\"meaning\":\"¿cuál es tu apellido?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我姓陈。\",\"pinyin\":\"wǒ xìng Chén.\",\"meaning\":\"mi apellido es Chen.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我也很高兴认识你。你是哪国人？\",\"pinyin\":\"wǒ yě hěn gāoxìng rènshi nǐ. nǐ shì nǎ guó rén?\",\"meaning\":\"también estoy encantado de conocerte. ¿de qué país eres?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我是中国人。你呢？\",\"pinyin\":\"wǒ shì Zhōngguó rén. nǐ ne?\",\"meaning\":\"soy chino. ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我是西班牙人。你会说西班牙语吗？\",\"pinyin\":\"wǒ shì Xībānyá rén. nǐ huì shuō Xībānyáyǔ ma?\",\"meaning\":\"soy español. ¿hablas español?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"对不起，我不会说西班牙语。\",\"pinyin\":\"duìbuqǐ, wǒ bú huì shuō Xībānyáyǔ.\",\"meaning\":\"lo siento, no hablo español.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我会说英语，你也会说吗？\",\"pinyin\":\"wǒ huì shuō Yīngyǔ, nǐ yě huì shuō ma?\",\"meaning\":\"hablo inglés, ¿tú también hablas?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我们说英语，好吗？\",\"pinyin\":\"wǒmen shuō Yīngyǔ, hǎo ma?\",\"meaning\":\"hablamos en inglés, ¿de acuerdo?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"不，我们说汉语好。\",\"pinyin\":\"bù, wǒmen shuō Hànyǔ hǎo.\",\"meaning\":\"no, mejor hablamos en chino.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我也好，我不认识她。\",\"pinyin\":\"wǒ yě hǎo, wǒ bù rènshi tā.\",\"meaning\":\"también estoy bien, no la conozco.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"不认识吗？她叫小燕。\",\"pinyin\":\"bù rènshi ma? tā jiào Xiǎoyàn.\",\"meaning\":\"¿no la conoces? se llama Xiaoyan.\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"你是哪国人？\",\"pinyin\":\"nǐ shì nǎ guó rén?\",\"meaning\":\"¿de qué país eres?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我是西班牙人，你呢？\",\"pinyin\":\"wǒ shì Xībānyá rén, nǐ ne?\",\"meaning\":\"soy español, ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"你会说英语吗？\",\"pinyin\":\"nǐ huì shuō Yīngyǔ ma?\",\"meaning\":\"¿hablas inglés?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我不会说英语，我会说汉语，日语和一点法语，你呢？\",\"pinyin\":\"wǒ bú huì shuō Yīngyǔ, wǒ huì shuō Hànyǔ, Rìyǔ hé yīdiǎn Fǎyǔ, nǐ ne?\",\"meaning\":\"no hablo inglés, hablo chino, japonés y un poco de francés. ¿y tú?\",\"tags\":[\"tema3\"]},{\"type\":\"phrase\",\"chinese\":\"我会说汉语，西班牙语和英语。\",\"pinyin\":\"wǒ huì shuō Hànyǔ, Xībānyáyǔ hé Yīngyǔ.\",\"meaning\":\"hablo chino, español e inglés.\",\"tags\":[\"tema3\"]},{\"type\":\"word\",\"chinese\":\"谁\",\"pinyin\":\"shéi\",\"meaning\":\"quién\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"写\",\"pinyin\":\"xiě\",\"meaning\":\"escribir\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"请\",\"pinyin\":\"qǐng\",\"meaning\":\"por favor\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"字\",\"pinyin\":\"zì\",\"meaning\":\"carácter chino\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"朋友\",\"pinyin\":\"péngyou\",\"meaning\":\"amigo / amiga\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"怎么\",\"pinyin\":\"zěnme\",\"meaning\":\"cómo\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"这\",\"pinyin\":\"zhè\",\"meaning\":\"este / esto\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"那\",\"pinyin\":\"nà\",\"meaning\":\"aquel / eso\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"做\",\"pinyin\":\"zuò\",\"meaning\":\"hacer\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"的\",\"pinyin\":\"de\",\"meaning\":\"partícula posesiva\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"工作\",\"pinyin\":\"gōngzuò\",\"meaning\":\"trabajo / trabajar\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"在\",\"pinyin\":\"zài\",\"meaning\":\"en / estar en\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"哪儿\",\"pinyin\":\"nǎr\",\"meaning\":\"dónde\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"住\",\"pinyin\":\"zhù\",\"meaning\":\"vivir / residir\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"北京\",\"pinyin\":\"Běijīng\",\"meaning\":\"Pekín\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"号\",\"pinyin\":\"hào\",\"meaning\":\"número\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"老师\",\"pinyin\":\"lǎoshī\",\"meaning\":\"profesor\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"学校\",\"pinyin\":\"xuéxiào\",\"meaning\":\"escuela / colegio\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"医生\",\"pinyin\":\"yīshēng\",\"meaning\":\"médico\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"医院\",\"pinyin\":\"yīyuàn\",\"meaning\":\"hospital\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"问\",\"pinyin\":\"wèn\",\"meaning\":\"preguntar\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"也\",\"pinyin\":\"yě\",\"meaning\":\"también\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"汉字\",\"pinyin\":\"hànzì\",\"meaning\":\"caracteres chinos\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"路\",\"pinyin\":\"lù\",\"meaning\":\"calle\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"您\",\"pinyin\":\"nín\",\"meaning\":\"usted\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"公司\",\"pinyin\":\"gōngsī\",\"meaning\":\"empresa / compañía\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"学生\",\"pinyin\":\"xuéshēng\",\"meaning\":\"estudiante\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"律师\",\"pinyin\":\"lǜshī\",\"meaning\":\"abogado\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"零\",\"pinyin\":\"líng\",\"meaning\":\"cero / 0\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"一\",\"pinyin\":\"yī\",\"meaning\":\"uno / 1\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"二\",\"pinyin\":\"èr\",\"meaning\":\"dos / 2\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"三\",\"pinyin\":\"sān\",\"meaning\":\"tres / 3\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"四\",\"pinyin\":\"sì\",\"meaning\":\"cuatro / 4\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"五\",\"pinyin\":\"wǔ\",\"meaning\":\"cinco / 5\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"六\",\"pinyin\":\"liù\",\"meaning\":\"seis / 6\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"七\",\"pinyin\":\"qī\",\"meaning\":\"siete / 7\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"八\",\"pinyin\":\"bā\",\"meaning\":\"ocho / 8\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"九\",\"pinyin\":\"jiǔ\",\"meaning\":\"nueve / 9\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"十\",\"pinyin\":\"shí\",\"meaning\":\"diez / 10\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"你是谁？\",\"pinyin\":\"nǐ shì shéi?\",\"meaning\":\"¿quién eres?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我是老师。\",\"pinyin\":\"wǒ shì lǎoshī.\",\"meaning\":\"soy profesor.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"他是老师的朋友。\",\"pinyin\":\"tā shì lǎoshī de péngyou.\",\"meaning\":\"él es el amigo del profesor.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"这是我写的汉字。\",\"pinyin\":\"zhè shì wǒ xiě de hànzì.\",\"meaning\":\"esto es el carácter que escribí.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"那个人做什么工作？\",\"pinyin\":\"nàgè rén zuò shénme gōngzuò?\",\"meaning\":\"¿a qué se dedica esa persona?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"你住在哪儿？\",\"pinyin\":\"nǐ zhù zài nǎr?\",\"meaning\":\"¿dónde vives?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"老师在学校工作。\",\"pinyin\":\"lǎoshī zài xuéxiào gōngzuò.\",\"meaning\":\"el profesor trabaja en el colegio.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我在公司工作。\",\"pinyin\":\"wǒ zài gōngsī gōngzuò.\",\"meaning\":\"trabajo en la empresa.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"医生在医院工作。\",\"pinyin\":\"yīshēng zài yīyuàn gōngzuò.\",\"meaning\":\"el médico trabaja en el hospital.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我在家。\",\"pinyin\":\"wǒ zài jiā.\",\"meaning\":\"estoy en casa.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我在家学习。\",\"pinyin\":\"wǒ zài jiā xuéxí.\",\"meaning\":\"estudio en casa.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我在学习。\",\"pinyin\":\"wǒ zài xuéxí.\",\"meaning\":\"estoy estudiando.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"律师在哪儿？\",\"pinyin\":\"lǜshī zài nǎr?\",\"meaning\":\"¿dónde está el abogado?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"律师在医院。\",\"pinyin\":\"lǜshī zài yīyuàn.\",\"meaning\":\"el abogado está en el hospital.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我是汉语学生。你呢？\",\"pinyin\":\"wǒ shì Hànyǔ xuéshēng. nǐ ne?\",\"meaning\":\"soy estudiante de chino. ¿y tú?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"你会写汉字吗？\",\"pinyin\":\"nǐ huì xiě hànzì ma?\",\"meaning\":\"¿sabes escribir caracteres chinos?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我会一点儿。\",\"pinyin\":\"wǒ huì yīdiǎnr.\",\"meaning\":\"sé un poco.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"请问，这个字怎么写？\",\"pinyin\":\"qǐngwèn, zhège zì zěnme xiě?\",\"meaning\":\"perdona, ¿cómo se escribe este carácter?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"对不起，这个字我不会写。\",\"pinyin\":\"duìbuqǐ, zhège zì wǒ bú huì xiě.\",\"meaning\":\"lo siento, no sé escribir este carácter.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"那个是我的朋友。\",\"pinyin\":\"nàgè shì wǒ de péngyou.\",\"meaning\":\"ese es mi amigo.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"他做什么工作？\",\"pinyin\":\"tā zuò shénme gōngzuò?\",\"meaning\":\"¿a qué se dedica?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"他在哪儿工作？\",\"pinyin\":\"tā zài nǎr gōngzuò?\",\"meaning\":\"¿dónde trabaja?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"他在医院工作。\",\"pinyin\":\"tā zài yīyuàn gōngzuò.\",\"meaning\":\"trabaja en el hospital.\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"王老师您住在哪儿？\",\"pinyin\":\"Wáng lǎoshī nín zhù zài nǎr?\",\"meaning\":\"maestro Wang, ¿dónde vive usted?\",\"tags\":[\"tema4\"]},{\"type\":\"phrase\",\"chinese\":\"我住在北京，在云南路68号。\",\"pinyin\":\"wǒ zhù zài Běijīng, zài Yúnnán lù 68 hào.\",\"meaning\":\"vivo en Pekín, en la calle Yunnan número 68.\",\"tags\":[\"tema4\"]},{\"type\":\"word\",\"chinese\":\"家\",\"pinyin\":\"jiā\",\"meaning\":\"casa / hogar\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"有\",\"pinyin\":\"yǒu\",\"meaning\":\"haber / tener\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"几\",\"pinyin\":\"jǐ\",\"meaning\":\"cuántos (menos de 10)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"多\",\"pinyin\":\"duō\",\"meaning\":\"mucho / más\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"少\",\"pinyin\":\"shǎo\",\"meaning\":\"poco / menos\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"多少\",\"pinyin\":\"duōshǎo\",\"meaning\":\"cuánto / cuántos (más de 10)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"儿子\",\"pinyin\":\"érzi\",\"meaning\":\"hijo\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"女儿\",\"pinyin\":\"nǚ'ér\",\"meaning\":\"hija\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"小\",\"pinyin\":\"xiǎo\",\"meaning\":\"pequeño\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"岁\",\"pinyin\":\"suì\",\"meaning\":\"años de edad\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"了\",\"pinyin\":\"le\",\"meaning\":\"partícula de acción acabada\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"大\",\"pinyin\":\"dà\",\"meaning\":\"grande\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"爸爸\",\"pinyin\":\"bàba\",\"meaning\":\"papá / padre\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"妻子\",\"pinyin\":\"qīzi\",\"meaning\":\"esposa\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"电话\",\"pinyin\":\"diànhuà\",\"meaning\":\"teléfono\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"号码\",\"pinyin\":\"hàomǎ\",\"meaning\":\"número (de teléfono)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"口\",\"pinyin\":\"kǒu\",\"meaning\":\"boca / clasificador de personas\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"个\",\"pinyin\":\"gè\",\"meaning\":\"clasificador general\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"瓶\",\"pinyin\":\"píng\",\"meaning\":\"botella (clasificador)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"杯\",\"pinyin\":\"bēi\",\"meaning\":\"taza / vaso (clasificador)\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"家人\",\"pinyin\":\"jiārén\",\"meaning\":\"familia\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"您家有几口人？\",\"pinyin\":\"nín jiā yǒu jǐ kǒu rén?\",\"meaning\":\"¿cuántas personas hay en su familia?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"我家有四口人：我妻子，儿子，女儿和我。\",\"pinyin\":\"wǒ jiā yǒu sì kǒu rén: wǒ qīzi, érzi, nǚ'ér hé wǒ.\",\"meaning\":\"mi familia tiene cuatro personas: mi esposa, mi hijo, mi hija y yo.\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"你几岁了？\",\"pinyin\":\"nǐ jǐ suì le?\",\"meaning\":\"¿cuántos años tienes?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"我六岁了。\",\"pinyin\":\"wǒ liù suì le.\",\"meaning\":\"tengo seis años.\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"您多大了？\",\"pinyin\":\"nín duō dà le?\",\"meaning\":\"¿cuántos años tiene usted?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"我三十岁了。\",\"pinyin\":\"wǒ sānshí suì le.\",\"meaning\":\"tengo treinta años.\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"你爸爸在家吗？\",\"pinyin\":\"nǐ bàba zài jiā ma?\",\"meaning\":\"¿está tu papá en casa?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"不在家。\",\"pinyin\":\"bù zài jiā.\",\"meaning\":\"no está en casa.\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"你爸爸的电话号码是多少？\",\"pinyin\":\"nǐ bàba de diànhuà hàomǎ shì duōshǎo?\",\"meaning\":\"¿cuál es el número de teléfono de tu papá?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"这个人是谁？\",\"pinyin\":\"zhège rén shì shéi?\",\"meaning\":\"¿quién es esta persona?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"这是什么？\",\"pinyin\":\"zhè shì shénme?\",\"meaning\":\"¿qué es esto?\",\"tags\":[\"tema5\"]},{\"type\":\"phrase\",\"chinese\":\"你家有几口人？\",\"pinyin\":\"nǐ jiā yǒu jǐ kǒu rén?\",\"meaning\":\"¿cuántas personas hay en tu familia?\",\"tags\":[\"tema5\"]},{\"type\":\"word\",\"chinese\":\"月\",\"pinyin\":\"yuè\",\"meaning\":\"mes\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"年\",\"pinyin\":\"nián\",\"meaning\":\"año\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"去\",\"pinyin\":\"qù\",\"meaning\":\"ir\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"学习\",\"pinyin\":\"xuéxí\",\"meaning\":\"estudiar\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"来\",\"pinyin\":\"lái\",\"meaning\":\"venir\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"时候\",\"pinyin\":\"shíhòu\",\"meaning\":\"tiempo / momento\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"昨天\",\"pinyin\":\"zuótiān\",\"meaning\":\"ayer\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"今天\",\"pinyin\":\"jīntiān\",\"meaning\":\"hoy\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"明天\",\"pinyin\":\"míngtiān\",\"meaning\":\"mañana\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"上午\",\"pinyin\":\"shàngwǔ\",\"meaning\":\"por la mañana\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"中午\",\"pinyin\":\"zhōngwǔ\",\"meaning\":\"mediodía\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"下午\",\"pinyin\":\"xiàwǔ\",\"meaning\":\"por la tarde\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"上班\",\"pinyin\":\"shàngbān\",\"meaning\":\"ir a trabajar\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"下班\",\"pinyin\":\"xiàbān\",\"meaning\":\"salir del trabajo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"丈夫\",\"pinyin\":\"zhàngfu\",\"meaning\":\"marido / esposo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"哥哥\",\"pinyin\":\"gēge\",\"meaning\":\"hermano mayor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"弟弟\",\"pinyin\":\"dìdi\",\"meaning\":\"hermano menor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"姐姐\",\"pinyin\":\"jiějie\",\"meaning\":\"hermana mayor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"妹妹\",\"pinyin\":\"mèimei\",\"meaning\":\"hermana menor\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"兄弟姐妹\",\"pinyin\":\"xiōngdìjiěmèi\",\"meaning\":\"hermanos (en general)\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"星期\",\"pinyin\":\"xīngqī\",\"meaning\":\"semana\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"星期天\",\"pinyin\":\"xīngqītiān\",\"meaning\":\"domingo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"早上\",\"pinyin\":\"zǎoshang\",\"meaning\":\"por la mañana temprano\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"晚上\",\"pinyin\":\"wǎnshang\",\"meaning\":\"por la noche\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"早\",\"pinyin\":\"zǎo\",\"meaning\":\"temprano\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"晚\",\"pinyin\":\"wǎn\",\"meaning\":\"tarde / noche\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"小朋友\",\"pinyin\":\"xiǎopéngyǒu\",\"meaning\":\"amiguito\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"好朋友\",\"pinyin\":\"hǎopéngyǒu\",\"meaning\":\"mejor amigo\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"日\",\"pinyin\":\"rì\",\"meaning\":\"sol / día (tiempo puntual)\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"中\",\"pinyin\":\"zhōng\",\"meaning\":\"medio / centro\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"今天是几月几号？\",\"pinyin\":\"jīntiān shì jǐ yuè jǐ hào?\",\"meaning\":\"¿qué fecha es hoy?\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"今天是2026年4月21号。\",\"pinyin\":\"jīntiān shì 2026 nián 4 yuè 21 hào.\",\"meaning\":\"hoy es 21 de abril de 2026.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"你有兄弟姐妹吗？\",\"pinyin\":\"nǐ yǒu xiōngdìjiěmèi ma?\",\"meaning\":\"¿tienes hermanos?\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"我有兄弟姐妹。\",\"pinyin\":\"wǒ yǒu xiōngdìjiěmèi.\",\"meaning\":\"tengo hermanos.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"他会说汉语和一点儿英语。\",\"pinyin\":\"tā huì shuō Hànyǔ hé yīdiǎnr Yīngyǔ.\",\"meaning\":\"habla chino y un poco de inglés.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"他在北京的医院工作。\",\"pinyin\":\"tā zài Běijīng de yīyuàn gōngzuò.\",\"meaning\":\"trabaja en el hospital de Pekín.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"他家有五口人。\",\"pinyin\":\"tā jiā yǒu wǔ kǒu rén.\",\"meaning\":\"su familia tiene cinco personas.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"他的妻子四十八岁了。\",\"pinyin\":\"tā de qīzi sìshíbā suì le.\",\"meaning\":\"su esposa tiene cuarenta y ocho años.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"明天是几月几号？\",\"pinyin\":\"míngtiān shì jǐ yuè jǐ hào?\",\"meaning\":\"¿qué fecha es mañana?\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"这个星期天是几月几号？\",\"pinyin\":\"zhège xīngqītiān shì jǐ yuè jǐ hào?\",\"meaning\":\"¿qué fecha es este domingo?\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"我住在中国的时候很高兴。\",\"pinyin\":\"wǒ zhù zài Zhōngguó de shíhou hěn gāoxìng.\",\"meaning\":\"cuando vivía en China estaba muy contento.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"她住在英国的时候不会说西班牙语。\",\"pinyin\":\"tā zhù zài Yīngguó de shíhou bú huì shuō Xībānyáyǔ.\",\"meaning\":\"cuando ella vivía en Inglaterra no sabía hablar español.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"我十五岁的时候不会写汉字。\",\"pinyin\":\"wǒ shíwǔ suì de shíhou bú huì xiě hànzì.\",\"meaning\":\"cuando tenía quince años no sabía escribir caracteres.\",\"tags\":[\"tema6\"]},{\"type\":\"phrase\",\"chinese\":\"你什么时候上班？\",\"pinyin\":\"nǐ shénme shíhou shàngbān?\",\"meaning\":\"¿cuándo vas a trabajar?\",\"tags\":[\"tema6\"]},{\"type\":\"word\",\"chinese\":\"现在\",\"pinyin\":\"xiànzài\",\"meaning\":\"ahora\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"点\",\"pinyin\":\"diǎn\",\"meaning\":\"hora (clasificador)\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"回\",\"pinyin\":\"huí\",\"meaning\":\"volver\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"没有\",\"pinyin\":\"méiyǒu\",\"meaning\":\"no tener / no haber\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"看\",\"pinyin\":\"kàn\",\"meaning\":\"mirar\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"电影\",\"pinyin\":\"diànyǐng\",\"meaning\":\"película\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"能\",\"pinyin\":\"néng\",\"meaning\":\"poder / ser capaz de\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"分钟\",\"pinyin\":\"fēnzhōng\",\"meaning\":\"minuto\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"半\",\"pinyin\":\"bàn\",\"meaning\":\"medio / mitad\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"早上好\",\"pinyin\":\"zǎoshang hǎo\",\"meaning\":\"buenos días\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"钟\",\"pinyin\":\"zhōng\",\"meaning\":\"en punto\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"时间\",\"pinyin\":\"shíjiān\",\"meaning\":\"tiempo\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"上学\",\"pinyin\":\"shàngxué\",\"meaning\":\"ir a la escuela\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"天\",\"pinyin\":\"tiān\",\"meaning\":\"cielo / día\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你几点上班？\",\"pinyin\":\"nǐ jǐ diǎn shàngbān?\",\"meaning\":\"¿a qué hora vas al trabajo?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你什么时候下班？\",\"pinyin\":\"nǐ shénme shíhou xiàbān?\",\"meaning\":\"¿cuándo sales del trabajo?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我晚上下班。\",\"pinyin\":\"wǒ wǎnshang xiàbān.\",\"meaning\":\"salgo del trabajo por la noche.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你这个星期怎么样？有时间吗？\",\"pinyin\":\"nǐ zhège xīngqī zěnmeyàng? yǒu shíjiān ma?\",\"meaning\":\"¿cómo estás esta semana? ¿tienes tiempo?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"很好，我有时间。\",\"pinyin\":\"hěn hǎo, wǒ yǒu shíjiān.\",\"meaning\":\"muy bien, tengo tiempo.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你明天几点上班？\",\"pinyin\":\"nǐ míngtiān jǐ diǎn shàngbān?\",\"meaning\":\"¿a qué hora vas al trabajo mañana?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你喜欢看电影吗？\",\"pinyin\":\"nǐ xǐhuān kàn diànyǐng ma?\",\"meaning\":\"¿te gusta ver películas?\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"我很喜欢看电影。\",\"pinyin\":\"wǒ hěn xǐhuān kàn diànyǐng.\",\"meaning\":\"me gusta mucho ver películas.\",\"tags\":[\"tema7\"]},{\"type\":\"phrase\",\"chinese\":\"你喜欢的电影叫什么名字？\",\"pinyin\":\"nǐ xǐhuān de diànyǐng jiào shénme míngzi?\",\"meaning\":\"¿cómo se llama la película que te gusta?\",\"tags\":[\"tema7\"]},{\"type\":\"word\",\"chinese\":\"想\",\"pinyin\":\"xiǎng\",\"meaning\":\"desear / pensar\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"喝\",\"pinyin\":\"hē\",\"meaning\":\"beber\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"杯子\",\"pinyin\":\"bēizi\",\"meaning\":\"vaso / taza (clasificador)\",\"tags\":[\"tema8\",\"tema9\"]},{\"type\":\"word\",\"chinese\":\"吃\",\"pinyin\":\"chī\",\"meaning\":\"comer\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"茶\",\"pinyin\":\"chá\",\"meaning\":\"té\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"水\",\"pinyin\":\"shuǐ\",\"meaning\":\"agua\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"米饭\",\"pinyin\":\"mǐfàn\",\"meaning\":\"arroz\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"爱\",\"pinyin\":\"ài\",\"meaning\":\"amar / gustar mucho\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"东西\",\"pinyin\":\"dōngxi\",\"meaning\":\"cosa\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"菜\",\"pinyin\":\"cài\",\"meaning\":\"plato de comida / verduras\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"都\",\"pinyin\":\"dōu\",\"meaning\":\"todo / todos\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"喂\",\"pinyin\":\"wèi\",\"meaning\":\"¡Hola! / ¿Diga?\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"小姐\",\"pinyin\":\"xiǎojiě\",\"meaning\":\"señorita\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"水果\",\"pinyin\":\"shuǐguǒ\",\"meaning\":\"fruta\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"看见\",\"pinyin\":\"kànjiàn\",\"meaning\":\"ver\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"先生\",\"pinyin\":\"xiānsheng\",\"meaning\":\"señor\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"太\",\"pinyin\":\"tài\",\"meaning\":\"demasiado\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"好吃\",\"pinyin\":\"hǎochī\",\"meaning\":\"delicioso\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"还\",\"pinyin\":\"hái\",\"meaning\":\"todavía / más aún\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"知道\",\"pinyin\":\"zhīdào\",\"meaning\":\"saber\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"身体\",\"pinyin\":\"shēntǐ\",\"meaning\":\"cuerpo / salud\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"晚上好\",\"pinyin\":\"wǎnshang hǎo\",\"meaning\":\"buenas noches\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"你想喝什么？\",\"pinyin\":\"nǐ xiǎng hē shénme?\",\"meaning\":\"¿qué quieres beber?\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"她爱吃什么？\",\"pinyin\":\"tā ài chī shénme?\",\"meaning\":\"¿qué le encanta comer a ella?\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"你知道他的名字吗？\",\"pinyin\":\"nǐ zhīdào tā de míngzi ma?\",\"meaning\":\"¿sabes su nombre?\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"我想吃饭。\",\"pinyin\":\"wǒ xiǎng chīfàn.\",\"meaning\":\"quiero comer.\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"你吃饭了吗？\",\"pinyin\":\"nǐ chīfàn le ma?\",\"meaning\":\"¿ya comiste? (también es forma de saludar)\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"我们都会说英语。\",\"pinyin\":\"wǒmen dōu huì shuō Yīngyǔ.\",\"meaning\":\"todos nosotros sabemos hablar inglés.\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"我还想吃。\",\"pinyin\":\"wǒ hái xiǎng chī.\",\"meaning\":\"quiero comer más.\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"我还没吃。\",\"pinyin\":\"wǒ hái méi chī.\",\"meaning\":\"todavía no he comido.\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"这个菜太好吃。\",\"pinyin\":\"zhège cài tài hǎochī.\",\"meaning\":\"esta comida está demasiado deliciosa.\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"你的身体怎么样？\",\"pinyin\":\"nǐ de shēntǐ zěnmeyàng?\",\"meaning\":\"¿cómo está tu salud?\",\"tags\":[\"tema8\"]},{\"type\":\"phrase\",\"chinese\":\"我的身体好了。\",\"pinyin\":\"wǒ de shēntǐ hǎo le.\",\"meaning\":\"mi salud está mejor.\",\"tags\":[\"tema8\"]},{\"type\":\"word\",\"chinese\":\"同学\",\"pinyin\":\"tóngxué\",\"meaning\":\"compañero de estudios\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"电脑\",\"pinyin\":\"diànnǎo\",\"meaning\":\"ordenador / computadora\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"里\",\"pinyin\":\"lǐ\",\"meaning\":\"dentro\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"书\",\"pinyin\":\"shū\",\"meaning\":\"libro\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"后面\",\"pinyin\":\"hòumiàn\",\"meaning\":\"detrás\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"前面\",\"pinyin\":\"qiánmiàn\",\"meaning\":\"delante\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"坐\",\"pinyin\":\"zuò\",\"meaning\":\"sentarse\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"桌子\",\"pinyin\":\"zhuōzi\",\"meaning\":\"mesa\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"上\",\"pinyin\":\"shàng\",\"meaning\":\"encima / arriba\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"下\",\"pinyin\":\"xià\",\"meaning\":\"debajo\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"椅子\",\"pinyin\":\"yǐzi\",\"meaning\":\"silla\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"本\",\"pinyin\":\"běn\",\"meaning\":\"clasificador de libros y revistas\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"玩\",\"pinyin\":\"wán\",\"meaning\":\"jugar\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"左边\",\"pinyin\":\"zuǒbiān\",\"meaning\":\"izquierda\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"右边\",\"pinyin\":\"yòubiān\",\"meaning\":\"derecha\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"台\",\"pinyin\":\"tái\",\"meaning\":\"clasificador de TV, ordenador, etc.\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"外面\",\"pinyin\":\"wàimiàn\",\"meaning\":\"fuera\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"只\",\"pinyin\":\"zhī\",\"meaning\":\"clasificador de animales y aves\",\"tags\":[\"tema9\"]},{\"type\":\"phrase\",\"chinese\":\"我的同学在老师旁边。\",\"pinyin\":\"wǒ de tóngxué zài lǎoshī pángbiān.\",\"meaning\":\"mi compañero está al lado del profesor.\",\"tags\":[\"tema9\"]},{\"type\":\"phrase\",\"chinese\":\"铅笔在电脑前面。\",\"pinyin\":\"qiānbǐ zài diànnǎo qiánmiàn.\",\"meaning\":\"el lápiz está delante del ordenador.\",\"tags\":[\"tema9\"]},{\"type\":\"word\",\"chinese\":\"买\",\"pinyin\":\"mǎi\",\"meaning\":\"comprar\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"钱\",\"pinyin\":\"qián\",\"meaning\":\"dinero\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"块\",\"pinyin\":\"kuài\",\"meaning\":\"trozo (clasificador)\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"些\",\"pinyin\":\"xiē\",\"meaning\":\"unos\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"苹果\",\"pinyin\":\"píngguǒ\",\"meaning\":\"manzana\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"衣服\",\"pinyin\":\"yīfú\",\"meaning\":\"ropa\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"漂亮\",\"pinyin\":\"piàoliang\",\"meaning\":\"bonito / guapa\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"卖\",\"pinyin\":\"mài\",\"meaning\":\"vender\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"元\",\"pinyin\":\"yuán\",\"meaning\":\"yuan (moneda de China)\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"我想买苹果，苹果多少钱？\",\"pinyin\":\"wǒ xiǎng mǎi píngguǒ, píngguǒ duōshǎo qián?\",\"meaning\":\"quiero comprar manzanas, ¿cuánto cuestan?\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"这件衣服多少钱？\",\"pinyin\":\"zhè jiàn yīfu duōshǎo qián?\",\"meaning\":\"¿cuánto vale esta ropa?\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"那些衣服多少钱？\",\"pinyin\":\"nà xiē yīfu duōshǎo qián?\",\"meaning\":\"¿cuánto cuestan aquellas ropas?\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"我卖一些书。\",\"pinyin\":\"wǒ mài yì xiē shū.\",\"meaning\":\"vendo unos libros.\",\"tags\":[\"tema10\"]},{\"type\":\"phrase\",\"chinese\":\"他在卖几台电脑。\",\"pinyin\":\"tā zài mài jǐ tái diànnǎo.\",\"meaning\":\"él está vendiendo unos cuantos ordenadores.\",\"tags\":[\"tema10\"]},{\"type\":\"word\",\"chinese\":\"天气\",\"pinyin\":\"tiānqì\",\"meaning\":\"clima / tiempo\",\"tags\":[\"tema11\"]},{\"type\":\"word\",\"chinese\":\"热\",\"pinyin\":\"rè\",\"meaning\":\"calor / caliente\",\"tags\":[\"tema11\"]},{\"type\":\"word\",\"chinese\":\"冷\",\"pinyin\":\"lěng\",\"meaning\":\"frío\",\"tags\":[\"tema11\"]},{\"type\":\"word\",\"chinese\":\"下雨\",\"pinyin\":\"xiàyǔ\",\"meaning\":\"lluvia / llover\",\"tags\":[\"tema11\"]},{\"type\":\"word\",\"chinese\":\"不冷不热\",\"pinyin\":\"bù lěng bù rè\",\"meaning\":\"templado / ni frío ni calor\",\"tags\":[\"tema11\"]}]";
+
+  const ALL_ITEMS = JSON.parse(serialized);
+  const SRS_KEY = 'hanyu-srs-v1';
+  const STREAK_KEY = 'hanyu-streak-v1';
+  const ACTIVITY_KEY = 'hanyu-activity-v1';
+
+  function loadSRS() {
+    try { return JSON.parse(localStorage.getItem(SRS_KEY) || '{}'); } catch { return {}; }
+  }
+
+  function loadStreak() {
+    try { return JSON.parse(localStorage.getItem(STREAK_KEY) || '{"count":0,"lastDate":""}'); } catch { return { count: 0, lastDate: '' }; }
+  }
+
+  function loadActivity() {
+    try { return JSON.parse(localStorage.getItem(ACTIVITY_KEY) || '{}'); } catch { return {}; }
+  }
+
+  const srs = loadSRS();
+  const streak = loadStreak();
+  const activity = loadActivity();
+
+  // Streak
+  document.getElementById('pv-streak').textContent = String(streak.count);
+
+  // Heatmap
+  const heatmap = document.getElementById('pv-heatmap');
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+    const active = activity[d] || false;
+    const dot = document.createElement('div');
+    dot.className = active
+      ? 'w-5 h-5 rounded-sm bg-amber-400/80'
+      : 'w-5 h-5 rounded-sm bg-white/10';
+    dot.title = d;
+    heatmap.appendChild(dot);
+  }
+
+  // Today's activity
+  const today = new Date().toISOString().slice(0, 10);
+  if (!activity[today]) {
+    activity[today] = true;
+    localStorage.setItem(ACTIVITY_KEY, JSON.stringify(activity));
+  }
+
+  // Stats
+  const words = ALL_ITEMS.filter(i => i.type === 'word' || i.type === 'phrase');
+  let mastered = 0, learning = 0, newItems = 0;
+  words.forEach(item => {
+    const rec = srs[item.chinese];
+    if (!rec) { newItems++; }
+    else if (rec.box >= 4) { mastered++; }
+    else { learning++; }
+  });
+  document.getElementById('pv-mastered').textContent = String(mastered);
+  document.getElementById('pv-learning').textContent = String(learning);
+  document.getElementById('pv-new').textContent = String(newItems);
+
+  // Per-topic
+  const topicsEl = document.getElementById('pv-topics');
+  const temaLabels = {
+    tema2: 'T2 — Saludos', tema3: 'T3 — Nacionalidades',
+    tema4: 'T4 — Profesiones', tema5: 'T5 — Familia',
+    tema6: 'T6 — Fechas y horas', tema7: 'T7 — Tiempo libre',
+    tema8: 'T8 — Comida', tema9: 'T9 — Ubicaciones', tema10: 'T10 — Compras'
+  };
+
+  const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
+  temas.forEach(tema => {
+    const tItems = words.filter(i => i.tags?.includes(tema));
+    const tMastered = tItems.filter(i => srs[i.chinese]?.box >= 4).length;
+    const pct = tItems.length > 0 ? Math.round((tMastered / tItems.length) * 100) : 0;
+
+    const row = document.createElement('div');
+    row.innerHTML = `
+      <div class="flex justify-between items-center mb-1">
+        <span class="text-xs text-slate-300 font-medium">${temaLabels[tema] ?? tema}</span>
+        <span class="text-xs text-slate-400">${tMastered}/${tItems.length}</span>
+      </div>
+      <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-500" style="width:${pct}%"></div>
+      </div>
+    `;
+    topicsEl.appendChild(row);
+  });
+
+  // Motivational message
+  const pct = words.length > 0 ? Math.round((mastered / words.length) * 100) : 0;
+  const messages = [
+    [0, 10, '¡Empieza tu aventura con el chino! 加油！'],
+    [10, 30, '¡Buen comienzo! Sigue practicando cada día. 💪'],
+    [30, 60, '¡Vas genial! Ya conoces bastante vocabulario. 🚀'],
+    [60, 80, '¡Impresionante progreso! Casi lo tienes. ⭐'],
+    [80, 101, '¡Eres un maestro del HSK1! 🏆 厉害！']
+  ];
+  const msg = messages.find(([min, max]) => pct >= min && pct < max);
+  if (msg) document.getElementById('pv-message').textContent = msg[2];
+})();</script> </div> </main> <!-- Bottom navigation --> <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-sm border-t border-white/10 flex z-10" data-astro-cid-j7pv25f6> <button class="nav-btn active flex-1 flex flex-col items-center gap-0.5 py-3" data-tab="vocab" data-astro-cid-j7pv25f6> <span class="nav-icon text-xl text-white/50" data-astro-cid-j7pv25f6>📚</span> <span class="nav-label text-[10px] font-medium text-white/50" data-astro-cid-j7pv25f6>Vocab</span> </button> <button class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-3" data-tab="sentences" data-astro-cid-j7pv25f6> <span class="nav-icon text-xl text-white/50" data-astro-cid-j7pv25f6>✍️</span> <span class="nav-label text-[10px] font-medium text-white/50" data-astro-cid-j7pv25f6>Frases</span> </button> <button class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-3" data-tab="dialogues" data-astro-cid-j7pv25f6> <span class="nav-icon text-xl text-white/50" data-astro-cid-j7pv25f6>💬</span> <span class="nav-label text-[10px] font-medium text-white/50" data-astro-cid-j7pv25f6>Diálogos</span> </button> <button class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-3" data-tab="progress" data-astro-cid-j7pv25f6> <span class="nav-icon text-xl text-white/50" data-astro-cid-j7pv25f6>📊</span> <span class="nav-label text-[10px] font-medium text-white/50" data-astro-cid-j7pv25f6>Progreso</span> </button> </nav>  </body> </html>

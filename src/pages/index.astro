@@ -1,5 +1,8 @@
 ---
 import PracticeCard from '../components/PracticeCard.astro';
+import SentencePractice from '../components/SentencePractice.astro';
+import DialoguePractice from '../components/DialoguePractice.astro';
+import ProgressView from '../components/ProgressView.astro';
 import vocabulary from '../data/vocabulary.json';
 import type { VocabItem } from '../types';
 
@@ -11,24 +14,130 @@ const items = vocabulary as VocabItem[];
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>汉语练习</title>
+    <title>汉语练习 · HSK1</title>
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .tab-content { display: none; }
+      .tab-content.active {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem 1rem 5rem;
+        animation: fadeIn 0.2s ease;
+      }
+      .nav-btn { transition: color 0.15s, border-color 0.15s; }
+      .nav-btn.active .nav-icon { color: #818cf8; }
+      .nav-btn.active .nav-label { color: #818cf8; }
+    </style>
   </head>
-  <body class="min-h-dvh bg-stone-100 flex flex-col items-center justify-center px-4 py-12 font-sans">
+  <body class="min-h-dvh bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col text-white">
 
-    <header class="text-center mb-10">
-      <h1 class="text-3xl font-bold text-stone-900 tracking-tight" style="font-family: 'PingFang SC', 'Noto Sans SC', sans-serif;">
-        汉语练习
-      </h1>
-      <p class="text-sm text-stone-400 mt-1">Mandarin practice</p>
+    <!-- Header -->
+    <header class="flex items-center justify-between px-4 py-3 border-b border-white/10 backdrop-blur-sm sticky top-0 z-10 bg-slate-900/60">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl font-bold tracking-tight" style="font-family: 'PingFang SC', 'Noto Sans SC', sans-serif;">汉语练习</span>
+        <span class="text-xs text-indigo-300 font-medium bg-indigo-900/50 px-2 py-0.5 rounded-full border border-indigo-700/50">HSK1</span>
+      </div>
+      <div id="streak-badge" class="flex items-center gap-1.5 bg-amber-500/20 border border-amber-500/30 rounded-full px-3 py-1">
+        <span class="text-base">🔥</span>
+        <span id="streak-count" class="text-sm font-bold text-amber-300">0</span>
+        <span class="text-xs text-amber-400/80">días</span>
+      </div>
     </header>
 
-    <main class="w-full max-w-md bg-white rounded-2xl border border-stone-200 shadow-sm p-8">
-      <PracticeCard items={items} />
+    <!-- Content area -->
+    <main class="flex-1 overflow-y-auto flex flex-col">
+      <div id="tab-vocab" class="tab-content active">
+        <PracticeCard items={items} />
+      </div>
+      <div id="tab-sentences" class="tab-content">
+        <SentencePractice items={items} />
+      </div>
+      <div id="tab-dialogues" class="tab-content">
+        <DialoguePractice items={items} />
+      </div>
+      <div id="tab-progress" class="tab-content">
+        <ProgressView items={items} />
+      </div>
     </main>
 
-    <footer class="mt-8 text-xs text-stone-400">
-      Press <kbd class="px-1.5 py-0.5 rounded border border-stone-300 text-stone-500 font-mono text-xs">Enter</kbd> to advance
-    </footer>
+    <!-- Bottom navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-sm border-t border-white/10 flex z-10">
+      <button class="nav-btn active flex-1 flex flex-col items-center gap-0.5 py-3" data-tab="vocab">
+        <span class="nav-icon text-xl text-white/50">📚</span>
+        <span class="nav-label text-[10px] font-medium text-white/50">Vocab</span>
+      </button>
+      <button class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-3" data-tab="sentences">
+        <span class="nav-icon text-xl text-white/50">✍️</span>
+        <span class="nav-label text-[10px] font-medium text-white/50">Frases</span>
+      </button>
+      <button class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-3" data-tab="dialogues">
+        <span class="nav-icon text-xl text-white/50">💬</span>
+        <span class="nav-label text-[10px] font-medium text-white/50">Diálogos</span>
+      </button>
+      <button class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-3" data-tab="progress">
+        <span class="nav-icon text-xl text-white/50">📊</span>
+        <span class="nav-label text-[10px] font-medium text-white/50">Progreso</span>
+      </button>
+    </nav>
+
+    <script>
+      // Tab navigation
+      const tabs = document.querySelectorAll('.nav-btn');
+      const contents = document.querySelectorAll('.tab-content');
+
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = (btn as HTMLElement).dataset.tab;
+          tabs.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          contents.forEach(c => {
+            c.classList.toggle('active', c.id === `tab-${target}`);
+          });
+        });
+      });
+
+      // Streak logic
+      const STREAK_KEY = 'hanyu-streak-v1';
+
+      function loadStreak(): { count: number; lastDate: string } {
+        try {
+          return JSON.parse(localStorage.getItem(STREAK_KEY) || '{"count":0,"lastDate":""}');
+        } catch {
+          return { count: 0, lastDate: '' };
+        }
+      }
+
+      function updateStreak() {
+        const today = new Date().toISOString().slice(0, 10);
+        const data = loadStreak();
+        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+
+        if (data.lastDate === today) {
+          // Already counted today
+        } else if (data.lastDate === yesterday) {
+          data.count += 1;
+          data.lastDate = today;
+        } else if (!data.lastDate) {
+          data.count = 1;
+          data.lastDate = today;
+        } else {
+          data.count = 1;
+          data.lastDate = today;
+        }
+
+        localStorage.setItem(STREAK_KEY, JSON.stringify(data));
+        return data.count;
+      }
+
+      const streak = updateStreak();
+      const el = document.getElementById('streak-count');
+      if (el) el.textContent = String(streak);
+    </script>
 
   </body>
 </html>

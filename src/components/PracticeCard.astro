@@ -1,388 +1,502 @@
 ---
 import type { VocabItem } from '../types';
-
-interface Props {
-  items: VocabItem[];
-}
-
+interface Props { items: VocabItem[]; }
 const { items } = Astro.props;
-const serialized = JSON.stringify(items);
+const words = items.filter(i => i.type === 'word');
+const serialized = JSON.stringify(words);
+const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
 ---
 
-<div class="flex flex-col gap-5">
+<div id="pc-root" class="w-full flex flex-col gap-3">
 
-  <!-- Filter tabs -->
-  <div class="flex gap-2" role="group" aria-label="Filtrar vocabulario">
-    <button class="tab active" data-filter="all">Todo</button>
-    <button class="tab" data-filter="word">Palabras</button>
-    <button class="tab" data-filter="phrase">Frases</button>
+  <!-- ── MOBILE: settings toggle ── -->
+  <div class="lg:hidden flex justify-end">
+    <button id="pc-settings-toggle"
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">
+      ⚙️ <span>Ajustes</span>
+    </button>
   </div>
 
-  <!-- Tema filter -->
-  <div class="flex items-center gap-2.5">
-    <span class="text-xs text-stone-400 shrink-0">Tema:</span>
-    <div class="flex gap-1 flex-wrap">
-      <button class="tema-btn active" data-tema="all">Todos</button>
-      <button class="tema-btn" data-tema="tema2">T2</button>
-      <button class="tema-btn" data-tema="tema3">T3</button>
-      <button class="tema-btn" data-tema="tema4">T4</button>
-      <button class="tema-btn" data-tema="tema5">T5</button>
-      <button class="tema-btn" data-tema="tema6">T6</button>
-      <button class="tema-btn" data-tema="tema7">T7</button>
-      <button class="tema-btn" data-tema="tema8">T8</button>
-      <button class="tema-btn" data-tema="tema9">T9</button>
-      <button class="tema-btn" data-tema="tema10">T10</button>
-    </div>
-  </div>
+  <!-- ── MOBILE: settings panel (slide-down) ── -->
+  <div id="pc-settings-panel" class="lg:hidden overflow-hidden"
+    style="max-height:0; transition:max-height 0.25s ease, opacity 0.2s ease; opacity:0">
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-4 mb-1 grid grid-cols-2 gap-4">
 
-  <!-- Direction mode -->
-  <div class="flex items-center gap-2.5">
-    <span class="text-xs text-stone-400 shrink-0">Modo:</span>
-    <div class="flex gap-1">
-      <button class="mode-btn active" data-mode="mix">Mezcla</button>
-      <button class="mode-btn" data-mode="zh-to-es">汉→ES</button>
-      <button class="mode-btn" data-mode="es-to-zh">ES→汉</button>
-    </div>
-  </div>
-
-  <!-- Session size selector -->
-  <div class="flex items-center gap-2.5">
-    <span class="text-xs text-stone-400 shrink-0">Sesión:</span>
-    <div class="flex gap-1">
-      <button class="size-btn" data-size="10">10</button>
-      <button class="size-btn active" data-size="20">20</button>
-      <button class="size-btn" data-size="50">50</button>
-      <button class="size-btn" data-size="0">∞</button>
-    </div>
-  </div>
-
-  <!-- ── PRACTICE VIEW ─────────────────────────────────────────────────── -->
-  <div id="practice-view" class="flex flex-col gap-5">
-
-    <!-- Type badge + SRS badge + counter -->
-    <div class="flex justify-between items-center">
-      <div class="flex gap-1.5">
-        <span id="type-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-stone-100 text-stone-500 border border-stone-200"></span>
-        <span id="srs-badge"  class="text-xs font-medium px-2 py-0.5 rounded-full border"></span>
-      </div>
-      <span class="text-xs text-stone-400">
-        <span id="current-index">1</span> / <span id="total-count">1</span>
-      </span>
-    </div>
-
-    <!-- Prompt -->
-    <div class="text-center py-6 min-h-[9rem] flex flex-col items-center justify-center gap-3">
-      <span id="prompt-text"></span>
-      <span id="prompt-hint" class="text-xs text-stone-400 tracking-wide uppercase"></span>
-      <button
-        id="btn-audio"
-        aria-label="Escuchar pronunciación"
-        class="mt-1 w-8 h-8 rounded-full border border-stone-200 bg-stone-50 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors flex items-center justify-center text-sm leading-none"
-      >🔊</button>
-    </div>
-
-    <!-- Pinyin / meaning reveals -->
-    <div class="flex flex-col gap-1 text-center min-h-[3.25rem]">
-      <p class="h-6"><span id="pinyin-text"  class="text-base italic text-red-700   invisible"></span></p>
-      <p class="h-6"><span id="meaning-text" class="text-sm        text-emerald-700 invisible"></span></p>
-    </div>
-
-    <!-- Input -->
-    <input
-      id="answer-input"
-      type="text"
-      autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
-      aria-label="Tu respuesta"
-      class="w-full px-4 py-3 rounded-lg border border-stone-200 bg-stone-50 text-stone-900 placeholder-stone-300 text-base outline-none focus:border-stone-500 transition-colors"
-    />
-
-    <!-- Result banner (words, shown after auto-check) -->
-    <div id="result-banner" class="hidden rounded-lg px-4 py-3 text-sm text-center">
-      <p id="result-line"    class="font-semibold"></p>
-      <p id="correct-answer" class="mt-0.5 text-stone-500"></p>
-    </div>
-
-    <!-- Reveal buttons -->
-    <div class="flex gap-2">
-      <button id="btn-pinyin"  class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors">Pinyin</button>
-      <button id="btn-meaning" class="btn-reveal flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 transition-colors">Significado</button>
-    </div>
-
-    <!-- Phase: answering -->
-    <div id="row-check">
-      <button id="btn-check" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors">
-        Comprobar →
-      </button>
-    </div>
-
-    <!-- Phase: word checked → next -->
-    <div id="row-next" class="hidden">
-      <button id="btn-next" class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors">
-        Siguiente →
-      </button>
-    </div>
-
-    <!-- Phase: phrase self-assess -->
-    <div id="row-selfassess" class="hidden flex gap-2">
-      <button id="btn-knew"  class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">✓ Lo sabía</button>
-      <button id="btn-didnt" class="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-red-500    text-white hover:bg-red-600    transition-colors">✗ No lo sabía</button>
-    </div>
-
-  </div>
-
-  <!-- ── SUMMARY VIEW ───────────────────────────────────────────────────── -->
-  <div id="summary-view" class="hidden flex flex-col gap-5 py-2">
-
-    <div class="text-center">
-      <p class="text-5xl font-bold text-stone-900" id="summary-pct">—</p>
-      <p class="text-sm text-stone-400 mt-1">de acierto esta sesión</p>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3">
-      <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center">
-        <p class="text-2xl font-bold text-emerald-700" id="summary-correct">0</p>
-        <p class="text-xs text-emerald-600 mt-0.5">correctas</p>
-      </div>
-      <div class="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
-        <p class="text-2xl font-bold text-red-700" id="summary-wrong">0</p>
-        <p class="text-xs text-red-600 mt-0.5">falladas</p>
-      </div>
-    </div>
-
-    <!-- SRS breakdown -->
-    <div class="bg-stone-50 border border-stone-100 rounded-xl p-4">
-      <p class="text-xs text-stone-400 font-medium uppercase tracking-wide mb-3">Progreso total</p>
-      <div class="flex gap-2 text-center text-xs text-stone-500">
-        <div class="flex-1 bg-white border border-stone-200 rounded-lg py-2.5">
-          <strong id="srs-count-0" class="block text-lg text-stone-700 font-bold">0</strong>nuevas
-        </div>
-        <div class="flex-1 bg-amber-50 border border-amber-100 rounded-lg py-2.5">
-          <strong id="srs-count-1" class="block text-lg text-amber-700 font-bold">0</strong>aprendiendo
-        </div>
-        <div class="flex-1 bg-emerald-50 border border-emerald-100 rounded-lg py-2.5">
-          <strong id="srs-count-2" class="block text-lg text-emerald-700 font-bold">0</strong>dominadas
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Tema</span>
+        <div class="relative">
+          <select id="tema-mob"
+            class="w-full px-3 py-2 pr-7 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none focus:border-indigo-500 appearance-none cursor-pointer">
+            <option value="all">Todos</option>
+            {temas.map(t => <option value={t}>{t.replace('tema','Tema ')}</option>)}
+          </select>
+          <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">▾</span>
         </div>
       </div>
-    </div>
 
-    <div class="flex flex-col gap-2">
-      <button id="btn-review-mistakes" class="hidden w-full py-2.5 rounded-lg text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"></button>
-      <button id="btn-new-session"     class="w-full py-2.5 rounded-lg text-sm font-semibold bg-stone-900 text-white hover:bg-stone-700 transition-colors">Nueva sesión</button>
-    </div>
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Dirección</span>
+        <div class="flex flex-col gap-1">
+          <button class="dir-btn active text-left" data-dir="random">🔀 Aleat.</button>
+          <button class="dir-btn text-left" data-dir="zh-to-es">中 → ES</button>
+          <button class="dir-btn text-left" data-dir="es-to-zh">ES → 中</button>
+        </div>
+      </div>
 
+    </div>
   </div>
 
+  <!-- ── 3-COLUMN GRID (desktop) / single col (mobile) ── -->
+  <div class="lg:grid lg:grid-cols-[208px_1fr_208px] lg:gap-5 lg:items-start">
+
+    <!-- Col 1: sidebar (desktop only) -->
+    <aside class="hidden lg:flex flex-col gap-4">
+
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Tema</span>
+        <div class="relative">
+          <select id="tema-desk"
+            class="w-full px-3 py-2 pr-8 rounded-xl bg-slate-800 border border-slate-600 text-white text-sm outline-none focus:border-indigo-500 appearance-none cursor-pointer">
+            <option value="all">Todos</option>
+            {temas.map(t => <option value={t}>{t.replace('tema','Tema ')}</option>)}
+          </select>
+          <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">▾</span>
+        </div>
+      </div>
+
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Dirección</span>
+        <div class="flex flex-col gap-1.5">
+          <button class="dir-btn active" data-dir="random">🔀 Aleatorio</button>
+          <button class="dir-btn" data-dir="zh-to-es">中文 → Español</button>
+          <button class="dir-btn" data-dir="es-to-zh">Español → 中 / Pīn</button>
+        </div>
+      </div>
+
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-3">
+        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Progreso SRS</h3>
+        <div id="srs-counts" class="flex flex-col gap-1.5 text-xs"></div>
+      </div>
+
+    </aside>
+
+    <!-- Col 2: THE CARD — always centered -->
+    <div class="flex flex-col items-center gap-3">
+
+      <!-- Session progress bar -->
+      <div id="session-progress" class="w-full max-w-[520px]">
+        <div class="flex justify-between items-center mb-1.5 text-xs">
+          <span class="text-slate-400"><span id="session-pos">0</span> / <span id="session-total">0</span></span>
+          <span id="session-accuracy-text" class="font-semibold"></span>
+        </div>
+        <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div id="session-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-500" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div id="pc-card" class="w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-5">
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <span id="type-badge" class="text-xs font-medium px-2 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/10"></span>
+          <span id="srs-badge" class="text-xs font-medium px-2 py-0.5 rounded-full border"></span>
+          <span id="extra-badge" class="hidden text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">extra</span>
+        </div>
+
+        <div class="text-center py-8 min-h-[9rem] flex flex-col items-center justify-center gap-3">
+          <span id="prompt-text"></span>
+          <span id="prompt-hint" class="text-xs text-slate-400 tracking-wide uppercase"></span>
+        </div>
+
+        <div class="flex flex-col gap-1 text-center min-h-[3.25rem]">
+          <p class="h-6"><span id="pinyin-text"  class="text-base italic text-indigo-300 invisible"></span></p>
+          <p class="h-6"><span id="meaning-text" class="text-sm text-emerald-300 invisible"></span></p>
+        </div>
+
+        <input id="answer-input" type="text"
+          autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+          placeholder="Escribe tu respuesta…"
+          class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 text-base outline-none focus:border-indigo-500 transition-colors"
+        />
+
+        <div id="result-banner" class="hidden rounded-xl px-4 py-3 text-sm text-center">
+          <p id="result-line" class="font-semibold"></p>
+          <p id="correct-answer" class="mt-0.5 text-slate-400"></p>
+        </div>
+
+        <div class="flex gap-2">
+          <button id="btn-pinyin"  class="btn-reveal flex-1 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Pinyin</button>
+          <button id="btn-meaning" class="btn-reveal flex-1 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Significado</button>
+        </div>
+
+        <div id="row-check">
+          <button id="btn-check" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">
+            Comprobar →
+          </button>
+        </div>
+
+        <div id="row-next" class="hidden">
+          <button id="btn-next" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">
+            Siguiente →
+          </button>
+        </div>
+
+        <div id="row-selfassess" class="hidden flex gap-2">
+          <button id="btn-knew"  class="flex-1 py-3 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors">✓ Lo sabía</button>
+          <button id="btn-didnt" class="flex-1 py-3 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors">✗ No lo sabía</button>
+        </div>
+
+      </div>
+
+      <!-- Session end screen -->
+      <div id="session-end" class="hidden w-full max-w-[520px] bg-white/5 border border-white/10 rounded-2xl p-6 flex-col gap-5">
+        <div class="text-center py-2">
+          <div id="session-end-emoji" class="text-5xl mb-3">🎉</div>
+          <h2 id="session-end-title" class="text-xl font-bold text-white">Sesión completada</h2>
+          <p id="session-end-subtitle" class="text-slate-400 text-sm mt-1"></p>
+        </div>
+        <div id="session-stats" class="grid grid-cols-2 gap-3"></div>
+        <div id="session-leveled" class="hidden flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide">↑ Listas para subir de nivel</h3>
+            <button id="btn-confirm-levelup" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-violet-600 hover:bg-violet-500 text-white transition-colors">↑ Subir nivel</button>
+          </div>
+          <div id="session-leveled-list" class="flex flex-wrap gap-1.5"></div>
+        </div>
+        <div id="session-errors-section" class="hidden flex-col gap-2">
+          <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide">⚠ Para repasar</h3>
+          <div id="session-errors-list" class="flex flex-wrap gap-1.5"></div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <button id="btn-retry-errors" class="hidden w-full py-3 rounded-xl text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white transition-colors">🔁 Repasar errores</button>
+          <button id="btn-new-session" class="w-full py-3 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">▶ Nueva sesión</button>
+          <button id="btn-practice-all" class="w-full py-3 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5 transition-colors">Practicar todas (sin SRS)</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Col 3: mirror spacer (desktop only) -->
+    <div class="hidden lg:block"></div>
+
+  </div>
 </div>
 
 <style>
-  .tab {
-    @apply flex-1 py-2 rounded-lg text-sm font-medium border border-stone-200 text-stone-500 transition-colors hover:bg-stone-100;
+  .dir-btn {
+    @apply w-full px-3 py-1.5 rounded-lg text-xs font-medium border border-white/10 text-slate-400 hover:bg-white/5 transition-colors;
   }
-  .tab.active {
-    @apply bg-stone-900 text-white border-stone-900;
-  }
-  .btn-reveal.on {
-    @apply bg-stone-200 border-stone-300 text-stone-800;
-  }
-  .size-btn {
-    @apply px-2.5 py-1 rounded-md text-xs font-medium border border-stone-200 text-stone-500 hover:bg-stone-100 transition-colors;
-  }
-  .size-btn.active {
-    @apply bg-stone-900 text-white border-stone-900;
-  }
-  .tema-btn {
-    @apply px-2.5 py-1 rounded-md text-xs font-medium border border-stone-200 text-stone-500 hover:bg-stone-100 transition-colors;
-  }
-  .tema-btn.active {
-    @apply bg-stone-900 text-white border-stone-900;
-  }
-  .mode-btn {
-    @apply px-2.5 py-1 rounded-md text-xs font-medium border border-stone-200 text-stone-500 hover:bg-stone-100 transition-colors;
-  }
-  .mode-btn.active {
-    @apply bg-stone-900 text-white border-stone-900;
-  }
-  #btn-audio.speaking {
-    @apply bg-stone-200 text-stone-700 border-stone-300;
-  }
+  .dir-btn.active { @apply bg-indigo-600 text-white border-indigo-500; }
+  .btn-reveal.on  { @apply bg-white/10 border-white/20 text-white; }
 </style>
 
 <script define:vars={{ serialized }}>
-  // ── Constants ─────────────────────────────────────────────────────────────
-  const ALL_ITEMS   = JSON.parse(serialized);
-  const SRS_KEY     = 'hanyu-srs-v1';
-  const INTERVALS   = [0, 1, 4];
-  const BOX_LABEL   = ['nueva', 'aprendiendo', 'dominada'];
+  const INTERVALS   = [0, 1, 3, 7, 14];
+  const BOX_LABEL   = ['nueva','aprendiendo','revisando','consolidando','dominada'];
   const BOX_CLASSES = [
-    'bg-stone-100 text-stone-500 border-stone-200',
-    'bg-amber-100 text-amber-700 border-amber-200',
-    'bg-emerald-100 text-emerald-700 border-emerald-200',
+    'bg-slate-700/50 text-slate-300 border-slate-600',
+    'bg-amber-500/20 text-amber-300 border-amber-500/30',
+    'bg-blue-500/20 text-blue-300 border-blue-500/30',
+    'bg-violet-500/20 text-violet-300 border-violet-500/30',
+    'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
   ];
-  const CHINESE_CLS = 'font-chinese text-chinese-lg font-medium text-stone-900';
-  const MEANING_CLS = 'text-2xl font-medium text-stone-700 leading-snug';
+  const SRS_KEY  = 'hanyu-srs-v1';
+  const ALL_ITEMS = JSON.parse(serialized);
 
-  // ── State ─────────────────────────────────────────────────────────────────
-  let srsData       = {};
-  let filtered      = [];
-  let currentIndex  = 0;
-  let direction     = 'zh-to-es';
-  let phase         = 'answering';
-  let pinyinOn      = false;
-  let meaningOn     = false;
-  let mistakes      = [];
-  let sessionRight  = 0;
-  let sessionWrong  = 0;
-  let activeFilter  = 'all';
-  let reviewMode    = false;
-  let sessionLimit   = 20;
-  let activeTema     = 'all';
-  let directionMode  = 'mix';   // 'mix' | 'zh-to-es' | 'es-to-zh'
-  let currentChinese = '';       // Chinese text of current card (for audio)
+  let srsData = {};
+  let pendingLevelUps = []; // items acertados que el usuario puede subir manualmente
 
-  // ── DOM ───────────────────────────────────────────────────────────────────
-  const $ = id => document.getElementById(id);
-  const practiceView      = $('practice-view');
-  const summaryView       = $('summary-view');
-  const promptEl          = $('prompt-text');
-  const hintEl            = $('prompt-hint');
-  const pinyinEl          = $('pinyin-text');
-  const meaningEl         = $('meaning-text');
-  const answerEl          = $('answer-input');
-  const typeBadge         = $('type-badge');
-  const srsBadge          = $('srs-badge');
-  const counterCur        = $('current-index');
-  const counterTot        = $('total-count');
-  const resultBanner      = $('result-banner');
-  const resultLine        = $('result-line');
-  const correctAnswerEl   = $('correct-answer');
-  const btnPinyin         = $('btn-pinyin');
-  const btnMeaning        = $('btn-meaning');
-  const btnAudio          = $('btn-audio');
-  const btnCheck          = $('btn-check');
-  const btnNext           = $('btn-next');
-  const btnKnew           = $('btn-knew');
-  const btnDidnt          = $('btn-didnt');
-  const rowCheck          = $('row-check');
-  const rowNext           = $('row-next');
-  const rowSelfassess     = $('row-selfassess');
-  const summaryPct        = $('summary-pct');
-  const summaryCorrect    = $('summary-correct');
-  const summaryWrong      = $('summary-wrong');
-  const srsCount          = [0,1,2].map(i => $(`srs-count-${i}`));
-  const btnReviewMistakes = $('btn-review-mistakes');
-  const btnNewSession     = $('btn-new-session');
-  const tabs              = document.querySelectorAll('.tab');
-  const sizeBtns          = document.querySelectorAll('.size-btn');
-  const temaBtns          = document.querySelectorAll('.tema-btn');
+  function loadSRS()  { try { srsData = JSON.parse(localStorage.getItem(SRS_KEY)||'{}'); } catch { srsData={}; } }
+  function saveSRS()  { localStorage.setItem(SRS_KEY, JSON.stringify(srsData)); }
+  function getSRS(it) { return srsData[it.chinese] ?? { box:0, nextDate:'' }; }
 
-  // ── Audio ─────────────────────────────────────────────────────────────────
-  const hasSpeech = typeof speechSynthesis !== 'undefined';
-
-  if (!hasSpeech) btnAudio.style.display = 'none';
-
-  function speak(text) {
-    if (!hasSpeech) return;
-    speechSynthesis.cancel();
-    const utt  = new SpeechSynthesisUtterance(text);
-    utt.lang   = 'zh-CN';
-    utt.rate   = 0.8;
-    utt.onstart = () => btnAudio.classList.add('speaking');
-    utt.onend   = () => btnAudio.classList.remove('speaking');
-    speechSynthesis.speak(utt);
-  }
-
-  // ── SRS ───────────────────────────────────────────────────────────────────
-  function loadSRS() {
-    try { srsData = JSON.parse(localStorage.getItem(SRS_KEY) || '{}'); }
-    catch { srsData = {}; }
-  }
-
-  function saveSRS() {
-    localStorage.setItem(SRS_KEY, JSON.stringify(srsData));
-  }
-
-  function getRecord(chinese) {
-    return srsData[chinese] ?? { box: 0, due: new Date(0).toISOString() };
-  }
-
-  function isDue(chinese) {
-    return new Date(getRecord(chinese).due) <= new Date();
-  }
-
-  function recordResult(chinese, correct) {
-    const rec    = getRecord(chinese);
-    const newBox = correct ? Math.min(rec.box + 1, 2) : 0;
-    const due    = new Date();
-    if (newBox > 0) due.setDate(due.getDate() + INTERVALS[newBox]);
-    srsData[chinese] = { box: newBox, due: due.toISOString() };
+  function updateSRS(item, correct) {
+    const rec = getSRS(item);
+    // Nunca subimos de nivel automáticamente: el usuario decide en el resumen
+    const newBox = correct
+      ? rec.box
+      : (sessionSourceBox === 4 ? 3 : rec.box);
+    const next = new Date(Date.now() + INTERVALS[newBox]*86400000).toISOString().slice(0,10);
+    srsData[item.chinese] = { box:newBox, nextDate:next };
     saveSRS();
-  }
-
-  // ── Normalisation ─────────────────────────────────────────────────────────
-  function normalise(s) {
-    return s
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[1-5]/g, '')
-      .toLowerCase()
-      .replace(/[.,!?¿¡；，。！？''…]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }
-
-  function isCorrect(input, item) {
-    const norm = normalise(input);
-    if (!norm) return false;
-    if (direction === 'zh-to-es') {
-      // Accept Spanish meaning
-      if (item.meaning.split(/[\/,]/).map(s => normalise(s.trim())).some(o => o === norm)) return true;
-      // Also accept pinyin: with tones, without tones, with/without spaces
-      // e.g. "nǐ hǎo" / "ni hao" / "nihao" / "ni3 hao3" / "ni3hao3" all accepted
-      const normPinyin = normalise(item.pinyin);
-      return norm === normPinyin || norm.replace(/\s/g, '') === normPinyin.replace(/\s/g, '');
+    // Registrar candidatos a subir (acertadas y que no estén ya en el máximo)
+    if (correct && rec.box < 4 && !pendingLevelUps.includes(item)) {
+      pendingLevelUps.push(item);
     }
-    return normalise(item.chinese) === norm || normalise(item.pinyin) === norm;
   }
 
-  // ── Session building ──────────────────────────────────────────────────────
+  function isDue(item) {
+    const rec = getSRS(item);
+    if (!rec.nextDate) return true;
+    return rec.nextDate <= new Date().toISOString().slice(0,10);
+  }
+
+  // ── Session state ──────────────────────────────────────────────────────────
+  let sessionItems     = [];
+  let sessionIndex     = 0;
+  let sessionResults   = [];  // [{item, correct, boxBefore, boxAfter}]
+  let allFiltered      = [];  // full tema set for "practice all"
+  let sessionSourceBox = null; // set when launched from a specific SRS box
+  let direction      = 'zh-to-es';
+  let activeDirection = 'random';
+  let activeTema      = 'all';
+  let phase           = 'answering';
+  let pinyinOn        = false;
+  let meaningOn       = false;
+
+  const $  = id => document.getElementById(id);
+  const promptEl       = $('prompt-text');
+  const hintEl         = $('prompt-hint');
+  const pinyinEl       = $('pinyin-text');
+  const meaningEl      = $('meaning-text');
+  const answerEl       = $('answer-input');
+  const typeBadge      = $('type-badge');
+  const srsBadge       = $('srs-badge');
+  const extraBadge     = $('extra-badge');
+  const resultBanner   = $('result-banner');
+  const resultLine     = $('result-line');
+  const correctAnswer  = $('correct-answer');
+  const btnPinyin      = $('btn-pinyin');
+  const btnMeaning     = $('btn-meaning');
+  const btnCheck       = $('btn-check');
+  const btnNext        = $('btn-next');
+  const btnKnew        = $('btn-knew');
+  const btnDidnt       = $('btn-didnt');
+  const rowCheck       = $('row-check');
+  const rowNext        = $('row-next');
+  const rowSelfassess  = $('row-selfassess');
+  const srsCounts      = $('srs-counts');
+  const temaDesk       = $('tema-desk');
+  const temaMob        = $('tema-mob');
+  const settingsToggle = $('pc-settings-toggle');
+  const settingsPanel  = $('pc-settings-panel');
+  const pcCard         = $('pc-card');
+  const sessionEndEl   = $('session-end');
+  const sessionProgEl  = $('session-progress');
+
+  // ── Settings panel (mobile) ────────────────────────────────────────────────
+  let settingsOpen = false;
+  settingsToggle.addEventListener('click', () => {
+    settingsOpen = !settingsOpen;
+    settingsPanel.style.maxHeight = settingsOpen ? '300px' : '0';
+    settingsPanel.style.opacity   = settingsOpen ? '1'     : '0';
+  });
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
   function shuffle(arr) {
     const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
+    for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
     return a;
   }
 
-  function getPool() {
-    let pool = activeFilter === 'all' ? ALL_ITEMS : ALL_ITEMS.filter(i => i.type === activeFilter);
-    if (activeTema !== 'all') pool = pool.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTema));
-    return pool;
+  function normalise(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[1-5]/g,'')
+      .toLowerCase().replace(/[.,!?¿¡；，。！？''…]/g,'').replace(/\s+/g,' ').trim();
   }
 
-  function buildSession(pool) {
-    const due      = pool.filter(i =>  srsData[i.chinese] &&  isDue(i.chinese));
-    const newCards = pool.filter(i => !srsData[i.chinese]);
-    const notDue   = pool.filter(i =>  srsData[i.chinese] && !isDue(i.chinese));
-    const session  = [...shuffle(due), ...shuffle(newCards)];
-    const base     = session.length > 0 ? session : shuffle(notDue);
-    return sessionLimit > 0 ? base.slice(0, sessionLimit) : base;
+  function isCorrect(input, item) {
+    const norm           = normalise(input);
+    if (!norm) return false;
+    const pinyinNorm     = normalise(item.pinyin);
+    const pinyinNoSpaces = pinyinNorm.replace(/\s/g,'');
+    const normNoSpaces   = norm.replace(/\s/g,'');
+    if (direction === 'zh-to-es')
+      return item.meaning.split(/[\/,]/).map(normalise).some(o => o === norm)
+          || norm === pinyinNorm || normNoSpaces === pinyinNoSpaces;
+    return normalise(item.chinese) === norm
+        || norm === pinyinNorm
+        || normNoSpaces === pinyinNoSpaces;
   }
 
-  // ── Reveal toggles ────────────────────────────────────────────────────────
-  function setReveal(el, btn, visible) {
-    el.classList.toggle('invisible', !visible);
-    btn.classList.toggle('on', visible);
-  }
-
+  function setReveal(el, btn, v) { el.classList.toggle('invisible',!v); btn.classList.toggle('on',v); }
   function resetReveals() {
-    pinyinOn  = false;
-    meaningOn = false;
+    pinyinOn = false; meaningOn = false;
     setReveal(pinyinEl, btnPinyin, false);
     setReveal(meaningEl, btnMeaning, false);
   }
 
-  // ── Phase transitions ─────────────────────────────────────────────────────
+  // ── SRS ────────────────────────────────────────────────────────────────────
+  function renderSRSBadge(item) {
+    const b = getSRS(item).box;
+    srsBadge.className   = `text-xs font-medium px-2 py-0.5 rounded-full border ${BOX_CLASSES[b]}`;
+    srsBadge.textContent = BOX_LABEL[b];
+  }
+
+  function renderSRSCounts() {
+    srsCounts.innerHTML = '';
+    for (let b=0;b<5;b++) {
+      const group = ALL_ITEMS.filter(i=>(srsData[i.chinese]?.box??0)===b);
+      const count = group.length;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col';
+
+      // Clickable header row
+      const header = document.createElement('button');
+      header.className = `rounded-lg px-3 py-1.5 border ${BOX_CLASSES[b]} flex items-center justify-between w-full cursor-pointer hover:opacity-80 transition-opacity`;
+      header.innerHTML = `
+        <span class="text-[10px] opacity-80">${BOX_LABEL[b]}</span>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm">${count}</span>
+          <span class="text-[10px] opacity-50 transition-transform duration-200 inline-block" data-arrow>▾</span>
+        </div>`;
+
+      // Expandable panel
+      const panel = document.createElement('div');
+      panel.className = 'overflow-hidden';
+      panel.style.cssText = 'max-height:0;opacity:0;transition:max-height 0.25s ease,opacity 0.2s ease';
+
+      const inner = document.createElement('div');
+      inner.className = 'pt-2 pb-1 flex flex-col gap-2';
+
+      if (count > 0) {
+        const chips = document.createElement('div');
+        chips.className = 'flex flex-wrap gap-1';
+        chips.innerHTML = group.map(i =>
+          `<span class="text-xs px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-300"
+            style="font-family:'PingFang SC','Noto Sans SC',sans-serif">${i.chinese}</span>`
+        ).join('');
+        inner.appendChild(chips);
+
+        const studyBtn = document.createElement('button');
+        studyBtn.className = 'w-full py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors';
+        studyBtn.textContent = `Estudiar estas ${count} →`;
+        studyBtn.addEventListener('click', e => { e.stopPropagation(); startSession(group, b); });
+        inner.appendChild(studyBtn);
+      } else {
+        inner.innerHTML = `<p class="text-xs text-slate-500 text-center py-0.5">Ninguna todavía</p>`;
+      }
+
+      panel.appendChild(inner);
+      wrapper.appendChild(header);
+      wrapper.appendChild(panel);
+      srsCounts.appendChild(wrapper);
+
+      // Toggle
+      let open = false;
+      header.addEventListener('click', () => {
+        open = !open;
+        panel.style.maxHeight = open ? panel.scrollHeight + 'px' : '0';
+        panel.style.opacity   = open ? '1' : '0';
+        const arrow = header.querySelector('[data-arrow]');
+        if (arrow) arrow.style.transform = open ? 'rotate(180deg)' : '';
+      });
+    }
+  }
+
+  // ── Progress bar ───────────────────────────────────────────────────────────
+  function renderProgress() {
+    const done    = sessionIndex;
+    const total   = sessionItems.length;
+    const correct = sessionResults.filter(r => r.correct).length;
+    const pct     = total > 0 ? Math.round(done / total * 100) : 0;
+    const acc     = done > 0  ? Math.round(correct / done * 100) : null;
+
+    $('session-pos').textContent   = String(done);
+    $('session-total').textContent = String(total);
+    $('session-bar').style.width   = `${pct}%`;
+
+    const accEl = $('session-accuracy-text');
+    if (acc !== null) {
+      accEl.textContent = `${acc}% ✓`;
+      accEl.className   = `font-semibold text-xs ${acc>=80?'text-emerald-400':acc>=50?'text-amber-400':'text-rose-400'}`;
+    } else {
+      accEl.textContent = '';
+    }
+  }
+
+  // ── Session end screen ─────────────────────────────────────────────────────
+  function showSessionEnd() {
+    pcCard.classList.add('hidden');
+    sessionProgEl.classList.add('hidden');
+    sessionEndEl.classList.remove('hidden');
+    sessionEndEl.classList.add('flex');
+
+    const total    = sessionResults.length;
+    const correct  = sessionResults.filter(r => r.correct).length;
+    const errors   = sessionResults.filter(r => !r.correct).map(r => r.item);
+    const leveled  = pendingLevelUps;
+    const accuracy = total > 0 ? Math.round(correct / total * 100) : 0;
+    const noDue    = total === 0;
+
+    $('session-end-emoji').textContent    = noDue ? '✨' : accuracy>=80 ? '🎉' : accuracy>=50 ? '💪' : '📚';
+    $('session-end-title').textContent    = noDue ? '¡Todo al día!' : '¡Sesión completada!';
+    $('session-end-subtitle').textContent = noDue
+      ? 'No hay tarjetas pendientes. Usa "Practicar todas" para repasar.'
+      : `${correct} de ${total} correctas`;
+
+    const statsEl = $('session-stats');
+    statsEl.innerHTML = '';
+    if (!noDue) {
+      const addStat = (label, value, cls) => {
+        const div = document.createElement('div');
+        div.className = 'rounded-xl p-3 bg-white/5 border border-white/10 text-center';
+        div.innerHTML = `<div class="text-2xl font-bold ${cls}">${value}</div><div class="text-xs text-slate-400 mt-0.5">${label}</div>`;
+        statsEl.appendChild(div);
+      };
+      const accCls = accuracy>=80?'text-emerald-400':accuracy>=50?'text-amber-400':'text-rose-400';
+      addStat('Precisión', `${accuracy}%`,     accCls);
+      addStat('Correctas', `${correct}`,        'text-emerald-400');
+      addStat('Errores',   `${errors.length}`,  errors.length>0  ? 'text-rose-400'   : 'text-slate-300');
+      addStat('↑ Nivel',   `${leveled.length}`, leveled.length>0 ? 'text-violet-400' : 'text-slate-300');
+    }
+
+    const leveledSec = $('session-leveled');
+    if (leveled.length > 0) {
+      leveledSec.classList.remove('hidden'); leveledSec.classList.add('flex');
+      $('session-leveled-list').innerHTML = leveled.map(i =>
+        `<span class="text-sm px-2 py-1 rounded-lg bg-violet-500/20 text-violet-300 border border-violet-500/30"
+          style="font-family:'PingFang SC','Noto Sans SC',sans-serif">${i.chinese}</span>`
+      ).join('');
+    } else {
+      leveledSec.classList.add('hidden'); leveledSec.classList.remove('flex');
+    }
+
+    const errorsSec = $('session-errors-section');
+    const retryBtn  = $('btn-retry-errors');
+    if (errors.length > 0) {
+      errorsSec.classList.remove('hidden'); errorsSec.classList.add('flex');
+      $('session-errors-list').innerHTML = errors.map(i =>
+        `<span class="text-sm px-2 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30"
+          style="font-family:'PingFang SC','Noto Sans SC',sans-serif">${i.chinese}</span>`
+      ).join('');
+      retryBtn.classList.remove('hidden');
+    } else {
+      errorsSec.classList.add('hidden'); errorsSec.classList.remove('flex');
+      retryBtn.classList.add('hidden');
+    }
+  }
+
+  // ── Start / restart session ────────────────────────────────────────────────
+  function startSession(items, sourceBox = null) {
+    sessionItems     = shuffle(items);
+    sessionIndex     = 0;
+    sessionResults   = [];
+    pendingLevelUps  = [];
+    sessionSourceBox = sourceBox;
+    sessionEndEl.classList.add('hidden');
+    sessionEndEl.classList.remove('flex');
+
+    if (sessionItems.length === 0) {
+      pcCard.classList.add('hidden');
+      sessionProgEl.classList.add('hidden');
+      showSessionEnd();
+      return;
+    }
+
+    pcCard.classList.remove('hidden');
+    sessionProgEl.classList.remove('hidden');
+    renderProgress();
+    renderCurrent();
+  }
+
+  function applyFilter(tema) {
+    let base = ALL_ITEMS.slice();
+    if (tema && tema !== 'all') base = base.filter(i => i.tags?.includes(tema));
+    allFiltered = base;
+    startSession(base.filter(isDue));
+  }
+
+  // ── Phase transitions ──────────────────────────────────────────────────────
   function goAnswering() {
     phase = 'answering';
     answerEl.disabled = false;
@@ -397,32 +511,33 @@ const serialized = JSON.stringify(items);
   function goWordResult(correct, item) {
     phase = 'checked';
     answerEl.disabled = true;
+    const boxBefore   = getSRS(item).box;
+    updateSRS(item, correct);
+    const boxAfter    = getSRS(item).box;
+    sessionResults.push({ item, correct, boxBefore, boxAfter });
+    renderSRSBadge(item);
+    renderSRSCounts();
     resultBanner.classList.remove('hidden');
+    const answerText = direction === 'zh-to-es'
+      ? `${item.meaning}  —  ${item.pinyin}`
+      : `${item.chinese}  /  ${item.pinyin}`;
     if (correct) {
-      resultBanner.className      = 'rounded-lg px-4 py-3 text-sm text-center bg-emerald-50 border border-emerald-200';
-      resultLine.textContent      = '✓ Correcto';
-      resultLine.className        = 'font-semibold text-emerald-700';
-      if (direction === 'zh-to-es') {
-        correctAnswerEl.textContent = `${item.meaning}  —  ${item.pinyin}`;
-      } else {
-        correctAnswerEl.textContent = `${item.chinese}  /  ${item.pinyin}`;
-      }
+      resultBanner.className    = 'rounded-xl px-4 py-3 text-sm text-center bg-emerald-500/10 border border-emerald-500/20';
+      resultLine.className      = 'font-semibold text-emerald-400';
+      resultLine.textContent    = '✓ Correcto';
+      correctAnswer.textContent = answerText;
     } else {
-      resultBanner.className      = 'rounded-lg px-4 py-3 text-sm text-center bg-red-50 border border-red-200';
-      resultLine.textContent      = '✗ Incorrecto';
-      resultLine.className        = 'font-semibold text-red-700';
-      if (direction === 'zh-to-es') {
-        correctAnswerEl.textContent = `${item.meaning}  —  ${item.pinyin}`;
-      } else {
-        correctAnswerEl.textContent = `${item.chinese}  /  ${item.pinyin}`;
-      }
+      resultBanner.className    = 'rounded-xl px-4 py-3 text-sm text-center bg-rose-500/10 border border-rose-500/20';
+      resultLine.className      = 'font-semibold text-rose-400';
+      resultLine.textContent    = '✗ Incorrecto';
+      correctAnswer.textContent = answerText;
     }
     rowCheck.classList.add('hidden');
     rowNext.classList.remove('hidden');
   }
 
   function goPhraseAssess() {
-    phase = 'checked';
+    phase = 'selfassess';
     answerEl.disabled = true;
     meaningOn = true;
     setReveal(meaningEl, btnMeaning, true);
@@ -430,185 +545,135 @@ const serialized = JSON.stringify(items);
     rowSelfassess.classList.remove('hidden');
   }
 
-  // ── Summary ───────────────────────────────────────────────────────────────
-  function showSummary() {
-    speechSynthesis?.cancel();
-    practiceView.classList.add('hidden');
-    summaryView.classList.remove('hidden');
+  // ── Render current card ────────────────────────────────────────────────────
+  const ZH_CLS = 'text-4xl font-medium text-white';
+  const ES_CLS = 'text-2xl font-medium text-slate-200 leading-snug';
 
-    const total = sessionRight + sessionWrong;
-    summaryPct.textContent     = total === 0 ? '—' : `${Math.round((sessionRight / total) * 100)}%`;
-    summaryCorrect.textContent = String(sessionRight);
-    summaryWrong.textContent   = String(sessionWrong);
-
-    const pool   = getPool();
-    const counts = [0, 0, 0];
-    for (const item of pool) {
-      const box = srsData[item.chinese] ? getRecord(item.chinese).box : 0;
-      counts[box]++;
-    }
-    srsCount.forEach((el, i) => { el.textContent = String(counts[i]); });
-
-    if (mistakes.length > 0) {
-      btnReviewMistakes.textContent = `Repasar errores (${mistakes.length})`;
-      btnReviewMistakes.classList.remove('hidden');
-    } else {
-      btnReviewMistakes.classList.add('hidden');
-    }
-  }
-
-  // ── Render ────────────────────────────────────────────────────────────────
   function renderCurrent() {
-    if (!filtered.length) return;
-
-    const item   = filtered[currentIndex];
+    if (!sessionItems.length) return;
+    const item   = sessionItems[sessionIndex];
     const isWord = item.type === 'word';
-    const box    = srsData[item.chinese] ? getRecord(item.chinese).box : 0;
-
-    currentChinese = item.chinese;
 
     typeBadge.textContent = isWord ? 'palabra' : 'frase';
-    srsBadge.textContent  = BOX_LABEL[box];
-    srsBadge.className    = `text-xs font-medium px-2 py-0.5 rounded-full border ${BOX_CLASSES[box]}`;
+    renderSRSBadge(item);
+    extraBadge.classList.toggle('hidden', !item.extra);
 
-    counterCur.textContent = String(currentIndex + 1);
-    counterTot.textContent = String(filtered.length);
+    if (isWord) direction = activeDirection==='random' ? (Math.random()<.5?'zh-to-es':'es-to-zh') : activeDirection;
+    else        direction = 'zh-to-es';
 
-    if (isWord) direction = directionMode === 'mix' ? (Math.random() < 0.5 ? 'zh-to-es' : 'es-to-zh') : directionMode;
-
-    const showChinese = !isWord || direction === 'zh-to-es';
-    promptEl.className   = showChinese ? CHINESE_CLS : MEANING_CLS;
-    promptEl.textContent = showChinese ? item.chinese : item.meaning;
-    hintEl.textContent   = isWord ? (showChinese ? 'escribe el significado o el pinyin' : 'escribe en chino o en pinyin') : '';
-
-    // Audio button: hide when Chinese is the answer (would be a spoiler)
-    btnAudio.classList.toggle('invisible', !showChinese);
+    if (direction === 'zh-to-es') {
+      promptEl.className        = ZH_CLS;
+      promptEl.style.fontFamily = "'PingFang SC','Noto Sans SC',sans-serif";
+      promptEl.textContent      = item.chinese;
+      hintEl.textContent        = isWord ? 'escribe el significado o pinyin' : '';
+      answerEl.placeholder      = 'Escribe el significado en español…';
+    } else {
+      promptEl.className        = ES_CLS;
+      promptEl.style.fontFamily = '';
+      promptEl.textContent      = item.meaning;
+      hintEl.textContent        = 'escribe en chino o pinyin';
+      answerEl.placeholder      = 'Escribe en chino o en pinyin…';
+    }
 
     pinyinEl.textContent  = item.pinyin;
     meaningEl.textContent = item.meaning;
-
-    answerEl.placeholder = isWord
-      ? (direction === 'zh-to-es' ? 'Escribe el significado en español o el pinyin…' : 'Escribe en chino o en pinyin…')
-      : 'Responde o traduce la frase…';
-
     resetReveals();
     goAnswering();
   }
 
-  // ── Advance ───────────────────────────────────────────────────────────────
-  function advance() {
-    speechSynthesis?.cancel();
-    currentIndex++;
-    if (currentIndex >= filtered.length) showSummary();
-    else renderCurrent();
-  }
-
-  function onResult(correct, item) {
-    if (correct) sessionRight++;
-    else { sessionWrong++; mistakes.push(item); }
-    recordResult(item.chinese, correct);
-  }
-
-  // ── Init session ──────────────────────────────────────────────────────────
-  function initSession(pool, isReview = false) {
-    reviewMode   = isReview;
-    filtered     = isReview ? shuffle(pool) : buildSession(pool);
-    currentIndex = 0;
-    sessionRight = 0;
-    sessionWrong = 0;
-    mistakes = [];
-    summaryView.classList.add('hidden');
-    practiceView.classList.remove('hidden');
+  function nextItem() {
+    sessionIndex++;
+    renderProgress();
+    if (sessionIndex >= sessionItems.length) { showSessionEnd(); return; }
     renderCurrent();
   }
 
-  function applyFilter(filter) {
-    activeFilter = filter;
-    initSession(getPool());
-  }
-
-  // ── Events ────────────────────────────────────────────────────────────────
-  btnAudio.addEventListener('click', () => speak(currentChinese));
-
-  btnPinyin.addEventListener('click', () => {
-    pinyinOn = !pinyinOn;
-    setReveal(pinyinEl, btnPinyin, pinyinOn);
-  });
-
-  btnMeaning.addEventListener('click', () => {
-    meaningOn = !meaningOn;
-    setReveal(meaningEl, btnMeaning, meaningOn);
-  });
+  // ── Events ─────────────────────────────────────────────────────────────────
+  btnPinyin.addEventListener('click',  () => { pinyinOn  = !pinyinOn;  setReveal(pinyinEl,  btnPinyin,  pinyinOn); });
+  btnMeaning.addEventListener('click', () => { meaningOn = !meaningOn; setReveal(meaningEl, btnMeaning, meaningOn); });
 
   btnCheck.addEventListener('click', () => {
-    const item = filtered[currentIndex];
-    if (item.type === 'word') {
-      const correct = isCorrect(answerEl.value, item);
-      onResult(correct, item);
-      goWordResult(correct, item);
-    } else {
-      goPhraseAssess();
-    }
+    const item = sessionItems[sessionIndex];
+    item.type === 'word' ? goWordResult(isCorrect(answerEl.value, item), item) : goPhraseAssess();
   });
 
-  btnNext.addEventListener('click', advance);
-  btnKnew.addEventListener('click',  () => { onResult(true,  filtered[currentIndex]); advance(); });
-  btnDidnt.addEventListener('click', () => { onResult(false, filtered[currentIndex]); advance(); });
+  btnNext.addEventListener('click', nextItem);
 
+  btnKnew.addEventListener('click', () => {
+    const item      = sessionItems[sessionIndex];
+    const boxBefore = getSRS(item).box;
+    updateSRS(item, true);
+    sessionResults.push({ item, correct:true, boxBefore, boxAfter:getSRS(item).box });
+    renderSRSCounts();
+    nextItem();
+  });
+
+  btnDidnt.addEventListener('click', () => {
+    const item      = sessionItems[sessionIndex];
+    const boxBefore = getSRS(item).box;
+    updateSRS(item, false);
+    sessionResults.push({ item, correct:false, boxBefore, boxAfter:getSRS(item).box });
+    renderSRSCounts();
+    nextItem();
+  });
+
+  // Session end buttons
+  $('btn-retry-errors').addEventListener('click', () => {
+    startSession(sessionResults.filter(r => !r.correct).map(r => r.item));
+  });
+  $('btn-new-session').addEventListener('click',  () => applyFilter(activeTema));
+  $('btn-practice-all').addEventListener('click', () => startSession(allFiltered));
+
+  // Tema selects
+  function onTemaChange(val) {
+    activeTema = val;
+    if (temaDesk) temaDesk.value = val;
+    if (temaMob)  temaMob.value  = val;
+    applyFilter(val);
+  }
+  temaDesk?.addEventListener('change', e => onTemaChange(e.target.value));
+  temaMob?.addEventListener('change',  e => onTemaChange(e.target.value));
+
+  // Direction buttons
+  document.querySelectorAll('.dir-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = btn.dataset.dir;
+      document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll(`.dir-btn[data-dir="${dir}"]`).forEach(b => b.classList.add('active'));
+      activeDirection = dir;
+      if (!sessionEndEl.classList.contains('hidden')) return;
+      renderCurrent();
+    });
+  });
+
+  // Confirmar subida de nivel manual
+  $('btn-confirm-levelup').addEventListener('click', () => {
+    pendingLevelUps.forEach(item => {
+      const rec = getSRS(item);
+      const newBox = Math.min(rec.box + 1, 4);
+      const next = new Date(Date.now() + INTERVALS[newBox]*86400000).toISOString().slice(0,10);
+      srsData[item.chinese] = { box:newBox, nextDate:next };
+    });
+    saveSRS();
+    renderSRSCounts();
+    pendingLevelUps = [];
+    $('session-leveled').classList.add('hidden');
+    $('session-leveled').classList.remove('flex');
+  });
+
+  // Enter key
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
+    if (e.target.tagName === 'SELECT') return;
+    const tabContent = $('pc-root')?.closest('.tab-content');
+    if (tabContent && !tabContent.classList.contains('active')) return;
+    if (e.target===btnCheck || e.target===btnNext || e.target===btnKnew || e.target===btnDidnt) return;
     if (phase === 'answering') btnCheck.click();
     else if (phase === 'checked') btnNext.click();
   });
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      applyFilter(tab.dataset.filter);
-    });
-  });
-
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      directionMode = btn.dataset.mode;
-      initSession(getPool());
-    });
-  });
-
-  temaBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      temaBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeTema = btn.dataset.tema;
-      initSession(getPool());
-    });
-  });
-
-  sizeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      sizeBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      sessionLimit = Number(btn.dataset.size);
-      initSession(getPool());
-    });
-  });
-
-  btnNewSession.addEventListener('click', () => {
-    const pool = getPool();
-    pool.forEach(item => { delete srsData[item.chinese]; });
-    saveSRS();
-    initSession(pool);
-  });
-  btnReviewMistakes.addEventListener('click', () => {
-    summaryView.classList.add('hidden');
-    practiceView.classList.remove('hidden');
-    initSession(mistakes, true);
-  });
-
-  // ── Boot ──────────────────────────────────────────────────────────────────
+  // ── Init ───────────────────────────────────────────────────────────────────
   loadSRS();
   applyFilter('all');
+  renderSRSCounts();
 </script>

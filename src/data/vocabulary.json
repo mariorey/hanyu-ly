@@ -28,7 +28,7 @@
   { "type": "word", "chinese": "哪", "pinyin": "nǎ", "meaning": "cuál / qué", "tags": ["tema3"] },
   { "type": "word", "chinese": "人", "pinyin": "rén", "meaning": "persona", "tags": ["tema3"] },
   { "type": "word", "chinese": "和", "pinyin": "hé", "meaning": "y", "tags": ["tema3"] },
-  { "type": "word", "chinese": "会", "pinyin": "huì", "meaning": "saber / poder", "tags": ["tema3"] },
+  { "type": "word", "chinese": "会", "pinyin": "huì", "meaning": "saber / poder / partícula de futuro", "tags": ["tema3", "tema11"] },
   { "type": "word", "chinese": "说", "pinyin": "shuō", "meaning": "hablar / decir", "tags": ["tema3"] },
   { "type": "word", "chinese": "中国", "pinyin": "Zhōngguó", "meaning": "China", "tags": ["tema3"] },
   { "type": "word", "chinese": "汉语", "pinyin": "hànyǔ", "meaning": "idioma chino", "tags": ["tema3"] },
@@ -300,5 +300,11 @@
   { "type": "phrase", "chinese": "这件衣服多少钱？", "pinyin": "zhè jiàn yīfu duōshǎo qián?", "meaning": "¿cuánto vale esta ropa?", "tags": ["tema10"] },
   { "type": "phrase", "chinese": "那些衣服多少钱？", "pinyin": "nà xiē yīfu duōshǎo qián?", "meaning": "¿cuánto cuestan aquellas ropas?", "tags": ["tema10"] },
   { "type": "phrase", "chinese": "我卖一些书。", "pinyin": "wǒ mài yì xiē shū.", "meaning": "vendo unos libros.", "tags": ["tema10"] },
-  { "type": "phrase", "chinese": "他在卖几台电脑。", "pinyin": "tā zài mài jǐ tái diànnǎo.", "meaning": "él está vendiendo unos cuantos ordenadores.", "tags": ["tema10"] }
+  { "type": "phrase", "chinese": "他在卖几台电脑。", "pinyin": "tā zài mài jǐ tái diànnǎo.", "meaning": "él está vendiendo unos cuantos ordenadores.", "tags": ["tema10"] },
+
+  { "type": "word", "chinese": "天气", "pinyin": "tiānqì", "meaning": "clima / tiempo", "tags": ["tema11"] },
+  { "type": "word", "chinese": "热", "pinyin": "rè", "meaning": "calor / caliente", "tags": ["tema11"] },
+  { "type": "word", "chinese": "冷", "pinyin": "lěng", "meaning": "frío", "tags": ["tema11"] },
+  { "type": "word", "chinese": "下雨", "pinyin": "xiàyǔ", "meaning": "lluvia / llover", "tags": ["tema11"] },
+  { "type": "word", "chinese": "不冷不热", "pinyin": "bù lěng bù rè", "meaning": "templado / ni frío ni calor", "tags": ["tema11"] }
 ]
