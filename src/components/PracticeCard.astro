@@ -84,7 +84,7 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
                p-4 gap-3 lg:flex-none lg:p-6 lg:gap-4">
 
         <!-- Badges row -->
-        <div class="shrink-0 flex items-center gap-2 flex-wrap">
+        <div id="badges-row" class="shrink-0 flex items-center gap-2 flex-wrap">
           <span id="type-badge"  class="text-xs font-medium px-2 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/10"></span>
           <span id="srs-badge"   class="text-xs font-medium px-2 py-0.5 rounded-full border"></span>
           <span id="extra-badge" class="hidden text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">extra</span>
@@ -233,16 +233,48 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
       opacity: 0 !important;
     }
     :global(body.kb-open) #prompt-area {
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
-      /* Stop the prompt from eating up all the flex space — shrink to content */
+      padding: 0 !important;
       flex: 0 0 auto !important;
       min-height: 0 !important;
+      gap: 0.15rem !important;
     }
-    /* With the prompt no longer flex-1, center the remaining content in the card */
+
+    /* THE KEY FIX — Duolingo-style: card shrinks to content + sticks to bottom.
+       - flex:0 0 auto stops the card from growing
+       - margin-top:auto pushes it down against the keyboard
+       - tight padding + gap kill the visible whitespace */
+    #pc-card {
+      transition: padding 0.22s ease, gap 0.22s ease, margin-top 0.22s ease;
+    }
     :global(body.kb-open) #pc-card {
-      justify-content: center !important;
-      gap: 0.5rem !important;
+      flex: 0 0 auto !important;
+      margin-top: auto !important;
+      padding: 0.5rem !important;
+      gap: 0.35rem !important;
+      background: transparent !important;
+      border-color: transparent !important;
+    }
+
+    /* Cancel the gap that the now-zero-height #hint-zone would still claim */
+    :global(body.kb-open) #hint-zone {
+      margin: -0.175rem 0 !important;
+    }
+
+    /* Hide badges and the prompt hint when typing — pure compact mode */
+    #badges-row, #prompt-hint {
+      transition: max-height 0.22s ease, opacity 0.18s ease, margin 0.22s ease;
+      overflow: hidden;
+    }
+    :global(body.kb-open) #badges-row,
+    :global(body.kb-open) #prompt-hint {
+      max-height: 0 !important;
+      opacity: 0 !important;
+      margin: -0.175rem 0 !important;
+    }
+
+    /* Tab-content top padding also collapses when kb opens */
+    :global(body.kb-open) .tab-content.active {
+      padding-top: 0.25rem !important;
     }
   }
 </style>
