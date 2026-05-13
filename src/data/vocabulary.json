@@ -305,5 +305,12 @@
   { "type": "word", "chinese": "热", "pinyin": "rè", "meaning": "calor / caliente", "tags": ["tema11"] },
   { "type": "word", "chinese": "冷", "pinyin": "lěng", "meaning": "frío", "tags": ["tema11"] },
   { "type": "word", "chinese": "下雨", "pinyin": "xiàyǔ", "meaning": "lluvia / llover", "tags": ["tema11"] },
-  { "type": "word", "chinese": "不冷不热", "pinyin": "bù lěng bù rè", "meaning": "templado / ni frío ni calor", "tags": ["tema11"] }
+  { "type": "word", "chinese": "不冷不热", "pinyin": "bù lěng bù rè", "meaning": "templado / ni frío ni calor", "tags": ["tema11"] },
+
+  { "type": "word", "chinese": "饭店", "pinyin": "fàndiàn", "meaning": "restaurante / hotel", "tags": ["tema12"] },
+  { "type": "word", "chinese": "出租车", "pinyin": "chūzūchē", "meaning": "taxi", "tags": ["tema12"] },
+  { "type": "word", "chinese": "认识", "pinyin": "rènshi", "meaning": "conocer", "tags": ["tema12"] },
+  { "type": "word", "chinese": "飞机", "pinyin": "fēijī", "meaning": "avión", "tags": ["tema12"] },
+  { "type": "word", "chinese": "高兴", "pinyin": "gāoxìng", "meaning": "contento", "tags": ["tema12"] },
+  { "type": "word", "chinese": "对", "pinyin": "duì", "meaning": "correcto", "tags": ["tema12"], "extra": true }
 ]
