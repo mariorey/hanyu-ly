@@ -27,6 +27,8 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
       <button class="dir-btn" data-dir="zh-to-es" title="Chino → Español">中→ES</button>
       <button class="dir-btn" data-dir="es-to-zh" title="Español → Chino">ES→中</button>
     </div>
+    <!-- Font toggle -->
+    <button id="btn-font-toggle" class="dir-btn shrink-0" title="Cambiar fuente">黑</button>
   </div>
 
   <!-- ── 3-col grid (desktop) / full-height flex (mobile) ── -->
@@ -185,6 +187,18 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   .dir-btn-full { @apply w-full text-left; }
   .dir-btn.active { @apply bg-indigo-600 text-white border-indigo-500; }
   .btn-reveal.on  { @apply bg-white/10 border-white/20 text-white; }
+
+  /* ── KaiTi font toggle ──────────────────────────────────────────────────── */
+  /* When .kaiti is on #pc-root, apply the KaiTi font stack to the prompt.
+     System fonts (KaiTi/STKaiti) are used on macOS/Windows;
+     Ma Shan Zheng (Google Fonts) is the fallback for iOS/Android. */
+  #pc-root.kaiti #prompt-text {
+    font-family: 'KaiTi', 'KaiTi_GB2312', 'STKaiti', 'AR PL UKai CN',
+                 'Ma Shan Zheng', cursive !important;
+  }
+  #btn-font-toggle.kaiti-on {
+    @apply bg-violet-600 text-white border-violet-500;
+  }
 
   /* ── Mobile: keyboard-open compact mode ────────────────────────────────────
      When the virtual keyboard opens we add .kb-open to <body>.
@@ -807,6 +821,27 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
       if (document.activeElement !== answerEl) setKbOpen(false);
     }, 50);
   });
+
+  // ── Font toggle (黑体 ↔ 楷体) ───────────────────────────────────────────────
+  const FONT_KEY    = 'hanyu-font-v1';
+  const btnFontToggle = $('btn-font-toggle');
+  let kaitiOn = localStorage.getItem(FONT_KEY) === 'kaiti';
+
+  function applyFont() {
+    pcRoot?.classList.toggle('kaiti', kaitiOn);
+    if (btnFontToggle) {
+      btnFontToggle.textContent = kaitiOn ? '楷' : '黑';
+      btnFontToggle.classList.toggle('kaiti-on', kaitiOn);
+    }
+  }
+
+  btnFontToggle?.addEventListener('click', () => {
+    kaitiOn = !kaitiOn;
+    localStorage.setItem(FONT_KEY, kaitiOn ? 'kaiti' : 'heiti');
+    applyFont();
+  });
+
+  applyFont(); // restore preference on load
 
   // ── Init ───────────────────────────────────────────────────────────────────
   loadSRS();
