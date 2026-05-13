@@ -63,6 +63,14 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
         <div id="srs-counts" class="flex flex-col gap-1.5 text-xs"></div>
       </div>
 
+      <!-- Font toggle (desktop) -->
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Fuente</span>
+        <button id="btn-font-toggle-desk" class="dir-btn dir-btn-full" title="Cambiar fuente del prompt">
+          <span id="font-toggle-desk-label">黑 Heiti (normal)</span>
+        </button>
+      </div>
+
     </aside>
 
     <!-- Col 2: card area — fills height on mobile, auto on desktop -->
@@ -823,23 +831,36 @@ const temas = [...new Set(words.flatMap(i => i.tags ?? []))].sort();
   });
 
   // ── Font toggle (黑体 ↔ 楷体) ───────────────────────────────────────────────
-  const FONT_KEY    = 'hanyu-font-v1';
-  const btnFontToggle = $('btn-font-toggle');
+  const FONT_KEY         = 'hanyu-font-v1';
+  const btnFontToggle    = $('btn-font-toggle');       // mobile
+  const btnFontToggleDsk = $('btn-font-toggle-desk');  // desktop
+  const fontLabelDsk     = $('font-toggle-desk-label');
   let kaitiOn = localStorage.getItem(FONT_KEY) === 'kaiti';
 
   function applyFont() {
     pcRoot?.classList.toggle('kaiti', kaitiOn);
+    // mobile button
     if (btnFontToggle) {
       btnFontToggle.textContent = kaitiOn ? '楷' : '黑';
       btnFontToggle.classList.toggle('kaiti-on', kaitiOn);
     }
+    // desktop button
+    if (btnFontToggleDsk) {
+      btnFontToggleDsk.classList.toggle('kaiti-on', kaitiOn);
+    }
+    if (fontLabelDsk) {
+      fontLabelDsk.textContent = kaitiOn ? '楷 Kǎitǐ (activa)' : '黑 Heiti (normal)';
+    }
   }
 
-  btnFontToggle?.addEventListener('click', () => {
+  const toggleFont = () => {
     kaitiOn = !kaitiOn;
     localStorage.setItem(FONT_KEY, kaitiOn ? 'kaiti' : 'heiti');
     applyFont();
-  });
+  };
+
+  btnFontToggle?.addEventListener('click', toggleFont);
+  btnFontToggleDsk?.addEventListener('click', toggleFont);
 
   applyFont(); // restore preference on load
 
