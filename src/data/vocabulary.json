@@ -312,5 +312,20 @@
   { "type": "word", "chinese": "认识", "pinyin": "rènshi", "meaning": "conocer", "tags": ["tema12"] },
   { "type": "word", "chinese": "飞机", "pinyin": "fēijī", "meaning": "avión", "tags": ["tema12"] },
   { "type": "word", "chinese": "高兴", "pinyin": "gāoxìng", "meaning": "contento", "tags": ["tema12"] },
-  { "type": "word", "chinese": "对", "pinyin": "duì", "meaning": "correcto", "tags": ["tema12"], "extra": true }
+  { "type": "word", "chinese": "对", "pinyin": "duì", "meaning": "correcto", "tags": ["tema12"], "extra": true },
+
+  { "type": "word", "chinese": "读", "pinyin": "dú", "meaning": "leer / estudiar", "tags": ["tema13"] },
+  { "type": "word", "chinese": "打电话", "pinyin": "dǎdiànhuà", "meaning": "llamar por teléfono", "tags": ["tema13"] },
+  { "type": "word", "chinese": "电视", "pinyin": "diànshì", "meaning": "televisor", "tags": ["tema13"] },
+  { "type": "word", "chinese": "喜欢", "pinyin": "xǐhuān", "meaning": "gustar / querer", "tags": ["tema13"] },
+  { "type": "word", "chinese": "给", "pinyin": "gěi", "meaning": "a / para / dar", "tags": ["tema13"], "extra": true },
+  { "type": "word", "chinese": "可以", "pinyin": "kěyǐ", "meaning": "poder", "tags": ["tema13"], "extra": true },
+  { "type": "word", "chinese": "明天见", "pinyin": "míngtiān jiàn", "meaning": "hasta mañana", "tags": ["tema13"], "extra": true },
+
+  { "type": "word", "chinese": "说话", "pinyin": "shuōhuà", "meaning": "hablar", "tags": ["tema14"] },
+  { "type": "word", "chinese": "听", "pinyin": "tīng", "meaning": "escuchar", "tags": ["tema14"] },
+  { "type": "word", "chinese": "睡觉", "pinyin": "shuìjiào", "meaning": "dormir", "tags": ["tema14"] },
+  { "type": "word", "chinese": "懂", "pinyin": "dǒng", "meaning": "entender", "tags": ["tema14"], "extra": true },
+  { "type": "word", "chinese": "空", "pinyin": "kōng", "meaning": "tiempo libre", "tags": ["tema14"], "extra": true },
+  { "type": "word", "chinese": "问题", "pinyin": "wèntí", "meaning": "problema / pregunta", "tags": ["tema14"], "extra": true }
 ]
